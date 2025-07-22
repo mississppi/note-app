@@ -1,0 +1,42 @@
+# Xcode Generated files
+build/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+*.pbxlayaout
+!default.pbxlayaout
+*.perspectivev3
+!default.perspectivev3
+xcuserdata/
+DerivedData/
+.DS_Store
+.swift-version
+
+# Swift Package Manager (if you use it)
+.build/
+.swiftpm/xcode/package.xcworkspace/xcuserdata/
+
+# Pods (if you use CocoaPods)
+Pods/
+
+# Carthage (if you use Carthage)
+Carthage/Build/
+
+# Other common ignored files
+*.o
+*.d
+*.swiftmodule
+*.swiftdoc
+*.swiftsourceinfo
+*.swo
+*.pyc
+*.pyo
+*.bak
+*.lock
+*.log
+*~
+*.nib
+*.xib.mode/
+*.gcno
+*.gcda
+*.gch
