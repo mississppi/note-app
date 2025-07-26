@@ -1,21 +1,5 @@
-import Foundation // UUID, Date, Errorなどの基本型のため
-import CoreData   // NSPredicate, NSSortDescriptor, NSManagedObjectContext (実装側で必要), NSManagedObject (型として必要)
-
-enum NoteStatus: Int16, CaseIterable, Identifiable {
-    case atcive = 0
-    case archived = 1
-    
-    var id: Self { self }
-    
-    var displayName: String {
-        switch self {
-        case .atcive:
-            return "アクティブ"
-        case .archived:
-            return "アーカイブ済み"
-        }
-    }
-}
+import Foundation
+import CoreData
 
 class CoreDataNoteService: NoteDataService {
     
