@@ -33,8 +33,14 @@
 		123BE9B32E34C57000902BDA /* Exceptions for "Argonautes" folder in "ArgonautesTests" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				"Models/Note+CoreDataClass.swift",
+				"Models/Note+CoreDataProperties.swift",
 				Models/NoteStatus.swift,
+				"Models/Tag+CoreDataClass.swift",
+				"Models/Tag+CoreDataProperties.swift",
+				Services/Implementations/CoreDataNoteService.swift,
 				Services/Implementations/MockNoteDataService.swift,
+				Services/Protocols/NoteDataService.swift,
 			);
 			target = 123BE97A2E2FBF1200902BDA /* ArgonautesTests */;
 		};

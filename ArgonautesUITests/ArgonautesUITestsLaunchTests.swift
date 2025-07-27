@@ -1,10 +1,3 @@
-//
-//  ArgonautesUITestsLaunchTests.swift
-//  ArgonautesUITests
-//
-//  Created by KOSUKE SAKURAI on 2025/07/22.
-//
-
 import XCTest
 
 final class ArgonautesUITestsLaunchTests: XCTestCase {
