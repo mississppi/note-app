@@ -33,14 +33,7 @@
 		123BE9B32E34C57000902BDA /* Exceptions for "Argonautes" folder in "ArgonautesTests" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				"Models/Note+CoreDataClass.swift",
-				"Models/Note+CoreDataProperties.swift",
-				Models/NoteStatus.swift,
-				"Models/Tag+CoreDataClass.swift",
-				"Models/Tag+CoreDataProperties.swift",
-				Services/Implementations/CoreDataNoteService.swift,
-				Services/Implementations/MockNoteDataService.swift,
-				Services/Protocols/NoteDataService.swift,
+				Models/Enums/NoteStatus.swift,
 			);
 			target = 123BE97A2E2FBF1200902BDA /* ArgonautesTests */;
 		};
@@ -58,11 +51,6 @@
 		123BE97E2E2FBF1200902BDA /* ArgonautesTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = ArgonautesTests;
-			sourceTree = "<group>";
-		};
-		123BE9882E2FBF1200902BDA /* ArgonautesUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = ArgonautesUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -97,7 +85,6 @@
 			children = (
 				123BE9672E2FBF1000902BDA /* Argonautes */,
 				123BE97E2E2FBF1200902BDA /* ArgonautesTests */,
-				123BE9882E2FBF1200902BDA /* ArgonautesUITests */,
 				123BE9662E2FBF1000902BDA /* Products */,
 			);
 			sourceTree = "<group>";
@@ -172,9 +159,6 @@
 			);
 			dependencies = (
 				123BE9872E2FBF1200902BDA /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				123BE9882E2FBF1200902BDA /* ArgonautesUITests */,
 			);
 			name = ArgonautesUITests;
 			packageProductDependencies = (
