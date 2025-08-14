@@ -99,5 +99,43 @@ final class CoreDataNoteServiceTests: XCTestCase {
         XCTAssertEqual(updatedNote.title, newTitle, "更新されたノートのタイトルが一致すべき")
         XCTAssertEqual(updatedNote.content, newContent, "更新されたノートのコンテンツが一致すべき")
     }
+    
+    func testDeleteAndFetchNote() throws {
+        let title = "Note to delete"
+        let content = "This note should be deleted."
+        let status = Argonautes.NoteStatus.active
+        let noteToDelete = service.createNote(title: title, content: content, status: status, tag: nil)
+        try service.saveContext()
+        
+        var fetchedNotes = service.fetchNotes(predicate: nil, sortDescriptors: nil)
+        XCTAssertEqual(fetchedNotes.count,1, "削除前はノートが1件存在するべき")
+        
+        service.deleteNote(noteToDelete)
+        
+        XCTAssertTrue(viewContext.hasChanges, "ノート削除後、コンテキストに変更があるべき")
+        
+        try service.saveContext()
+        
+        fetchedNotes = service.fetchNotes(predicate: nil, sortDescriptors: nil)
+        XCTAssertEqual(fetchedNotes.count, 0, "削除後はノートが0件であるべき")
+    }
+    
+    func testCreateAndFetchTag() throws {
+        let tagName = "General"
+        let newTag = service.createTag(name: tagName)
+        try service.saveContext()
+        
+        
+        let fetchTags = service.fetchTags(predicate: nil, sortDescriptors: nil)
+        XCTAssertEqual(fetchTags.count, 1, "タグ作成後、1件のタグが存在すべき")
+        
+        guard let fetchTag = fetchTags.first else {
+            XCTFail("作成したタグが取得できませんでした")
+            return
+        }
+        
+        XCTAssertEqual(fetchTag.name, tagName, "作成したタグの名前は一致")
+        XCTAssertEqual(fetchTag.uuid, newTag.uuid, "作成したタグのUUIDは一致")
+    }
 
 }

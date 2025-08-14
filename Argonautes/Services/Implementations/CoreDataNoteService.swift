@@ -75,7 +75,7 @@ class CoreDataNoteService: NoteDataService {
     }
     
     func deleteNote(_ note: Note){
-        fatalError("deleteNote() has not been implemented")
+        context.delete(note)
     }
     
     func saveContext() throws {
@@ -94,11 +94,23 @@ class CoreDataNoteService: NoteDataService {
     }
     
     func fetchTags(predicate: NSPredicate?, sortDescriptors: [NSSortDescriptor]?) -> [Tag] {
-        fatalError("fetchTags() has not been implemented")
+        let request: NSFetchRequest<Tag> = Tag.fetchRequest()
+        request.predicate = predicate
+        request.sortDescriptors = sortDescriptors
+        
+        do {
+            return try context.fetch(request)
+        } catch {
+            print("Error fetching tags: \(error)")
+            return []
+        }
     }
     
     func createTag(name: String) -> Tag {
-        fatalError("createTag() has not been implemented")
+        let newTag = Tag(context: context)
+        newTag.name = name
+        newTag.uuid = UUID()
+        return newTag
     }
     
     func deleteTag(_ tag: Tag) {
