@@ -132,6 +132,6 @@ class CoreDataNoteService: NoteDataService {
     }
     
     func deleteTag(_ tag: Tag) {
-        fatalError("deleteTag() has not been implemented")
+        context.delete(tag)
     }
 }

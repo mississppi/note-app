@@ -124,25 +124,17 @@ final class CoreDataNoteServiceTests: XCTestCase {
         let note1 = service.createNote(title: "買い物リスト", content: "牛乳、卵、パン", status: .active, tag: nil)
         let note2 = service.createNote(title: "プロジェクトの計画", content: "新しいアプリの構想", status: .active, tag: nil)
         let note3 = service.createNote(title: "旅行の計画", content: "京都、東京、大阪を巡る", status: .active, tag: nil)
-        
         let searchText = "計画"
-        
         let fetchedNotes = service.searchNotes(for: searchText)
-        
         XCTAssertEqual(fetchedNotes.count, 2, "検索結果は2件であるべき")
-        
-        
     }
     
     func testCreateAndFetchTag() throws {
         let tagName = "General"
         let newTag = service.createTag(name: tagName)
         try service.saveContext()
-        
-        
         let fetchTags = service.fetchTags(predicate: nil, sortDescriptors: nil)
         XCTAssertEqual(fetchTags.count, 1, "タグ作成後、1件のタグが存在すべき")
-        
         guard let fetchTag = fetchTags.first else {
             XCTFail("作成したタグが取得できませんでした")
             return
@@ -161,16 +153,27 @@ final class CoreDataNoteServiceTests: XCTestCase {
         service.updateTag(tagToUpdate, newName: newName)
         
         try service.saveContext()
-        
         let fetchTags = service.fetchTags(predicate: nil, sortDescriptors: nil)
         XCTAssertEqual(fetchTags.count, 1, "タグ更新後も、タグは1件であるべき")
-        
+
         guard let updatedTag = fetchTags.first else {
             XCTFail("更新したタグが取得できませんでした")
             return
         }
-        
         XCTAssertEqual(updatedTag.name, newName, "更新されたタグの名前が新しい名前に一致すべき")
+    }
+    
+    func testDeleteAndFetchTag() throws {
+        let tagToDelete = service.createTag(name: "General")
+        try service.saveContext()
+        var fetchedTags = service.fetchTags(predicate: nil, sortDescriptors: nil)
+        XCTAssertEqual(fetchedTags.count, 1, "タグ作成後、1件のタグが存在すべき")
+        
+        service.deleteTag(tagToDelete)
+        XCTAssertTrue(viewContext.hasChanges, "タグ削除後、コンテキストに変更があるべき")
+        try service.saveContext()
+        fetchedTags = service.fetchTags(predicate: nil, sortDescriptors: nil)
+        XCTAssertEqual(fetchedTags.count,0,"削除後はタグが0件であるべき")
     }
 
 }
