@@ -120,6 +120,20 @@ final class CoreDataNoteServiceTests: XCTestCase {
         XCTAssertEqual(fetchedNotes.count, 0, "削除後はノートが0件であるべき")
     }
     
+    func testSearchNotes() throws {
+        let note1 = service.createNote(title: "買い物リスト", content: "牛乳、卵、パン", status: .active, tag: nil)
+        let note2 = service.createNote(title: "プロジェクトの計画", content: "新しいアプリの構想", status: .active, tag: nil)
+        let note3 = service.createNote(title: "旅行の計画", content: "京都、東京、大阪を巡る", status: .active, tag: nil)
+        
+        let searchText = "計画"
+        
+        let fetchedNotes = service.searchNotes(for: searchText)
+        
+        XCTAssertEqual(fetchedNotes.count, 2, "検索結果は2件であるべき")
+        
+        
+    }
+    
     func testCreateAndFetchTag() throws {
         let tagName = "General"
         let newTag = service.createTag(name: tagName)
@@ -136,6 +150,27 @@ final class CoreDataNoteServiceTests: XCTestCase {
         
         XCTAssertEqual(fetchTag.name, tagName, "作成したタグの名前は一致")
         XCTAssertEqual(fetchTag.uuid, newTag.uuid, "作成したタグのUUIDは一致")
+    }
+    
+    func testUpdateAndFetchTag() throws {
+        let originalName = "Work"
+        let tagToUpdate = service.createTag(name: originalName)
+        try service.saveContext()
+        
+        let newName = "Private"
+        service.updateTag(tagToUpdate, newName: newName)
+        
+        try service.saveContext()
+        
+        let fetchTags = service.fetchTags(predicate: nil, sortDescriptors: nil)
+        XCTAssertEqual(fetchTags.count, 1, "タグ更新後も、タグは1件であるべき")
+        
+        guard let updatedTag = fetchTags.first else {
+            XCTFail("更新したタグが取得できませんでした")
+            return
+        }
+        
+        XCTAssertEqual(updatedTag.name, newName, "更新されたタグの名前が新しい名前に一致すべき")
     }
 
 }

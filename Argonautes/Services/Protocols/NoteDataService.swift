@@ -19,11 +19,15 @@ protocol NoteDataService: AnyObject {
     
     func deleteNote(_ note: Note)
     
+    func searchNotes(for searchText: String) -> [Note]
+    
     func saveContext() throws
     
     func fetchTags(predicate: NSPredicate?, sortDescriptors: [NSSortDescriptor]?) -> [Tag]
     
     func createTag(name: String) -> Tag
+    
+    func updateTag(_ tag: Tag, newName: String)
     
     func deleteTag(_ tag: Tag)
 

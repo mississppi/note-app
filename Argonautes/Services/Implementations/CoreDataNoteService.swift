@@ -78,6 +78,20 @@ class CoreDataNoteService: NoteDataService {
         context.delete(note)
     }
     
+    func searchNotes(for searchText: String) -> [Note] {
+        let request: NSFetchRequest<Note> = Note.fetchRequest()
+        
+        if !searchText.isEmpty {
+            request.predicate = NSPredicate(format: "title CONTAINS[c] %@", searchText)
+        }
+        do {
+            return try context.fetch(request)
+        } catch {
+            print("Error searching notes: \(error)")
+            return []
+        }
+    }
+    
     func saveContext() throws {
         if context.hasChanges {
             do {
@@ -111,6 +125,10 @@ class CoreDataNoteService: NoteDataService {
         newTag.name = name
         newTag.uuid = UUID()
         return newTag
+    }
+    
+    func updateTag(_ tag: Tag, newName: String) {
+        tag.name = newName
     }
     
     func deleteTag(_ tag: Tag) {
