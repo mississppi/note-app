@@ -26,14 +26,35 @@ struct PersistenceController {
             container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
         }
 
-        container.loadPersistentStores(completionHandler: { (storeDescription, error) in
+        container.loadPersistentStores(completionHandler: { [self] (storeDescription, error) in
             if let error = error as NSError? {
                 fatalError("Unresolved error \(error), \(error.userInfo)")
+            }
+            
+            if !inMemory {
+                createInitialDataIfNeeded()
             }
         })
         container.viewContext.automaticallyMergesChangesFromParent = true
     }
 
+    private func createInitialDataIfNeeded() {
+        let context = container.viewContext
+        let tagRequest: NSFetchRequest<Tag> = Tag.fetchRequest()
+        if (try? context.count(for: tagRequest)) == 0 {
+            let service = CoreDataNoteService(context: context)
+            let defaultTag = service.createTag(name: "未分類")
+            
+            let weldomeNote = service.createNote(title: "はじめまして！", content: "これは最初のノートです。このノートを編集したり、新しいノートを作成して、アイデアを整理しましょう。", status: .active, tag: defaultTag)
+            
+            do {
+                try service.saveContext()
+            } catch {
+                print("Failed to save initial data: \(error)")
+            }
+        }
+    }
+    
     static var inMemory: PersistenceController = {
         let controller = PersistenceController(inMemory: true)
         return controller

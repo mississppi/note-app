@@ -1,12 +1,6 @@
 import XCTest
 import CoreData
 @testable import Argonautes
-extension PersistenceController {
-    static var inMemory: PersistenceController = {
-        let controller = PersistenceController(inMemory: true)
-        return controller
-    }()
-}
 
 final class CoreDataNoteServiceTests: XCTestCase {
 
