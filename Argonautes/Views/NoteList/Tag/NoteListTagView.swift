@@ -6,21 +6,26 @@ struct NoteListTagView: View {
     var body: some View {
         HStack {
             NoteListChevronButton(direction: .left) {
-                // 左矢印アクションのロジック
+                viewModel.selectPreviousTag()
             }
             Spacer()
-            Text("Daily")
-                .font(.system(size: 15))
+            if let  selectedTag = viewModel.selectedTag {
+                Text(selectedTag.name ?? "No Tag")
+                    .font(.system(size: 15))
+            } else {
+                Text("No Tag")
+                    .font(.system(size: 15))
+            }
             
             Spacer()
             NoteListChevronButton(direction: .right) {
-                // 右矢印アクションのロジック
+                viewModel.selectNextTag()
             }
 
         }
         .frame(height: 100)
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 16)
+        .padding(.horizontal, 16)
         .background(Color.gray.opacity(0.2))
     }
 }

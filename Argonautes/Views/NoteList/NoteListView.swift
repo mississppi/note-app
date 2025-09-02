@@ -6,12 +6,17 @@ struct NoteListView: View {
     @ObservedObject var viewModel: NoteListViewModel
     
     var body: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: 8) {
             NoteListTagArea(viewModel: viewModel)
+            NoteListSearchArea(viewModel: viewModel)
+            Spacer()
+            NoteListNoteArea(viewModel: viewModel)
+            NoteListTrashArea(viewModel: viewModel)
         }
         .padding(.horizontal, 24)
         .onAppear {
-            viewModel.fetchNotes()
+//            viewModel.fetchNotes()
+            viewModel.fetchData()
         }
     }
 }

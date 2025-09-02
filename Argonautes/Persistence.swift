@@ -53,6 +53,34 @@ struct PersistenceController {
                 print("Failed to save initial data: \(error)")
             }
         }
+        
+        //とりあえず3件
+        let service = CoreDataNoteService(context: context)
+        let dailyTag = service.createTag(name: "memo")
+        let workTag = service.createTag(name: "mynote")
+        let dailyNote = service.createNote(title: "デイリー1", content: "これはノートです。", status: .active, tag: dailyTag)
+        let dailyNote2 = service.createNote(title: "デイリー2", content: "これはノートです。", status: .active, tag: dailyTag)
+        let workNote = service.createNote(title: "work1", content: "これはノートです。", status: .active, tag: workTag)
+        let workNote2 = service.createNote(title: "work2", content: "これはノートです。", status: .active, tag: workTag)
+        
+        do {
+            try service.saveContext()
+        } catch {
+            print("Failed to save initial data: \(error)")
+        }
+    }
+    
+    func deleteAllData() {
+        print("start delete")
+        let noteRequest = NSBatchDeleteRequest(fetchRequest: Note.fetchRequest())
+        let tagRequest = NSBatchDeleteRequest(fetchRequest: Tag.fetchRequest())
+        do {
+            try container.viewContext.execute(noteRequest)
+            try container.viewContext.execute(tagRequest)
+            try container.viewContext.save()
+        } catch {
+            print("Failed to delete all data: \(error)")
+        }
     }
     
     static var inMemory: PersistenceController = {

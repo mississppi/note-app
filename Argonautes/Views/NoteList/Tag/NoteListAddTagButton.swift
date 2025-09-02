@@ -16,14 +16,18 @@ struct NoteListAddTagButton: View {
                 .frame(height: 45)
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal, 10)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(Color.gray, lineWidth: 1)
-                )
+//                .overlay(
+//                    RoundedRectangle(cornerRadius: 8)
+//                        .stroke(Color(hex: "cococo"), lineWidth: 1)
+//                )
 
         }
         .frame(maxWidth: .infinity)
 //        .padding(.horizontal, 10)
         .cornerRadius(8)
+        .overlay(
+            RoundedRectangle(cornerRadius: 8)
+                .stroke(Color(hex: "cococo"), lineWidth: 1)
+        )
     }
 }
