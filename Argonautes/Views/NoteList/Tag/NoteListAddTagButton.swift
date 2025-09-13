@@ -1,10 +1,12 @@
 import SwiftUI
 
 struct NoteListAddTagButton: View {
+    @ObservedObject var viewModel: NoteListViewModel
     
     var body: some View {
         Button(action: {
-            
+            print("--- action ----")
+            viewModel.showingAddTagModal = true
         }) {
             HStack(spacing: 8){
                 Image(systemName: "plus")
@@ -29,5 +31,8 @@ struct NoteListAddTagButton: View {
             RoundedRectangle(cornerRadius: 8)
                 .stroke(Color(hex: "cococo"), lineWidth: 1)
         )
+        .sheet(isPresented: $viewModel.showingAddTagModal) {
+            TagAddModelView(viewModel: viewModel)
+        }
     }
 }

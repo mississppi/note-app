@@ -169,5 +169,28 @@ final class CoreDataNoteServiceTests: XCTestCase {
         fetchedTags = service.fetchTags(predicate: nil, sortDescriptors: nil)
         XCTAssertEqual(fetchedTags.count,0,"削除後はタグが0件であるべき")
     }
+    
+    func testFetchNotesWithTagPredicate() throws {
+        print("----- test start ------")
+        let tag1 = try service.createTag(name: "tag1")
+        print(tag1)
+        let tag2 = try service.createTag(name: "tag2")
+        
+        let _ = try service.createNote(title: "Note 1", content: "c 1", status: .active, tag: tag1)
+        let _ = try service.createNote(title: "Note 2", content: "c 2", status: .active, tag: tag1)
+        
+        let _ = try service.createNote(title: "Note 3", content: "c 3", status: .active, tag: tag2)
+        let _ = try service.createNote(title: "Note 4", content: "c 4", status: .active, tag: tag2)
+        
+        let predicateForTag1 = NSPredicate(format: "tag == %@", tag1)
+        let notesForTag1 = service.fetchNotes(predicate: predicateForTag1, sortDescriptors: nil)
+        
+        XCTAssertEqual(notesForTag1.count, 2)
+        
+        let predicateForTag2 = NSPredicate(format: "tag == %@", tag2)
+        let notesForTag2 = service.fetchNotes(predicate: predicateForTag2, sortDescriptors: nil)
+        
+        XCTAssertEqual(notesForTag2.count, 2)
+    }
 
 }

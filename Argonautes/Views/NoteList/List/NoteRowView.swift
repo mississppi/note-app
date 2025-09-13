@@ -1,7 +1,8 @@
 import SwiftUI
 
 struct NoteRowView: View {
-    @ObservedObject var note: Note
+//    @ObservedObject var note: Note
+    let note: Note
     
     var body: some View {
         HStack(spacing: 12) {
@@ -22,8 +23,5 @@ struct NoteRowView: View {
             Spacer()
         }
         .padding(.vertical, 8)
-        .onAppear {
-            print("NoteRowView: \(note.title ?? "No title")")
-        }
     }
 }

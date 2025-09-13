@@ -13,7 +13,6 @@ class CoreDataNoteService: NoteDataService {
         let request: NSFetchRequest<Note> = Note.fetchRequest()
         request.predicate = predicate
         request.sortDescriptors = sortDescriptors
-        
         do {
             return try context.fetch(request)
         } catch {

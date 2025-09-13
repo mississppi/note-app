@@ -11,9 +11,6 @@ struct ContentView: View {
         } detail: {
             Text("Detail View")
         }
-        .onAppear{
-            PersistenceController.shared.deleteAllData()
-        }
     }
 }
 #Preview {

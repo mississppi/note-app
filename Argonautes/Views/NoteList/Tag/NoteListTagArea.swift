@@ -8,7 +8,7 @@ struct NoteListTagArea: View {
     var body: some View {
         VStack() {
             NoteListTagView(viewModel: viewModel)
-            NoteListAddTagButton()
+            NoteListAddTagButton(viewModel: viewModel)
         }
         .frame(maxWidth: .infinity)
 //        .padding(.vertical, 16)

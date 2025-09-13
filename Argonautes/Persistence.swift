@@ -7,8 +7,12 @@ struct PersistenceController {
     let container: NSPersistentContainer
 
     init(inMemory: Bool = false) {
+        print("--- persistence init ----")
+        let currentDate = Date()
+        print(currentDate)
         var managedObjectModel: NSManagedObjectModel? = nil
         if inMemory {
+            print("--- persistence inmemory ----")
             // テスト環境の場合、Bundle.mainからモデルをロードする
             // テストターゲットのリソースとしてモデルがコピーされていることを前提とする
             guard let modelURL = Bundle.main.url(forResource: "Argonautes", withExtension: "momd") else { // <--- ここを Bundle.main に修正
@@ -16,13 +20,16 @@ struct PersistenceController {
             }
             managedObjectModel = NSManagedObjectModel(contentsOf: modelURL)
         } else {
+            print("--- persistence no inMemory ----")
             // 通常のアプリ実行時
             managedObjectModel = NSManagedObjectModel.mergedModel(from: [Bundle.main])
         }
 
         container = NSPersistentContainer(name: "Argonautes", managedObjectModel: managedObjectModel!)
 
+        print("--- persistence checkpoint003 ----")
         if inMemory {
+            print("--- persistence 29 - inmemory ----")
             container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
         }
 
@@ -32,6 +39,9 @@ struct PersistenceController {
             }
             
             if !inMemory {
+                // テストデータ削除したい場合
+//                 self.deleteAllData()
+                
                 createInitialDataIfNeeded()
             }
         })
@@ -40,33 +50,22 @@ struct PersistenceController {
 
     private func createInitialDataIfNeeded() {
         let context = container.viewContext
+        let service = CoreDataNoteService(context: context)
         let tagRequest: NSFetchRequest<Tag> = Tag.fetchRequest()
         if (try? context.count(for: tagRequest)) == 0 {
             let service = CoreDataNoteService(context: context)
             let defaultTag = service.createTag(name: "未分類")
-            
-            let weldomeNote = service.createNote(title: "はじめまして！", content: "これは最初のノートです。このノートを編集したり、新しいノートを作成して、アイデアを整理しましょう。", status: .active, tag: defaultTag)
-            
+            _ = service.createNote(
+                title: "はじめまして！",
+                content: "これは最初のノートです。このノートを編集したり、新しいノートを作成して、アイデアを整理しましょう。",
+                status: .active,
+                tag: defaultTag
+            )
             do {
                 try service.saveContext()
             } catch {
                 print("Failed to save initial data: \(error)")
             }
-        }
-        
-        //とりあえず3件
-        let service = CoreDataNoteService(context: context)
-        let dailyTag = service.createTag(name: "memo")
-        let workTag = service.createTag(name: "mynote")
-        let dailyNote = service.createNote(title: "デイリー1", content: "これはノートです。", status: .active, tag: dailyTag)
-        let dailyNote2 = service.createNote(title: "デイリー2", content: "これはノートです。", status: .active, tag: dailyTag)
-        let workNote = service.createNote(title: "work1", content: "これはノートです。", status: .active, tag: workTag)
-        let workNote2 = service.createNote(title: "work2", content: "これはノートです。", status: .active, tag: workTag)
-        
-        do {
-            try service.saveContext()
-        } catch {
-            print("Failed to save initial data: \(error)")
         }
     }
     

@@ -11,6 +11,11 @@ class NoteListViewModel: ObservableObject {
     @Published var selectedTag: Tag?
     @Published var selectedTagIndex: Int = 0
     
+    @Published var showingAddTagModal: Bool = false
+    @Published var newTagName: String = ""
+    @Published var addTagError: String? = nil
+    
+    
     private let noteService: NoteDataService
     
     init(noteService: NoteDataService) {
@@ -19,10 +24,7 @@ class NoteListViewModel: ObservableObject {
     }
     
     func fetchData() {
-        print("--- fetchData() started ---")
         self.tags = noteService.fetchTags(predicate: nil, sortDescriptors: nil)
-        print("Fetched \(self.tags.count) tags.")
-        
         if !self.tags.isEmpty {
             self.selectedTag = self.tags[0]
             self.selectedTagIndex = 0
@@ -32,20 +34,14 @@ class NoteListViewModel: ObservableObject {
             self.selectedTagIndex = 0
             fetchNotes(searchText: "", selectedTag: nil)
         }
-        
-        print("Total notes after fetch: \(self.notes.count)")
-        for note in self.notes {
-            print(" - Note Title: \(note.title ?? "No Title")")
-        }
-        print("--- fetchData() finished ---") // <-- 追加
     }
     
     func fetchNotes(searchText: String = "", selectedTag: Tag? = nil) {
         let searchPredicate = createSearchPredicate(for: searchText)
         let tagPredicate = createTagPredicate(for: selectedTag)
         let finalPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [searchPredicate, tagPredicate].compactMap { $0 })
-
         self.notes = noteService.fetchNotes(predicate: finalPredicate, sortDescriptors: [NSSortDescriptor(keyPath: \Note.order, ascending: true)])
+
     }
     
     func selectPreviousTag() {
@@ -72,7 +68,32 @@ class NoteListViewModel: ObservableObject {
         fetchNotes(searchText: "", selectedTag: self.selectedTag)
     }
     
-
+    func addNewTag() {
+        guard !newTagName.isEmpty else {
+            addTagError = "タグ名を入力してください"
+            return
+        }
+        
+        let existsTagNames = tags.compactMap{ $0.name }
+        if existsTagNames.contains(newTagName) {
+            addTagError = "このタグはすでに存在しています"
+            return
+        }
+        
+        _ = noteService.createTag(name: newTagName)
+        
+        do {
+            try noteService.saveContext()
+            addTagError = nil
+            newTagName = ""
+            fetchData()
+        } catch {
+            addTagError = "タグの保存に失敗しました。"
+            print("Failed to save new tag: \(error.localizedDescription)")
+        }
+        
+        
+    }
 }
 
 private extension NoteListViewModel {
