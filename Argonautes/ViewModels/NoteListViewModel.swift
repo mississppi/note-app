@@ -17,9 +17,18 @@ class NoteListViewModel: ObservableObject {
     
     
     private let noteService: NoteDataService
+    private var cancellabels = Set<AnyCancellable>()
     
     init(noteService: NoteDataService) {
         self.noteService = noteService
+        
+        $searchText
+            .debounce(for: .milliseconds(500), scheduler: RunLoop.main)
+            .sink { [weak self] searchText in
+                self?.fetchNotes(searchText: searchText)
+            }
+            .store(in: &cancellabels)
+        
         fetchData()
     }
     
