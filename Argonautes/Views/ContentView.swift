@@ -9,7 +9,7 @@ struct ContentView: View {
         NavigationSplitView {
             NoteListView(viewModel: viewModel)
         } detail: {
-            NoteDetailView()
+            NoteDetailView(viewModel: viewModel)
         }
         .modifier(TransparentTitleBarModifier())
     }

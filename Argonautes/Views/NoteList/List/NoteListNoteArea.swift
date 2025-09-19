@@ -6,13 +6,16 @@ struct NoteListNoteArea: View {
     @ObservedObject var viewModel: NoteListViewModel
     
     var body: some View {
-        List(viewModel.notes, selection: $viewModel.selectedNote) { note in
+        List(viewModel.notes, id: \.self, selection: $viewModel.selectedNote) { note in
             NoteRowView(note: note)
         }
         .padding(.horizontal, 16)
         .background(Color(hex: "cceeac"))
         .onAppear{
             viewModel.fetchNotes()
+        }
+        .onChange(of: viewModel.selectedNote) { newNote in
+            print("sleetednote  change to : \(newNote?.title ?? "nil")")
         }
     }
 }

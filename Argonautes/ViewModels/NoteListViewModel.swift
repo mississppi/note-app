@@ -32,6 +32,25 @@ class NoteListViewModel: ObservableObject {
         fetchData()
     }
     
+    func addNewNote() {
+        let newNote = noteService.createNote(
+            title: "new Note",
+            content: "",
+            status: .active,
+            tag: selectedTag
+        )
+        
+        self.notes.insert(newNote, at: 0)
+        
+        self.selectedNote = newNote
+        
+        do {
+            try noteService.saveContext()
+        } catch {
+            print("Failed to save new note: \(error.localizedDescription)")
+        }
+    }
+    
     func fetchData() {
         self.tags = noteService.fetchTags(predicate: nil, sortDescriptors: nil)
         if !self.tags.isEmpty {

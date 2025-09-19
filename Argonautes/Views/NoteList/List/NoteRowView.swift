@@ -11,7 +11,7 @@ struct NoteRowView: View {
                 .scaledToFit()
                 .frame(width: 14, height: 14)
             
-            VStack(alignment: .leading, spacing: 30){
+            VStack(alignment: .leading, spacing: 4){
                 Text(note.title ?? "No Title")
                     .font(.system(size:14, weight: .semibold))
                     .foregroundColor(.primary)
@@ -23,5 +23,9 @@ struct NoteRowView: View {
             Spacer()
         }
         .padding(.vertical, 8)
+        .onTapGesture {
+            print("NotwRawView Tagpped: \(note.title ?? "No title")")
+            print("NotwRawView Tagpped: \(note.content ?? "No title")")
+        }
     }
 }
