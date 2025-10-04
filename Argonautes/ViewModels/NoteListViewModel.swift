@@ -50,7 +50,8 @@ class NoteListViewModel: ObservableObject {
             }
             .store(in: &cancellabels)
         
-        fetchData()
+        //初回起動時に1件目を選択状態にする
+        fetchDataAndSelectFirstNote()
     }
     
     func addNewNote() {
@@ -212,5 +213,11 @@ private extension NoteListViewModel {
         } catch {
             print("Autosave failed: \(error.localizedDescription)")
         }
+    }
+    
+    func fetchDataAndSelectFirstNote() {
+        self.notes = noteService.fetchNotes(predicate: nil, sortDescriptors: nil)
+        
+        self.selectedNote = self.notes.first
     }
 }

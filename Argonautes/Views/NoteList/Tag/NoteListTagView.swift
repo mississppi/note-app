@@ -27,15 +27,19 @@ struct NoteListTagView: View {
                 }
             }
             Spacer()
-            if let  selectedTag = viewModel.selectedTag {
-                Text(selectedTag.name ?? "No Tag")
-                    .font(.system(size: 15))
-                    .transition(tagTransition)
-                    .id(selectedTag.uuid)
-            } else {
-                Text("No Tag")
-                    .font(.system(size: 15))
+            
+            Group {
+                if let  selectedTag = viewModel.selectedTag {
+                    Text(selectedTag.name ?? "No Tag")
+                        .font(.system(size: 15))
+                        .transition(tagTransition)
+                        .id(selectedTag.uuid)
+                } else {
+                    Text("No Tag")
+                        .font(.system(size: 15))
+                }
             }
+            .frame(width: 100, alignment: .center)
             
             Spacer()
             NoteListChevronButton(direction: .right) {
