@@ -17,6 +17,8 @@ protocol NoteDataService: AnyObject {
         newOrder: Int64?
     )
     
+    func archiveNote(_ note: Note)
+    
     func deleteNote(_ note: Note)
     
     func searchNotes(for searchText: String) -> [Note]

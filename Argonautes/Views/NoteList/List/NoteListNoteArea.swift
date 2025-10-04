@@ -8,14 +8,14 @@ struct NoteListNoteArea: View {
     var body: some View {
         List(viewModel.notes, id: \.self, selection: $viewModel.selectedNote) { note in
             NoteRowView(note: note)
+                .contextMenu {
+                    NoteListArchiveButton(viewModel: viewModel, note: note)
+                }
         }
         .padding(.horizontal, 16)
         .background(Color(hex: "cceeac"))
         .onAppear{
             viewModel.fetchNotes()
-        }
-        .onChange(of: viewModel.selectedNote) { newNote in
-            print("sleetednote  change to : \(newNote?.title ?? "nil")")
         }
     }
 }

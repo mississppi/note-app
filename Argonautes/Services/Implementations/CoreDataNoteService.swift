@@ -73,6 +73,11 @@ class CoreDataNoteService: NoteDataService {
         note.updatedAt = Date()
     }
     
+    func archiveNote(_ note: Note) {
+        note.status = NoteStatus.archived.rawValue
+        note.updatedAt = Date()
+    }
+    
     func deleteNote(_ note: Note){
         context.delete(note)
     }

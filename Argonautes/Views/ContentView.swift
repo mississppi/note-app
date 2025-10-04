@@ -9,7 +9,11 @@ struct ContentView: View {
         NavigationSplitView {
             NoteListView(viewModel: viewModel)
         } detail: {
-            NoteDetailView(viewModel: viewModel)
+            if viewModel.isShowingTrash {
+                TrashDetailView(viewModel: viewModel)
+            } else {
+                NoteDetailView(viewModel: viewModel)
+            }
         }
         .modifier(TransparentTitleBarModifier())
     }

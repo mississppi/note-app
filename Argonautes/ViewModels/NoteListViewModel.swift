@@ -3,6 +3,12 @@ import Combine
 import CoreData
 import Argonautes
 
+enum TagTransitionDirection {
+    case forward
+    case backward
+    case none
+}
+
 class NoteListViewModel: ObservableObject {
     @Published var notes: [Note] = []
     @Published var tags: [Tag] = []
@@ -19,6 +25,10 @@ class NoteListViewModel: ObservableObject {
     @Published var showingAddTagModal: Bool = false
     @Published var newTagName: String = ""
     @Published var addTagError: String? = nil
+    
+    @Published var isShowingTrash: Bool = false
+    
+    @Published var tagTransitionDirection: TagTransitionDirection = .none
 
     private let noteService: NoteDataService
     private var cancellabels = Set<AnyCancellable>()
@@ -57,8 +67,31 @@ class NoteListViewModel: ObservableObject {
         
         do {
             try noteService.saveContext()
+            fetchNotes(searchText: searchText, selectedTag: selectedTag)
         } catch {
             print("Failed to save new note: \(error.localizedDescription)")
+        }
+    }
+    
+    func archiveNote(note: Note){
+        noteService.archiveNote(note)
+        do {
+            try noteService.saveContext()
+            fetchNotes(searchText: searchText, selectedTag: selectedTag)
+            
+            self.selectedNote = self.notes.first
+            self.selectedContent = self.selectedNote?.content ?? ""
+        } catch {
+            print("Failed to save new note: \(error.localizedDescription)")
+        }
+    }
+    
+    func deleteNote(note: Note) {
+        noteService.deleteNote(note)
+        do {
+            try noteService.saveContext()
+        } catch {
+            print("Failed to delete note: \(error.localizedDescription)")
         }
     }
     
@@ -75,10 +108,17 @@ class NoteListViewModel: ObservableObject {
         }
     }
     
-    func fetchNotes(searchText: String = "", selectedTag: Tag? = nil) {
+    func fetchNotes(
+        searchText: String = "",
+        selectedTag: Tag? = nil,
+        statusFilter: NoteStatus = .active
+    ) {
         let searchPredicate = createSearchPredicate(for: searchText)
         let tagPredicate = createTagPredicate(for: selectedTag)
-        let finalPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [searchPredicate, tagPredicate].compactMap { $0 })
+        
+        let statusPredicate = createStatusPredicate(for: statusFilter)
+        
+        let finalPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [searchPredicate, tagPredicate, statusPredicate].compactMap { $0 })
         self.notes = noteService.fetchNotes(predicate: finalPredicate, sortDescriptors: [NSSortDescriptor(keyPath: \Note.order, ascending: true)])
 
     }
@@ -91,6 +131,7 @@ class NoteListViewModel: ObservableObject {
         if previousIndex < 0 {
             previousIndex = tags.count - 1
         }
+        self.tagTransitionDirection = .backward
         self.selectedTag = tags[previousIndex]
         fetchNotes(searchText: "", selectedTag: self.selectedTag)
     }
@@ -103,6 +144,7 @@ class NoteListViewModel: ObservableObject {
         if nextIndex >= tags.count {
             nextIndex = 0
         }
+        self.tagTransitionDirection = .forward
         self.selectedTag = tags[nextIndex]
         fetchNotes(searchText: "", selectedTag: self.selectedTag)
     }
@@ -130,8 +172,11 @@ class NoteListViewModel: ObservableObject {
             addTagError = "タグの保存に失敗しました。"
             print("Failed to save new tag: \(error.localizedDescription)")
         }
-        
-        
+    }
+    
+    func toggleTrashDisplay() {
+        self.isShowingTrash.toggle()
+        print(self.isShowingTrash)
     }
 }
 
@@ -146,6 +191,10 @@ private extension NoteListViewModel {
         return NSPredicate(format: "tag == %@", tag)
     }
     
+    func createStatusPredicate(for status: NoteStatus) -> NSPredicate? {
+        return NSPredicate(format: "status == %d", status.rawValue)
+    }
+    
     func getSelectedTagIndex() -> Int? {
         guard let selectedTag = selectedTag,
               let selectedTagIndex = tags.firstIndex(of: selectedTag) else {
@@ -156,7 +205,6 @@ private extension NoteListViewModel {
     
     func autoSave(newContent: String) {
         guard let note = selectedNote else {return}
-        print("---start---")
         noteService.updateNote(note, newTitle: nil, newContent: newContent, newStatus: nil, newTag: nil, newCursorPosition: nil, newOrder: nil)
         
         do {

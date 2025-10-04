@@ -11,7 +11,6 @@ struct NoteListTagArea: View {
             NoteListAddTagButton(viewModel: viewModel)
         }
         .frame(maxWidth: .infinity)
-//        .padding(.vertical, 16)
         .background(Color.gray.opacity(0.1))
     }
 }
