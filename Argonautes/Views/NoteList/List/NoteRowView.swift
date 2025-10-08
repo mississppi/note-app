@@ -22,7 +22,15 @@ struct NoteRowView: View {
             }
             Spacer()
         }
-        .padding(.vertical, 8)
+        .listRowInsets(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
+        
+        .frame(height: 55)
+        
+//        .listRowBackground(isSelected ? Color(hex: "E6E6E6") : Color.white)
+        
+        .listRowSeparator(.hidden)
+
+
         .onTapGesture {
             print("NotwRawView Tagpped: \(note.title ?? "No title")")
             print("NotwRawView Tagpped: \(note.content ?? "No title")")

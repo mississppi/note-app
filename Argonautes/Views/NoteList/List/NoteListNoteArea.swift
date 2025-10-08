@@ -12,8 +12,10 @@ struct NoteListNoteArea: View {
                     NoteListArchiveButton(viewModel: viewModel, note: note)
                 }
         }
-        .padding(.horizontal, 16)
-        .background(Color(hex: "cceeac"))
+        
+        .listStyle(.plain)
+        .scrollContentBackground(.hidden)
+        .background(Color(hex: "EFEFEF"))
         .onAppear{
             viewModel.fetchNotes()
         }

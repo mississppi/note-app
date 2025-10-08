@@ -7,5 +7,6 @@ struct NoteDetailView: View {
             NoteDetailTitleArea(viewModel: viewModel)
             NoteDetailContentArea(viewModel: viewModel)
         }
+        .background(Color("FFFFFF"))
     }
 }

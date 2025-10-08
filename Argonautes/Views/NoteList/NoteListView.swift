@@ -14,6 +14,7 @@ struct NoteListView: View {
             NoteListTrashArea(viewModel: viewModel)
         }
         .padding(.horizontal, 24)
+        .background(Color(hex: "EFEFEF"))
         .onAppear {
 //            viewModel.fetchNotes()
             viewModel.fetchData()

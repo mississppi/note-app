@@ -29,9 +29,6 @@ struct NoteListTrashArea: View {
         .foregroundColor(.primary)
         .padding(.vertical,6)
         .padding(.horizontal, 16)
-//        .background(viewModel.isShowingTrash ? Color.accentColor.opacity(0.2) : Color.clear)
         .cornerRadius(8) // <-- 角丸を追加
-
-
     }
 }

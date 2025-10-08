@@ -109,6 +109,22 @@ class NoteListViewModel: ObservableObject {
         }
     }
     
+    func fetchDataAndSelectLastTag() {
+        self.tags = noteService.fetchTags(predicate: nil, sortDescriptors: nil)
+        
+        // 修正点：tags.lastで最後のタグを取得
+        if let lastTag = self.tags.last {
+            self.selectedTag = lastTag
+            self.selectedTagIndex = self.tags.count - 1
+            
+            fetchNotes(searchText: "", selectedTag: self.selectedTag)
+        } else {
+            self.selectedTag = nil
+            self.selectedTagIndex = 0
+            fetchNotes(searchText: "", selectedTag: nil)
+        }
+    }
+    
     func fetchNotes(
         searchText: String = "",
         selectedTag: Tag? = nil,
@@ -121,7 +137,8 @@ class NoteListViewModel: ObservableObject {
         
         let finalPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [searchPredicate, tagPredicate, statusPredicate].compactMap { $0 })
         self.notes = noteService.fetchNotes(predicate: finalPredicate, sortDescriptors: [NSSortDescriptor(keyPath: \Note.order, ascending: true)])
-
+        
+        self.selectedNote = self.notes.first
     }
     
     func selectPreviousTag() {
@@ -134,7 +151,9 @@ class NoteListViewModel: ObservableObject {
         }
         self.tagTransitionDirection = .backward
         self.selectedTag = tags[previousIndex]
+        self.selectedNote = nil
         fetchNotes(searchText: "", selectedTag: self.selectedTag)
+//        fetchDataAndSelectFirstNote()
     }
     
     func selectNextTag() {
@@ -147,6 +166,8 @@ class NoteListViewModel: ObservableObject {
         }
         self.tagTransitionDirection = .forward
         self.selectedTag = tags[nextIndex]
+        
+        self.selectedNote = nil
         fetchNotes(searchText: "", selectedTag: self.selectedTag)
     }
     
@@ -162,13 +183,15 @@ class NoteListViewModel: ObservableObject {
             return
         }
         
-        _ = noteService.createTag(name: newTagName)
+        let newTag = noteService.createTag(name: newTagName)
         
         do {
             try noteService.saveContext()
             addTagError = nil
             newTagName = ""
-            fetchData()
+            self.selectedTag = newTag
+//            fetchData()
+            fetchDataAndSelectLastTag()
         } catch {
             addTagError = "タグの保存に失敗しました。"
             print("Failed to save new tag: \(error.localizedDescription)")
