@@ -7,7 +7,7 @@ struct NoteListTrashArea: View {
     
     var body: some View {
         Button(action: {
-            viewModel.toggleTrashDisplay()
+            
         }){
             HStack {
                 Image(systemName: "trash")
