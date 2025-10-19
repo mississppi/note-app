@@ -4,6 +4,7 @@ import Argonautes
 
 struct NoteListSearchArea: View {
     @ObservedObject var viewModel: NoteListViewModel
+    @FocusState private var searchFieldFocused: Bool
     
     var body: some View {
         HStack {
@@ -18,7 +19,7 @@ struct NoteListSearchArea: View {
                 .textFieldStyle(.plain) // テキストフィールドのスタイルをプレーンに
                 .font(.system(size: 18))
                 .foregroundColor(.black) // テキストの色を黒に設定
-            
+                .focused($searchFieldFocused)
             
         }
         .frame(height: 45)
@@ -28,5 +29,10 @@ struct NoteListSearchArea: View {
         .cornerRadius(8) // 角丸
         .frame(maxWidth: .infinity) // 幅いっぱいに広げる
         .background(Color(hex: "cccccc"))
+        .onAppear {
+            DispatchQueue.main.async {
+                searchFieldFocused = false
+            }
+        }
     }
 }
