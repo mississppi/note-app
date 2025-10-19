@@ -6,10 +6,7 @@ struct NoteDetailTitleArea: View {
     var body: some View {
         HStack {
             NoteDetailTitleView(viewModel: viewModel)
-            
             Spacer()
-            
-            NoteDetailAddNoteButton(viewModel: viewModel)
         }
         .padding()
         .background(Color("F2F2F7"))
