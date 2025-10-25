@@ -4,7 +4,7 @@ struct NoteDetailTitleView: View {
     @ObservedObject var viewModel: NoteListViewModel
     
     var body: some View {
-        Text(viewModel.selectedNote?.title ?? "")
+        TextField("タイトル", text: $viewModel.selectedTitle)
             .font(.largeTitle)
             .fontWeight(.bold)
     }

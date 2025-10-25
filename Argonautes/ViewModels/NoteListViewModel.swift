@@ -15,9 +15,11 @@ class NoteListViewModel: ObservableObject {
     @Published var searchText: String = ""
     @Published var selectedNote: Note? {
         didSet {
+            selectedTitle = selectedNote?.title ?? ""
             selectedContent = selectedNote?.content ?? ""
         }
     }
+    @Published var selectedTitle: String = ""
     @Published var selectedContent: String = ""
     @Published var selectedTag: Tag?
     @Published var selectedTagIndex: Int = 0
@@ -43,10 +45,17 @@ class NoteListViewModel: ObservableObject {
             }
             .store(in: &cancellabels)
         
+        $selectedTitle
+            .debounce(for: .milliseconds(500), scheduler: RunLoop.main)
+            .sink { [weak self] title in
+                self?.autoSaveTitle(newTitle: title)
+            }
+            .store(in: &cancellabels)
+        
         $selectedContent
             .debounce(for: .seconds(1), scheduler: RunLoop.main)
             .sink { [weak self] content in
-                self?.autoSave(newContent: content)
+                self?.autoSaveContent(newContent: content)
             }
             .store(in: &cancellabels)
         
@@ -139,6 +148,10 @@ class NoteListViewModel: ObservableObject {
         self.notes = noteService.fetchNotes(predicate: finalPredicate, sortDescriptors: [NSSortDescriptor(keyPath: \Note.order, ascending: true)])
         
         self.selectedNote = self.notes.first
+        
+        if let first = self.notes.first {
+            callDebugNoteIdentity(first) // ← fetch 結果のノートを確認
+        }
     }
     
     func selectPreviousTag() {
@@ -202,6 +215,43 @@ class NoteListViewModel: ObservableObject {
         self.isShowingTrash.toggle()
         print(self.isShowingTrash)
     }
+    
+    func callDebugNoteIdentity(_ note: Note) {
+        // 基本情報
+        print("DebugNoteIdentity -----------------")
+        print("note: \(note)")
+        print("objectID: \(note.objectID)")
+        print("objectID.uri: \(note.objectID.uriRepresentation())")
+        print("managedObjectContext: \(String(describing: note.managedObjectContext))")
+
+        // notes 配列の最初の要素と同一インスタンスか
+        if let first = notes.first {
+            print("notes.first exists -> objectID: \(first.objectID)")
+            print("notes.first managedObjectContext: \(String(describing: first.managedObjectContext))")
+            print("notes.first === note ? -> \(first === note)")
+            print("notes.first.objectID == note.objectID ? -> \(first.objectID == note.objectID)")
+        } else {
+            print("notes.first is nil")
+        }
+
+        // selectedNote と同一か（呼ぶ場所によっては selectedNote と同じオブジェクトを比較）
+        if let sel = selectedNote {
+            print("selectedNote exists -> objectID: \(sel.objectID)")
+            print("selectedNote === note ? -> \(sel === note)")
+            print("selectedNote.objectID == note.objectID ? -> \(sel.objectID == note.objectID)")
+        } else {
+            print("selectedNote is nil")
+        }
+
+        // managedObjectContext のポインタ比較（同じコンテキストかを確認）
+        if let ctxA = note.managedObjectContext,
+           let ctxB = notes.first?.managedObjectContext ?? selectedNote?.managedObjectContext {
+            print("ctxA === ctxB ? -> \(ctxA === ctxB)")
+        } else {
+            print("one of contexts is nil")
+        }
+        print("-----------------")
+    }
 }
 
 private extension NoteListViewModel {
@@ -227,14 +277,25 @@ private extension NoteListViewModel {
         return selectedTagIndex
     }
     
-    func autoSave(newContent: String) {
+    func autoSaveTitle(newTitle: String) {
+        guard let note = selectedNote else {return}
+        noteService.updateNote(note, newTitle: newTitle, newContent: nil, newStatus: nil, newTag: nil, newCursorPosition: nil, newOrder: nil)
+        
+        do {
+            try noteService.saveContext()
+        } catch {
+            print("autoSaveTitle failed: \(error.localizedDescription)")
+        }
+    }
+    
+    func autoSaveContent(newContent: String) {
         guard let note = selectedNote else {return}
         noteService.updateNote(note, newTitle: nil, newContent: newContent, newStatus: nil, newTag: nil, newCursorPosition: nil, newOrder: nil)
         
         do {
             try noteService.saveContext()
         } catch {
-            print("Autosave failed: \(error.localizedDescription)")
+            print("autoSaveContent failed: \(error.localizedDescription)")
         }
     }
     

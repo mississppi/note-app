@@ -1,8 +1,8 @@
 import SwiftUI
 
 struct NoteRowView: View {
-//    @ObservedObject var note: Note
-    let note: Note
+    @ObservedObject var note: Note
+//    let note: Note
     
     var body: some View {
         HStack(spacing: 12) {
@@ -23,17 +23,7 @@ struct NoteRowView: View {
             Spacer()
         }
         .listRowInsets(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
-        
         .frame(height: 55)
-        
-//        .listRowBackground(isSelected ? Color(hex: "E6E6E6") : Color.white)
-        
         .listRowSeparator(.hidden)
-
-
-        .onTapGesture {
-            print("NotwRawView Tagpped: \(note.title ?? "No title")")
-            print("NotwRawView Tagpped: \(note.content ?? "No title")")
-        }
     }
 }
