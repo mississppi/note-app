@@ -9,7 +9,7 @@ struct NoteDetailContentArea: View {
                 .font(.body)
                 .padding()
         } else {
-            Text("Select a Note")
+            Text("No Note")
         }
     }
 }

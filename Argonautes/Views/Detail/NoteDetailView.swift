@@ -11,7 +11,7 @@ struct NoteDetailView: View {
                 if let _ = viewModel.selectedNote {
                     NoteDetailContentArea(viewModel: viewModel)
                 } else {
-                    Text("Select a Note")
+                    Text("No Note")
                         .foregroundColor(.secondary)
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
                 }
