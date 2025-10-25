@@ -5,7 +5,9 @@ struct NoteDetailTitleArea: View {
     
     var body: some View {
         HStack {
-            NoteDetailTitleView(viewModel: viewModel)
+            if let title = viewModel.selectedNote?.title, !title.isEmpty {
+                NoteDetailTitleView(viewModel: viewModel)
+            }
             Spacer()
         }
         .padding()
