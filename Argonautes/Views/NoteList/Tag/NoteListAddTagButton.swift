@@ -23,10 +23,10 @@ struct NoteListAddTagButton: View {
 //        .background(
 //            RoundedRectangle(cornerRadius: 8)
 //                .fill(Color(hex: "#EFEFEF")))
-//        .overlay(
-//            RoundedRectangle(cornerRadius: 8)
-//                .stroke(Color(hex: "cococo"), lineWidth: 1)
-//        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 8)
+                .stroke(Color(hex: "cococo"), lineWidth: 1)
+        )
         .buttonStyle(.plain)
         .sheet(isPresented: $viewModel.showingAddTagModal) {
             TagAddModelView(viewModel: viewModel)
