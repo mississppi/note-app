@@ -10,6 +10,7 @@ struct NoteDetailView: View {
             Group {
                 if let _ = viewModel.selectedNote {
                     NoteDetailContentArea(viewModel: viewModel)
+//                    MarkdownEditorView(viewModel: viewModel)
                 } else {
                     Text("No Note")
                         .foregroundColor(.secondary)
