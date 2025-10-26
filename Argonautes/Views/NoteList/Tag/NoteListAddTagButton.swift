@@ -5,7 +5,6 @@ struct NoteListAddTagButton: View {
     
     var body: some View {
         Button(action: {
-            print("--- action ----")
             viewModel.showingAddTagModal = true
         }) {
             HStack(spacing: 8){
@@ -18,19 +17,16 @@ struct NoteListAddTagButton: View {
                 .frame(height: 45)
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal, 10)
-//                .overlay(
-//                    RoundedRectangle(cornerRadius: 8)
-//                        .stroke(Color(hex: "cococo"), lineWidth: 1)
-//                )
 
         }
         .frame(maxWidth: .infinity)
-//        .padding(.horizontal, 10)
-        .cornerRadius(8)
-        .overlay(
+        .background(
             RoundedRectangle(cornerRadius: 8)
-                .stroke(Color(hex: "cococo"), lineWidth: 1)
-        )
+                .fill(Color(hex: "#EFEFEF")))
+//        .overlay(
+//            RoundedRectangle(cornerRadius: 8)
+//                .stroke(Color(hex: "cococo"), lineWidth: 1)
+//        )
         .sheet(isPresented: $viewModel.showingAddTagModal) {
             TagAddModelView(viewModel: viewModel)
         }

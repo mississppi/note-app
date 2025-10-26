@@ -29,7 +29,7 @@ struct NoteListSearchArea: View {
         .cornerRadius(8) // 角丸
         .frame(maxWidth: .infinity) // 幅いっぱいに広げる
 //        .background(Color(hex: "cccccc"))
-        .background(Color(NSColor.windowBackgroundColor))
+        .background(Color(hex: "#E0E0E0"))
         .onAppear {
             DispatchQueue.main.async {
                 searchFieldFocused = false

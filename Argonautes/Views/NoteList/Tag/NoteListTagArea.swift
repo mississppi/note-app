@@ -11,6 +11,6 @@ struct NoteListTagArea: View {
             NoteListAddTagButton(viewModel: viewModel)
         }
         .frame(maxWidth: .infinity)
-        .background(Color.gray.opacity(0.1))
+//        .background(Color.gray.opacity(0.1))
     }
 }
