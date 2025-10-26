@@ -25,10 +25,8 @@ struct NoteListSearchArea: View {
         .frame(height: 45)
         .padding(.horizontal, 16) // 左右のパディング
         .padding(.vertical, 8)    // 上下のパディング
-//        .background(Color(NSColor.systemGray6)) // システムのグレー背景
         .cornerRadius(8) // 角丸
         .frame(maxWidth: .infinity) // 幅いっぱいに広げる
-//        .background(Color(hex: "cccccc"))
         .background(Color(hex: "#E0E0E0"))
         .onAppear {
             DispatchQueue.main.async {

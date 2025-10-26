@@ -13,20 +13,21 @@ struct NoteListAddTagButton: View {
                 Spacer()
             }
                 .font(.system(size: 18, weight: .regular))
-                .foregroundColor(.black)
+//                .foregroundColor(.black)
                 .frame(height: 45)
-                .frame(maxWidth: .infinity)
+//                .frame(maxWidth: .infinity)
                 .padding(.horizontal, 10)
 
         }
         .frame(maxWidth: .infinity)
-        .background(
-            RoundedRectangle(cornerRadius: 8)
-                .fill(Color(hex: "#EFEFEF")))
+//        .background(
+//            RoundedRectangle(cornerRadius: 8)
+//                .fill(Color(hex: "#EFEFEF")))
 //        .overlay(
 //            RoundedRectangle(cornerRadius: 8)
 //                .stroke(Color(hex: "cococo"), lineWidth: 1)
 //        )
+        .buttonStyle(.plain)
         .sheet(isPresented: $viewModel.showingAddTagModal) {
             TagAddModelView(viewModel: viewModel)
         }

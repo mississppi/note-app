@@ -52,6 +52,6 @@ struct NoteListTagView: View {
         .frame(height: 100)
         .frame(maxWidth: .infinity)
         .padding(.horizontal, 16)
-        .background(Color.gray.opacity(0.2))
+//        .background(Color.gray.opacity(0.2))
     }
 }
