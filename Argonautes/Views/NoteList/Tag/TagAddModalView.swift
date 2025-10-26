@@ -82,8 +82,6 @@ struct TagAddModalView: View {
         .background(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .fill(Color.white)
-                .shadow(color: Color.black.opacity(0.12), radius: 20, x: 0, y: 6)
         )
-        .padding(.horizontal, 20)
     }
 }
