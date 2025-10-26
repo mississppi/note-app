@@ -9,7 +9,12 @@ struct NoteListView: View {
         VStack(spacing: 8) {
             NoteListTagArea(viewModel: viewModel)
             NoteListSearchArea(viewModel: viewModel)
-            Spacer()
+//                .padding(.bottom, 8)
+            Rectangle()
+                .fill(Color(hex: "#C0C0C0"))
+                .frame(height: 1)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 8)
             NoteListNoteArea(viewModel: viewModel)
             NoteListTrashArea(viewModel: viewModel)
         }
