@@ -1,6 +1,5 @@
 import SwiftUI
 import CoreData
-import Argonautes
 
 struct NoteListSearchArea: View {
     @ObservedObject var viewModel: NoteListViewModel
@@ -24,10 +23,14 @@ struct NoteListSearchArea: View {
         }
         .frame(height: 45)
         .padding(.horizontal, 16) // 左右のパディング
-        .padding(.vertical, 8)    // 上下のパディング
-        .cornerRadius(8) // 角丸
+//        .padding(.vertical, 8)    // 上下のパディング
+//        .cornerRadius(8) // 角丸
         .frame(maxWidth: .infinity) // 幅いっぱいに広げる
-        .background(Color(hex: "#E0E0E0"))
+        .background(
+            RoundedRectangle(cornerRadius: 8)
+                .fill(Color(hex: "#E0E0E0"))
+        )
+        .padding(.top, 12)
         .onAppear {
             DispatchQueue.main.async {
                 searchFieldFocused = false
