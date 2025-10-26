@@ -18,7 +18,6 @@ struct NoteListTagView: View {
         }
     }
     
-
     var body: some View {
         HStack {
             NoteListChevronButton(direction: .left) {
@@ -49,9 +48,8 @@ struct NoteListTagView: View {
             }
 
         }
-        .frame(height: 100)
+        .frame(height: 75)
         .frame(maxWidth: .infinity)
         .padding(.horizontal, 16)
-//        .background(Color.gray.opacity(0.2))
     }
 }
