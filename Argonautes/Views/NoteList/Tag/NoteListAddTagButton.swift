@@ -29,7 +29,7 @@ struct NoteListAddTagButton: View {
         )
         .buttonStyle(.plain)
         .sheet(isPresented: $viewModel.showingAddTagModal) {
-            TagAddModelView(viewModel: viewModel)
+            TagAddModalView(viewModel: viewModel)
         }
     }
 }

@@ -6,7 +6,7 @@ struct NoteDetailView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             NoteDetailTitleArea(viewModel: viewModel)
-            Divider()
+//            Divider()
             Group {
                 if let _ = viewModel.selectedNote {
                     NoteDetailContentArea(viewModel: viewModel)

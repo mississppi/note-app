@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct TagAddModelView: View {
+struct TagAddModalView: View {
     @ObservedObject var viewModel: NoteListViewModel
     
     @Environment(\.dismiss) var dismiss
