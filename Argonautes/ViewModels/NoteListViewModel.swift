@@ -304,4 +304,36 @@ private extension NoteListViewModel {
         
         self.selectedNote = self.notes.first
     }
+    
+    func saveNotesOrder() {
+        for (index, note) in notes.enumerated() {
+            let newOrder = Int64(index)
+            if note.order != newOrder {
+                noteService.updateNote(
+                    note,
+                    newTitle: nil,
+                    newContent: nil,
+                    newStatus: nil,
+                    newTag: nil,
+                    newCursorPosition: nil,
+                    newOrder: newOrder
+                )
+            }
+        }
+        
+        do {
+            try noteService.saveContext()
+            fetchNotes(searchText: searchText, selectedTag: selectedTag) .self
+            
+        } catch {
+            print("saveNoteOrder failed: \(error.localizedDescription)")
+        }
+    }
+    
+    func moveNotes(fromOffsets: IndexSet, toOffset: Int) {
+        var updated = notes
+        updated.move(fromOffsets: fromOffsets, toOffset: toOffset)
+        notes = updated
+        saveNotesOrder()
+    }
 }

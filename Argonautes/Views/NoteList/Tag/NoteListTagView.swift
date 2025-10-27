@@ -25,6 +25,7 @@ struct NoteListTagView: View {
                     viewModel.selectPreviousTag()
                 }
             }
+            
             Spacer()
             
             Group {
@@ -46,7 +47,6 @@ struct NoteListTagView: View {
                     viewModel.selectNextTag()
                 }
             }
-
         }
         .frame(height: 75)
         .frame(maxWidth: .infinity)
