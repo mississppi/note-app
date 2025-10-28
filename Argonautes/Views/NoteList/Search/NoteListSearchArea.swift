@@ -31,11 +31,6 @@ struct NoteListSearchArea: View {
                 .fill(Color(hex: "#E0E0E0"))
         )
         .padding(.top, 12)
-//        .onAppear {
-//            DispatchQueue.main.async {
-//                searchFieldFocused = false
-//            }
-//        }
         .task {
             await MainActor.run {
                 searchFieldFocused = false

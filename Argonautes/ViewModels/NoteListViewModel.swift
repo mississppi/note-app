@@ -252,6 +252,13 @@ class NoteListViewModel: ObservableObject {
         }
         print("-----------------")
     }
+    
+    func moveNotes(fromOffsets: IndexSet, toOffset: Int) {
+        var updated = notes
+        updated.move(fromOffsets: fromOffsets, toOffset: toOffset)
+        notes = updated
+        saveNotesOrder()
+    }
 }
 
 private extension NoteListViewModel {
@@ -330,10 +337,5 @@ private extension NoteListViewModel {
         }
     }
     
-    func moveNotes(fromOffsets: IndexSet, toOffset: Int) {
-        var updated = notes
-        updated.move(fromOffsets: fromOffsets, toOffset: toOffset)
-        notes = updated
-        saveNotesOrder()
-    }
+
 }

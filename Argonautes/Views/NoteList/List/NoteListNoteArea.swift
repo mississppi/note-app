@@ -20,20 +20,21 @@ struct NoteListNoteArea: View {
                     guard let provider = providers.first else { return false }
                     provider.loadObject(ofClass: NSString.self) { (nsstr, error) in
                         guard let idString = nsstr as? String else { return }
-                        DispatchQueue.main.async {
-                            guard
-                                let fromIndex = viewModel.notes.firstIndex(where: {
-                                    $0.objectID.uriRepresentation().absoluteString == idString
-                                }),
-                                let toIndex = viewModel.notes.firstIndex(of: note)
-                            else { return }
-                            
-                            withAnimation {
-                                let adjstedTo = toIndex > fromIndex ? toIndex + 1 : toIndex
-                                viewModel.notes.move(fromOffsets: IndexSet(integer: fromIndex), toOffset: adjstedTo)
+                        Task {
+                            await MainActor.run {
+                                guard
+                                   let fromIndex = viewModel.notes.firstIndex(where: {
+                                       $0.objectID.uriRepresentation().absoluteString == idString
+                                   }),
+                                   let toIndex = viewModel.notes.firstIndex(of: note)
+                               else { return }
+   
+                               withAnimation {
+                                   let adjustedTo = toIndex > fromIndex ? toIndex + 1 : toIndex
+                                   viewModel.moveNotes(fromOffsets: IndexSet(integer: fromIndex), toOffset: adjustedTo)
+//                                   viewModel.notes.move(fromOffsets: IndexSet(integer: fromIndex), toOffset: adjstedTo)
+                               }
                             }
-                            
-                            
                         }
                     }
                     return true
