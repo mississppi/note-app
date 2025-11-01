@@ -1,13 +1,25 @@
 import SwiftUI
 import CoreData
-import Argonautes
 import UniformTypeIdentifiers
 
 struct NoteListNoteArea: View {
     @ObservedObject var viewModel: NoteListViewModel
     
+    private var selectionBinding: Binding<Note?> {
+        Binding<Note?>(
+            get: { viewModel.selectedNote },
+            set: { new in
+                Task {
+                    await MainActor.run {
+                        viewModel.select(note: new, userInitiated: true)
+                    }
+                }
+            }
+        )
+    }
+    
     var body: some View {
-        List(viewModel.notes, id: \.self, selection: $viewModel.selectedNote) { note in
+        List(viewModel.notes, id: \.self, selection: selectionBinding) { note in
             NoteRowView(note: note)
                 .contextMenu {
                     NoteListArchiveButton(viewModel: viewModel, note: note)
