@@ -4,6 +4,12 @@ import CoreData
 import Argonautes
 
 class NoteListViewModel: ObservableObject {
+    private enum Constants {
+        static let newNoteTitle = "new Note"
+        static let searchDebounceMilliseconds = 500
+        static let titleDebounceMilliseconds = 500
+        static let contentDebounceSeconds: TimeInterval  = 1.0
+    }
     @Published var notes: [Note] = []
     @Published var tags: [Tag] = []
     @Published var searchText: String = ""
@@ -33,21 +39,21 @@ class NoteListViewModel: ObservableObject {
         self.noteService = noteService
         
         $searchText
-            .debounce(for: .milliseconds(500), scheduler: RunLoop.main)
+            .debounce(for: .milliseconds(Constants.searchDebounceMilliseconds), scheduler: RunLoop.main)
             .sink { [weak self] searchText in
                 self?.fetchNotes(searchText: searchText)
             }
             .store(in: &cancellabels)
         
         $selectedTitle
-            .debounce(for: .milliseconds(500), scheduler: RunLoop.main)
+            .debounce(for: .milliseconds(Constants.titleDebounceMilliseconds), scheduler: RunLoop.main)
             .sink { [weak self] title in
                 self?.autoSaveTitle(newTitle: title)
             }
             .store(in: &cancellabels)
         
         $selectedContent
-            .debounce(for: .seconds(1), scheduler: RunLoop.main)
+            .debounce(for: .seconds(Constants.contentDebounceSeconds), scheduler: RunLoop.main)
             .sink { [weak self] content in
                 self?.autoSaveContent(newContent: content)
             }
@@ -67,7 +73,7 @@ class NoteListViewModel: ObservableObject {
     
     func addNewNote() {
         let newNote = noteService.createNote(
-            title: "new Note",
+            title: Constants.newNoteTitle,
             content: "",
             status: .active,
             tag: selectedTag
