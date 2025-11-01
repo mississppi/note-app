@@ -20,7 +20,7 @@ class NoteListViewModel: ObservableObject {
     
     @Published var showingAddTagModal: Bool = false
     @Published var newTagName: String = ""
-    @Published var addTagError: String? = nil
+    @Published var addTagError: TagError? = nil
     
     @Published var isShowingTrash: Bool = false
     
@@ -187,14 +187,15 @@ class NoteListViewModel: ObservableObject {
     }
     
     func addNewTag() {
-        guard !newTagName.isEmpty else {
-            addTagError = "タグ名を入力してください"
+        let name = newTagName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !name.isEmpty else {
+            addTagError = TagError.emptyTagName
             return
         }
         
         let existsTagNames = tags.compactMap{ $0.name }
         if existsTagNames.contains(newTagName) {
-            addTagError = "このタグはすでに存在しています"
+            addTagError = TagError.duplicateTag
             return
         }
         
@@ -205,10 +206,9 @@ class NoteListViewModel: ObservableObject {
             addTagError = nil
             newTagName = ""
             self.selectedTag = newTag
-//            fetchData()
             fetchDataAndSelectLastTag()
         } catch {
-            addTagError = "タグの保存に失敗しました。"
+            addTagError = TagError.unknownError
             print("Failed to save new tag: \(error.localizedDescription)")
         }
     }

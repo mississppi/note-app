@@ -36,7 +36,7 @@ struct TagAddModalView: View {
             
             // Error message (left aligned)
             if let error = viewModel.addTagError {
-                Text(error)
+                Text(error.rawValue)
                     .font(.caption)
                     .foregroundColor(.red)
                     .frame(maxWidth: .infinity, alignment: .leading)
