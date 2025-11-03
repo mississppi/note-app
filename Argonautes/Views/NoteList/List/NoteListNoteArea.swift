@@ -19,38 +19,16 @@ struct NoteListNoteArea: View {
     }
     
     var body: some View {
-        List(viewModel.notes, id: \.self, selection: selectionBinding) { note in
-            NoteRowView(note: note)
-                .contextMenu {
-                    NoteListArchiveButton(viewModel: viewModel, note: note)
-                }
-                .onDrag {
-                    let idString = note.objectID.uriRepresentation().absoluteString
-                    return NSItemProvider(object: idString as NSString)
-                }
-                .onDrop(of: [UTType.plainText], isTargeted: nil) { providers in
-                    guard let provider = providers.first else { return false }
-                    provider.loadObject(ofClass: NSString.self) { (nsstr, error) in
-                        guard let idString = nsstr as? String else { return }
-                        Task {
-                            await MainActor.run {
-                                guard
-                                   let fromIndex = viewModel.notes.firstIndex(where: {
-                                       $0.objectID.uriRepresentation().absoluteString == idString
-                                   }),
-                                   let toIndex = viewModel.notes.firstIndex(of: note)
-                               else { return }
-   
-                               withAnimation {
-                                   let adjustedTo = toIndex > fromIndex ? toIndex + 1 : toIndex
-                                   viewModel.moveNotes(fromOffsets: IndexSet(integer: fromIndex), toOffset: adjustedTo)
-//                                   viewModel.notes.move(fromOffsets: IndexSet(integer: fromIndex), toOffset: adjstedTo)
-                               }
-                            }
-                        }
+        List(selection: selectionBinding) {
+            ForEach(viewModel.notes, id: \.self) { note in
+                NoteRowView(note: note)
+                    .contextMenu {
+                        NoteListArchiveButton(viewModel: viewModel, note: note)
                     }
-                    return true
-                }
+            }
+            .onMove { fromOffsets, toOffset in
+                viewModel.moveNotes(fromOffsets: fromOffsets, toOffset: toOffset)
+            }
         }
         
         .listStyle(.plain)
