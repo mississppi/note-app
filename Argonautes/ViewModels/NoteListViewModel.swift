@@ -3,16 +3,30 @@ import Combine
 import CoreData
 import Argonautes
 
+/// ノート一覧画面のビジネスロジックを管理するViewModel
+/// 
+/// 主な責務:
+/// - ノートの一覧表示・検索・フィルタリング
+/// - ノートの作成・更新・削除・アーカイブ
+/// - タグの管理・切り替え
+/// - 自動保存機能（タイトル・コンテンツの変更を監視）
 class NoteListViewModel: ObservableObject {
     private enum Constants {
         static let newNoteTitle = "new Note"
+        /// 検索テキストのデバウンス時間（ミリ秒）
         static let searchDebounceMilliseconds = 500
+        /// タイトル自動保存のデバウンス時間（ミリ秒）
         static let titleDebounceMilliseconds = 500
+        /// コンテンツ自動保存のデバウンス時間（秒）
         static let contentDebounceSeconds: TimeInterval  = 1.0
     }
     @Published var notes: [Note] = []
     @Published var tags: [Tag] = []
     @Published var searchText: String = ""
+
+    /// 現在選択されているノート
+    /// - Note: `private(set)` により外部からは読み取り専用
+    /// - didSet で selectedTitle と selectedContent を自動更新
     @Published private(set) var selectedNote: Note? {
         didSet {
             selectedTitle = selectedNote?.title ?? ""
@@ -63,6 +77,36 @@ class NoteListViewModel: ObservableObject {
         fetchDataAndSelectFirstNote()
     }
     
+    /// ノートを選択する
+    /// 
+    /// - Parameters:
+    ///   - note: 選択するノート（nil の場合は選択解除）
+    ///   - userInitiated: ユーザーの明示的な操作による選択かどうか
+    /// 
+    /// - Note: 選択時の動作
+    ///   1. `selectedNote` が更新される
+    ///   2. `didSet` で `selectedTitle` と `selectedContent` が自動的に更新される
+    ///   3. `$selectedTitle` と `$selectedContent` の Publisher が発火
+    ///   4. デバウンス後に `autoSaveTitle` と `autoSaveContent` が呼ばれる
+    ///   5. ただし、値が変更されていない場合は実際には保存されない（guard で早期リターン）
+    /// 
+    /// - Important: userInitiated の使い分け
+    ///   - `userInitiated: false`: 
+    ///     - リストからのノート選択時（NoteListNoteArea）
+    ///     - タグ切り替え時の自動選択（selectPreviousTag, selectNextTag）
+    ///     - データ取得後の自動選択（fetchNotes, archiveNote）
+    ///     → 選択しただけでは `updatedAt` が更新されない（値が同じため）
+    ///   
+    ///   - `userInitiated: true`:
+    ///     - ノート作成時（addNewNote）
+    ///     → 現在は false の場合と動作は同じだが、将来的な拡張のために区別
+    ///     → 例: ユーザー操作のログ記録、アナリティクス送信など
+    /// 
+    /// - SeeAlso: 
+    ///   - `NoteListNoteArea.selectionBinding`: リストからの選択で使用（false）
+    ///   - `addNewNote()`: ノート作成時に使用（true）
+    ///   - `autoSaveTitle(newTitle:)`: タイトル自動保存の実装
+    ///   - `autoSaveContent(newContent:)`: コンテンツ自動保存の実装
     func select(note: Note?, userInitiated: Bool) {
         selectedNote = note
     }
