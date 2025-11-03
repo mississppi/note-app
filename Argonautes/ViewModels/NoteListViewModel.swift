@@ -65,10 +65,6 @@ class NoteListViewModel: ObservableObject {
     
     func select(note: Note?, userInitiated: Bool) {
         selectedNote = note
-        guard userInitiated, let note = note else { return }
-        
-        note.updatedAt = Date()
-        saveContextIfNeeded(context: note.managedObjectContext)
     }
     
     func addNewNote() {
@@ -97,9 +93,7 @@ class NoteListViewModel: ObservableObject {
         do {
             try noteService.saveContext()
             fetchNotes(searchText: searchText, selectedTag: selectedTag)
-            
-//            self.selectedNote = self.notes.first
-//            self.selectedContent = self.selectedNote?.content ?? ""
+
             select(note: self.notes.first, userInitiated: false)
         } catch {
             print("Failed to save new note: \(error.localizedDescription)")
@@ -157,7 +151,6 @@ class NoteListViewModel: ObservableObject {
         let finalPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [searchPredicate, tagPredicate, statusPredicate].compactMap { $0 })
         self.notes = noteService.fetchNotes(predicate: finalPredicate, sortDescriptors: [NSSortDescriptor(keyPath: \Note.order, ascending: true)])
         
-//        self.selectedNote = self.notes.first
         select(note: self.notes.first, userInitiated: false)
         
     }
@@ -257,6 +250,8 @@ class NoteListViewModel: ObservableObject {
         
         func autoSaveTitle(newTitle: String) {
             guard let note = selectedNote else {return}
+            guard note.title != newTitle else { return }
+
             noteService.updateNote(note, newTitle: newTitle, newContent: nil, newStatus: nil, newTag: nil, newCursorPosition: nil, newOrder: nil)
             
             do {
@@ -268,6 +263,7 @@ class NoteListViewModel: ObservableObject {
         
         func autoSaveContent(newContent: String) {
             guard let note = selectedNote else {return}
+            guard note.content != newContent else { return }
             noteService.updateNote(note, newTitle: nil, newContent: newContent, newStatus: nil, newTag: nil, newCursorPosition: nil, newOrder: nil)
             
             do {

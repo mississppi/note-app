@@ -46,12 +46,17 @@ class CoreDataNoteService: NoteDataService {
         newCursorPosition: Int?,
         newOrder: Int64?
     ) {
-        if let newTitle = newTitle {
+        var shouldUpdateTimeStamp = false
+        
+        if let newTitle = newTitle, newTitle != note.title{
+            print("DEBUG: title changed: ''\(note.title ?? "")'' -> ''\(newTitle)''")
             note.title = newTitle
+            shouldUpdateTimeStamp = true
         }
         
-        if let newContent = newContent {
+        if let newContent = newContent, newContent != note.content {
             note.content = newContent
+            shouldUpdateTimeStamp = true
         }
         
         if let newStatus = newStatus {
@@ -70,12 +75,14 @@ class CoreDataNoteService: NoteDataService {
             note.order = newOrder
         }
         
-        note.updatedAt = Date()
+        if shouldUpdateTimeStamp {
+            note.updatedAt = Date()
+        }
     }
     
     func archiveNote(_ note: Note) {
         note.status = NoteStatus.archived.rawValue
-        note.updatedAt = Date()
+
     }
     
     func deleteNote(_ note: Note){

@@ -11,7 +11,7 @@ struct NoteListNoteArea: View {
             set: { new in
                 Task {
                     await MainActor.run {
-                        viewModel.select(note: new, userInitiated: true)
+                        viewModel.select(note: new, userInitiated: false)
                     }
                 }
             }
