@@ -1,13 +1,12 @@
 import SwiftUI
 import CoreData
-import Argonautes
 
 struct NoteListTrashArea: View {
     @ObservedObject var viewModel: NoteListViewModel
     
     var body: some View {
         Button(action: {
-            
+            viewModel.isShowingTrash = true
         }){
             HStack {
                 Image(systemName: "trash")

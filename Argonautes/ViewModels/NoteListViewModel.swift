@@ -256,11 +256,6 @@ class NoteListViewModel: ObservableObject {
         }
     }
     
-    func toggleTrashDisplay() {
-        self.isShowingTrash.toggle()
-        print(self.isShowingTrash)
-    }
-    
     func moveNotes(fromOffsets: IndexSet, toOffset: Int) {
         var updated = notes
         updated.move(fromOffsets: fromOffsets, toOffset: toOffset)
