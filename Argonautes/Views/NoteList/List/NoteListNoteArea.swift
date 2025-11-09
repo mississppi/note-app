@@ -23,12 +23,31 @@ struct NoteListNoteArea: View {
     }
     
     var body: some View {
-        List(selection: selectionBinding) {
-            ForEach(viewModel.notes, id: \.self) { note in
+        // List(selection: selectionBinding) {
+        //     ForEach(viewModel.notes, id: \.self) { note in
+        //         NoteRowView(note: note)
+        //             .contextMenu {
+        //                 NoteListArchiveButton(viewModel: viewModel, note: note)
+        //             }
+        //     }
+        //     .onMove { fromOffsets, toOffset in
+        //         viewModel.moveNotes(fromOffsets: fromOffsets, toOffset: toOffset)
+        //     }
+        // }
+        List {
+            ForEach(viewModel.notes, id: \.self) {
+                note in
                 NoteRowView(note: note)
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        selectionBinding.wrappedValue = note
+                    }
                     .contextMenu {
                         NoteListArchiveButton(viewModel: viewModel, note: note)
                     }
+                    .listRowBackground(
+                        (viewModel.selectedNote?.objectID == note.objectID) ? Color(hex: "#E6E6E6") : Color.clear
+                    )
             }
             .onMove { fromOffsets, toOffset in
                 viewModel.moveNotes(fromOffsets: fromOffsets, toOffset: toOffset)

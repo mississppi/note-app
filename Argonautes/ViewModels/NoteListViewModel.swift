@@ -43,6 +43,7 @@ class NoteListViewModel: ObservableObject {
     @Published var addTagError: TagError? = nil
     
     @Published var isShowingTrash: Bool = false
+    @Published var archivedNotes: [Note] = []
     
     @Published var tagTransitionDirection: TagTransitionDirection = .none
 
@@ -261,6 +262,12 @@ class NoteListViewModel: ObservableObject {
         updated.move(fromOffsets: fromOffsets, toOffset: toOffset)
         notes = updated
         saveNotesOrder()
+    }
+
+    func fetchArchivedNotes() {
+        let predicate = NSPredicate(format: "status == %d", NoteStatus.archived.rawValue)
+        let sortDescriptors = [NSSortDescriptor(keyPath: \Note.updatedAt, ascending: false)]
+        archivedNotes = noteService.fetchNotes(predicate: predicate, sortDescriptors: sortDescriptors)
     }
 }
 

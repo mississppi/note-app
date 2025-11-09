@@ -9,8 +9,6 @@ struct ArchiveListView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-
-        
             //header
             HStack {
                 Text("アーカイブ")
@@ -42,7 +40,7 @@ struct ArchiveListView: View {
             // }
         }
         .onAppear {
-            // viewModel.fetchArchivedNotes()
+            viewModel.fetchArchivedNotes()
         }
     }
 
