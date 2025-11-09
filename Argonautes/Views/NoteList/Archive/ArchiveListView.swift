@@ -21,23 +21,23 @@ struct ArchiveListView: View {
 
             Divider()
 
-            // if viewModel.arcchivedNotes.isEmpty {
-            //     VStack(spacing: 16) {
+            if viewModel.archivedNotes.isEmpty {
+                VStack(spacing: 16) {
             //         Image(systemName: "trash")
             //             .font(.system(size: 60))
             //             .foregroundColor(.gray)
 
-            //         Text("ゴミ箱はからです")
-            //             .font(.system(size: 18))
-            //             .foregroundColor(.gray)
-            //     }
+                    Text("ゴミ箱はからです")
+                        .font(.system(size: 18))
+                        .foregroundColor(.gray)
+                }
             //     .frame(maxWidth: .infinity, maxHeight: .infinity)
-            // } else {
-            //     List(viewModel.archivedNotes, id: \.self) { note in 
-            //         ArchiveRowView(note: note, viewModel: viewModel)
-            //     }
-            //     .listStyle(.plain)
-            // }
+            } else {
+                List(viewModel.archivedNotes, id: \.self) { note in 
+                    ArchiveRowView(note: note, viewModel: viewModel)
+                }
+                .listStyle(.plain)
+            }
         }
         .onAppear {
             viewModel.fetchArchivedNotes()

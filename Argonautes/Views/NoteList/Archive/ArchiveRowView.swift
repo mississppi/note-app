@@ -32,7 +32,7 @@ struct ArchiveRowView: View {
         .contextMenu {
             // 復元ボタン
             Button(action: {
-                // viewModel.restoreNoteFromArchive(note)
+                viewModel.restoreNoteFromArchive(note: note)
             }) {
                 Text("復元")
                 Image(systemName: "arrow.uturn.left")
@@ -41,7 +41,7 @@ struct ArchiveRowView: View {
             Divider()
 
             Button(role: .destructive) {
-                // viewModel.deleteNotePermanently(note)
+                viewModel.deleteNotePermanently(note: note)
             } label: {
                 Text("完全に削除")
                 Image(systemName: "trash")

@@ -269,6 +269,32 @@ class NoteListViewModel: ObservableObject {
         let sortDescriptors = [NSSortDescriptor(keyPath: \Note.updatedAt, ascending: false)]
         archivedNotes = noteService.fetchNotes(predicate: predicate, sortDescriptors: sortDescriptors)
     }
+
+    func restoreNoteFromArchive(note: Note) {
+        noteService.updateNote(note, newTitle:nil, newContent: nil,
+            newStatus: .active,
+            newTag: nil,
+            newCursorPosition: nil,
+            newOrder: nil
+        )
+        do {
+            try noteService.saveContext()
+            fetchArchivedNotes()
+        } catch {
+            print("Failed to restore note from archive: \(error.localizedDescription)")
+        }
+    }
+
+    func deleteNotePermanently(note: Note) {
+        noteService.deleteNote(note)
+        do {
+            try noteService.saveContext()
+            fetchArchivedNotes()
+        } catch {
+            print("Failed to delete note permanently: \(error.localizedDescription)")
+        }
+    }
+
 }
 
     private extension NoteListViewModel {
