@@ -5,9 +5,9 @@ struct NoteDetailTitleArea: View {
     
     var body: some View {
         HStack {
-            if let title = viewModel.selectedNote?.title, !title.isEmpty {
-                NoteDetailTitleView(viewModel: viewModel)
-            }
+            //空タイトルでも常に入力欄を表示
+            NoteDetailTitleView(viewModel: viewModel)
+                .disabled(viewModel.selectedNote == nil)
             Spacer()
         }
         .padding()
