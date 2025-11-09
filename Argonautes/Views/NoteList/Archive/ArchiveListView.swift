@@ -11,9 +11,10 @@ struct ArchiveListView: View {
         VStack(spacing: 0) {
             //header
             HStack {
-                Text("アーカイブ")
+                Text("ゴミ箱")
                     .font(.system(size: 24, weight: .bold))
                     .foregroundColor(.black)
+                    .padding(.leading, 24)
                 Spacer()
 
             }
@@ -23,15 +24,15 @@ struct ArchiveListView: View {
 
             if viewModel.archivedNotes.isEmpty {
                 VStack(spacing: 16) {
-            //         Image(systemName: "trash")
-            //             .font(.system(size: 60))
-            //             .foregroundColor(.gray)
+                    Image(systemName: "trash")
+                        .font(.system(size: 60))
+                        .foregroundColor(.gray)
 
-                    Text("ゴミ箱はからです")
+                    Text("ゴミ箱は空です")
                         .font(.system(size: 18))
                         .foregroundColor(.gray)
                 }
-            //     .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 List(viewModel.archivedNotes, id: \.self) { note in 
                     ArchiveRowView(note: note, viewModel: viewModel)
