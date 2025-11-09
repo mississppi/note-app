@@ -8,7 +8,7 @@ struct NoteListArchiveButton: View {
         Button(action: {
             viewModel.archiveNote(note: note)
         }) {
-            Text("削除")
+            Text("ゴミ箱に移動")
             Image(systemName: "trash")
         }
     }
