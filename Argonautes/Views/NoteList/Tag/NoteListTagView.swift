@@ -19,7 +19,7 @@ struct NoteListTagView: View {
     }
     
     var body: some View {
-        HStack {
+        HStack(spacing: 0) {
             NoteListChevronButton(direction: .left) {
                 withAnimation(.easeInOut(duration: 0.1)) {
                     viewModel.selectPreviousTag()
@@ -50,6 +50,5 @@ struct NoteListTagView: View {
         }
         .frame(height: 75)
         .frame(maxWidth: .infinity)
-        .padding(.horizontal, 16)
     }
 }
