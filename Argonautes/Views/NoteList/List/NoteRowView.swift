@@ -12,11 +12,18 @@ struct NoteRowView: View {
                 .frame(width: 14, height: 14)
             
             VStack(alignment: .leading, spacing: 4){
-                Text(truncatedTitle)
+                // Text(truncatedTitle)
+                //     .font(.system(size:14, weight: .semibold))
+                //     .foregroundColor(.primary)
+                //     .lineLimit(1)
+                //     .truncationMode(.tail)
+                Text(note.displayTitle.replacingOccurrences(of: "\n", with: " "))
                     .font(.system(size:14, weight: .semibold))
-                    .foregroundColor(.primary)
+                    .foregroundColor(titleColor)
                     .lineLimit(1)
                     .truncationMode(.tail)
+                    .allowsTightening(true)
+                    .minimumScaleFactor(0.8)
                 
                 Text(note.updatedAt ?? Date(), style: .date)
                     .font(.system(size:12))
@@ -33,5 +40,10 @@ struct NoteRowView: View {
         let raw = (note.title ?? "No Title").replacingOccurrences(of: "\n", with: " ")
         if raw.count <= titleLimit {return raw}
         return String(raw.prefix(titleLimit)) + "…"
+    }
+
+    private var titleColor: Color {
+        let trimmed = (note.title ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? .secondary : .primary
     }
 }
