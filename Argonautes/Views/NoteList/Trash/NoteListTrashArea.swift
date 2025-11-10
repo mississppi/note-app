@@ -23,12 +23,13 @@ struct NoteListTrashArea: View {
             .contentShape(Rectangle())
         }
         .frame(maxWidth: .infinity)
-        .frame(height: 70)
+        .frame(height: 40)
         .buttonStyle(.plain)
         .foregroundColor(.primary)
         .padding(.vertical,6)
         .padding(.horizontal, 16)
         .background(viewModel.isShowingTrash ? Color(hex: "#E6E6E6") : Color.clear)
         .cornerRadius(8) // <-- 角丸を追加
+        .padding(.bottom, 5)
     }
 }
