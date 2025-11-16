@@ -47,6 +47,14 @@ class NoteListViewModel: ObservableObject {
     
     @Published var tagTransitionDirection: TagTransitionDirection = .none
 
+    @Published var isTitleFocused: Bool = false {
+        didSet {
+            if !isTitleFocused && oldValue {
+                normalizeTitle()
+            }
+        }
+    }
+
     private let noteService: NoteDataService
     private var cancellabels = Set<AnyCancellable>()
     
@@ -343,6 +351,15 @@ class NoteListViewModel: ObservableObject {
             } catch {
                 print("autoSaveContent failed: \(error.localizedDescription)")
             }
+        }
+
+        func normalizeTitle() {
+            print("normalizeTitle called")
+            let trimmed = selectedTitle.trimmingCharacters(in: .whitespacesAndNewlines)
+
+            guard selectedTitle != trimmed else { return }
+
+            selectedTitle = trimmed
         }
         
         func fetchDataAndSelectFirstNote() {

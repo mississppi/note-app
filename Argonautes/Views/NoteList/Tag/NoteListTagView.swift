@@ -34,6 +34,14 @@ struct NoteListTagView: View {
                         .font(.system(size: 15))
                         .transition(tagTransition)
                         .id(selectedTag.uuid)
+                        .contextMenu {
+                            Button(action: {
+                                // viewModel.editTag(selectedTag)
+                            }) {
+                                Text("Edit Tag")
+                                Image(systemName: "pencil")
+                            }
+                        }
                 } else {
                     Text("No Tag")
                         .font(.system(size: 15))
@@ -50,5 +58,12 @@ struct NoteListTagView: View {
         }
         .frame(height: 75)
         .frame(maxWidth: .infinity)
+        // .sheet(isPresented: $viewModel.showEditModal) {
+        //     TagEditModalView(isPresented: $viewModel.showEditModal, tagName: $viewModel.newTagName, viewModel: viewModel) {
+        //         if let tag =  viewModel.selectedTag {
+        //             // selectedTag.name = viewModel.newTagName
+        //         }
+        //     }
+        // }
     }
 }
