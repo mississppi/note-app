@@ -12,10 +12,11 @@ struct NoteListNoteArea: View {
                 Task {
                     await MainActor.run {
                         // ゴミ箱表示中なら閉じる
-                        if viewModel.isShowingTrash {
-                            viewModel.isShowingTrash = false
-                        }
-                        viewModel.select(note: new, userInitiated: false)
+                        viewModel.selectNote(
+                            new,
+                            closeTrashIfNeeded: true,
+                            userInitiated: false
+                        )
                     }
                 }
             }

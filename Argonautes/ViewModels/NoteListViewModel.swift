@@ -129,6 +129,22 @@ class NoteListViewModel: ObservableObject {
     func select(note: Note?, userInitiated: Bool) {
         selectedNote = note
     }
+
+    // ノートを選択し、必要に応じてゴミ箱を閉じる
+    // - Parameters:
+    //   - note: 選択するノート（nil の場合は選択解除）
+    //   - closeTrashIfNeeded: ゴミ箱が開いている場合に閉じるかどうか
+    //   - userInitiated: ユーザーの明示的な操作による選択かどうか
+    func selectNote(
+        _ note: Note?,
+        closeTrashIfNeeded: Bool = false,
+        userInitiated: Bool = false
+    ) {
+        if closeTrashIfNeeded && isShowingTrash {
+            isShowingTrash = false
+        }
+        select(note: note, userInitiated: userInitiated)
+    }
     
     func addNewNote() {
         let newNote = noteService.createNote(
