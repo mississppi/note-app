@@ -31,18 +31,28 @@ class NoteListViewModel: ObservableObject {
         didSet {
             selectedTitle = selectedNote?.title ?? ""
             selectedContent = selectedNote?.content ?? ""
+            // selectedNoteの変更に応じてdetailContentTypeを更新
+            updateDetailContentType()
         }
     }
     @Published var selectedTitle: String = ""
     @Published var selectedContent: String = ""
     @Published var selectedTag: Tag?
     @Published var selectedTagIndex: Int = 0
+
+    //Detail領域に表示するコンテンツの種類
+    @Published private(set) var detailContentType: DetailContentType = .empty
     
     @Published var showingAddTagModal: Bool = false
     @Published var newTagName: String = ""
     @Published var addTagError: TagError? = nil
     
-    @Published var isShowingTrash: Bool = false
+    @Published var isShowingTrash: Bool = false {
+        didSet {
+            // isShowingTrashの変更に応じてdetailContentTypeを更新
+            updateDetailContentType()
+        }
+    }
     @Published var archivedNotes: [Note] = []
     
     @Published var tagTransitionDirection: TagTransitionDirection = .none
@@ -401,4 +411,13 @@ class NoteListViewModel: ObservableObject {
             }
         }
 
+        func updateDetailContentType() {
+            if isShowingTrash {
+                detailContentType = .archiveList
+            } else if selectedNote != nil {
+                detailContentType = .noteDetail
+            } else {
+                detailContentType = .empty
+            }
+        }
 }
