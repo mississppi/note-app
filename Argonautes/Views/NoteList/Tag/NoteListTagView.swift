@@ -61,7 +61,7 @@ struct NoteListTagView: View {
         // .sheet(isPresented: $viewModel.showEditModal) {
         //     TagEditModalView(isPresented: $viewModel.showEditModal, tagName: $viewModel.newTagName, viewModel: viewModel) {
         //         if let tag =  viewModel.selectedTag {
-        //             // selectedTag.name = viewModel.newTagName
+        //             selectedTag.name = viewModel.newTagName
         //         }
         //     }
         // }

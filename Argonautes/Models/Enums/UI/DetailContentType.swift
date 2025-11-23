@@ -1,0 +1,15 @@
+import Foundation
+
+enum DetailContentType{
+    /// ノート詳細を表示
+    /// - selectedNote が存在する場合
+    case noteDetail
+
+    /// ゴミ箱（アーカイブ）一覧を表示
+    /// - isShowingTrash が true の場合
+    case archiveList
+
+    /// 空の状態を表示
+    /// - ノートが選択されていない場合
+    case empty
+}
