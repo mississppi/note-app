@@ -11,8 +11,9 @@ import Argonautes
 /// - タグの管理・切り替え
 /// - 自動保存機能（タイトル・コンテンツの変更を監視）
 class NoteListViewModel: ObservableObject {
+    
+    // MARK: - Published Properties (Note List Management)
     @Published var notes: [Note] = []
-    @Published var tags: [Tag] = []
     @Published var searchText: String = ""
 
     /// 現在選択されているノート
@@ -26,17 +27,34 @@ class NoteListViewModel: ObservableObject {
             updateDetailContentType()
         }
     }
+
+    // Mark: - Published Properties (Note Detail Management)
     @Published var selectedTitle: String = ""
     @Published var selectedContent: String = ""
+
+    // タイトル入力欄のフォーカス状態
+    @Published var isTitleFocused: Bool = false {
+        didSet {
+            if !isTitleFocused && oldValue {
+                normalizeTitle()
+            }
+        }
+    }
+
+    // MARK: - Published Properties (Tag Management)
+    @Published var tags: [Tag] = []
     @Published var selectedTag: Tag?
     @Published var selectedTagIndex: Int = 0
+    @Published var tagTransitionDirection: TagTransitionDirection = .none
 
-    //Detail領域に表示するコンテンツの種類
-    @Published private(set) var detailContentType: DetailContentType = .empty
-    
     @Published var showingAddTagModal: Bool = false
     @Published var newTagName: String = ""
     @Published var addTagError: TagError? = nil
+
+    // MARK: - Published Properties (UI State)
+
+    //Detail領域に表示するコンテンツの種類
+    @Published private(set) var detailContentType: DetailContentType = .empty
     
     @Published var isShowingTrash: Bool = false {
         didSet {
@@ -46,19 +64,12 @@ class NoteListViewModel: ObservableObject {
     }
     @Published var archivedNotes: [Note] = []
     
-    @Published var tagTransitionDirection: TagTransitionDirection = .none
-
-    @Published var isTitleFocused: Bool = false {
-        didSet {
-            if !isTitleFocused && oldValue {
-                normalizeTitle()
-            }
-        }
-    }
+    // MARK: - Private Properties
 
     private let noteService: NoteDataService
     private var cancellabels = Set<AnyCancellable>()
-    
+
+    // MARK: - Initialization    
     init(noteService: NoteDataService) {
         self.noteService = noteService
         
@@ -87,6 +98,7 @@ class NoteListViewModel: ObservableObject {
         fetchDataAndSelectFirstNote()
     }
     
+    // MARK: - Public Methods
     /// ノートを選択する
     /// 
     /// - Parameters:
@@ -137,6 +149,7 @@ class NoteListViewModel: ObservableObject {
         select(note: note, userInitiated: userInitiated)
     }
     
+    // MARK: - Public Methods (Note CRUD)
     func addNewNote() {
         let newNote = noteService.createNote(
             title: NoteListViewModelConstants.newNoteTitle,
@@ -179,6 +192,8 @@ class NoteListViewModel: ObservableObject {
         }
     }
     
+    // MARK: - Public Methods (Tag Management)
+
     func fetchData() {
         self.tags = noteService.fetchTags(predicate: nil, sortDescriptors: nil)
         if !self.tags.isEmpty {
@@ -208,22 +223,7 @@ class NoteListViewModel: ObservableObject {
         }
     }
     
-    func fetchNotes(
-        searchText: String = "",
-        selectedTag: Tag? = nil,
-        statusFilter: NoteStatus = .active
-    ) {
-        let searchPredicate = createSearchPredicate(for: searchText)
-        let tagPredicate = createTagPredicate(for: selectedTag)
-        
-        let statusPredicate = createStatusPredicate(for: statusFilter)
-        
-        let finalPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [searchPredicate, tagPredicate, statusPredicate].compactMap { $0 })
-        self.notes = noteService.fetchNotes(predicate: finalPredicate, sortDescriptors: [NSSortDescriptor(keyPath: \Note.order, ascending: true)])
-        
-        select(note: self.notes.first, userInitiated: false)
-        
-    }
+
     
     func selectPreviousTag() {
         guard let selectedTagIndex = getSelectedTagIndex() else {
@@ -289,6 +289,8 @@ class NoteListViewModel: ObservableObject {
         saveNotesOrder()
     }
 
+    // MARK: - Public Methods (Archive Management)
+
     func fetchArchivedNotes() {
         let predicate = NSPredicate(format: "status == %d", NoteStatus.archived.rawValue)
         let sortDescriptors = [NSSortDescriptor(keyPath: \Note.updatedAt, ascending: false)]
@@ -320,111 +322,146 @@ class NoteListViewModel: ObservableObject {
         }
     }
 
+
+        // MARK: - Public Methods (Data Fetching)
+
+    func fetchNotes(
+        searchText: String = "",
+        selectedTag: Tag? = nil,
+        statusFilter: NoteStatus = .active
+    ) {
+        let searchPredicate = createSearchPredicate(for: searchText)
+        let tagPredicate = createTagPredicate(for: selectedTag)
+        
+        let statusPredicate = createStatusPredicate(for: statusFilter)
+        
+        let finalPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [searchPredicate, tagPredicate, statusPredicate].compactMap { $0 })
+        self.notes = noteService.fetchNotes(predicate: finalPredicate, sortDescriptors: [NSSortDescriptor(keyPath: \Note.order, ascending: true)])
+        
+        select(note: self.notes.first, userInitiated: false)
+        
+    }
+
+
 }
 
-    private extension NoteListViewModel {
-        func createSearchPredicate(for searchText: String) -> NSPredicate? {
-            guard !searchText.isEmpty else { return nil }
-            return NSPredicate(format: "title CONTAINS[cd] %@ OR content CONTAINS[cd] %@", searchText, searchText)
-        }
-        
-        func createTagPredicate(for tag: Tag?) -> NSPredicate? {
-            guard let tag = tag else {return nil}
-            return NSPredicate(format: "tag == %@", tag)
-        }
-        
-        func createStatusPredicate(for status: NoteStatus) -> NSPredicate? {
-            return NSPredicate(format: "status == %d", status.rawValue)
-        }
-        
-        func getSelectedTagIndex() -> Int? {
-            guard let selectedTag = selectedTag,
-                  let selectedTagIndex = tags.firstIndex(of: selectedTag) else {
-                return nil
-            }
-            return selectedTagIndex
-        }
-        
-        func autoSaveTitle(newTitle: String) {
-            guard let note = selectedNote else {return}
-            guard note.title != newTitle else { return }
+// MARK: - Private Methods
 
-            noteService.updateNote(note, newTitle: newTitle, newContent: nil, newStatus: nil, newTag: nil, newCursorPosition: nil, newOrder: nil)
+private extension NoteListViewModel {
+
+    // MARK: Predicate Creation
+
+    func createSearchPredicate(for searchText: String) -> NSPredicate? {
+        guard !searchText.isEmpty else { return nil }
+        return NSPredicate(format: "title CONTAINS[cd] %@ OR content CONTAINS[cd] %@", searchText, searchText)
+    }
+    
+    func createTagPredicate(for tag: Tag?) -> NSPredicate? {
+        guard let tag = tag else {return nil}
+        return NSPredicate(format: "tag == %@", tag)
+    }
+    
+    func createStatusPredicate(for status: NoteStatus) -> NSPredicate? {
+        return NSPredicate(format: "status == %d", status.rawValue)
+    }
+    
+    // MARK: Helper Methods
+
+    func getSelectedTagIndex() -> Int? {
+        guard let selectedTag = selectedTag,
+                let selectedTagIndex = tags.firstIndex(of: selectedTag) else {
+            return nil
+        }
+        return selectedTagIndex
+    }
+    
+    // MARK: Auto-Save (Note Detail)
+
+    func autoSaveTitle(newTitle: String) {
+        guard let note = selectedNote else {return}
+        guard note.title != newTitle else { return }
+
+        noteService.updateNote(note, newTitle: newTitle, newContent: nil, newStatus: nil, newTag: nil, newCursorPosition: nil, newOrder: nil)
+        
+        do {
+            try noteService.saveContext()
+        } catch {
+            print("autoSaveTitle failed: \(error.localizedDescription)")
+        }
+    }
+    
+    func autoSaveContent(newContent: String) {
+        guard let note = selectedNote else {return}
+        guard note.content != newContent else { return }
+        noteService.updateNote(note, newTitle: nil, newContent: newContent, newStatus: nil, newTag: nil, newCursorPosition: nil, newOrder: nil)
+        
+        do {
+            try noteService.saveContext()
+        } catch {
+            print("autoSaveContent failed: \(error.localizedDescription)")
+        }
+    }
+
+    func normalizeTitle() {
+        print("normalizeTitle called")
+        let trimmed = selectedTitle.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard selectedTitle != trimmed else { return }
+
+        selectedTitle = trimmed
+    }
+    
+    // MARK: Initial Data Loading
+
+    func fetchDataAndSelectFirstNote() {
+        self.notes = noteService.fetchNotes(predicate: nil, sortDescriptors: nil)
+        select(note: self.notes.first, userInitiated: false)
+    }
+    
+    // MARK: Note Order Management
+
+    func saveNotesOrder() {
+        for (index, note) in notes.enumerated() {
+            let newOrder = Int64(index)
+            if note.order != newOrder {
+                noteService.updateNote(
+                    note,
+                    newTitle: nil,
+                    newContent: nil,
+                    newStatus: nil,
+                    newTag: nil,
+                    newCursorPosition: nil,
+                    newOrder: newOrder
+                )
+            }
+        }
+        
+        do {
+            try noteService.saveContext()
+            fetchNotes(searchText: searchText, selectedTag: selectedTag) .self
             
-            do {
-                try noteService.saveContext()
-            } catch {
-                print("autoSaveTitle failed: \(error.localizedDescription)")
-            }
+        } catch {
+            print("saveNoteOrder failed: \(error.localizedDescription)")
         }
-        
-        func autoSaveContent(newContent: String) {
-            guard let note = selectedNote else {return}
-            guard note.content != newContent else { return }
-            noteService.updateNote(note, newTitle: nil, newContent: newContent, newStatus: nil, newTag: nil, newCursorPosition: nil, newOrder: nil)
-            
-            do {
-                try noteService.saveContext()
-            } catch {
-                print("autoSaveContent failed: \(error.localizedDescription)")
-            }
+    }
+    
+    func saveContextIfNeeded(context: NSManagedObjectContext?) {
+        guard let ctx = context, ctx.hasChanges else { return }
+        do {
+            try noteService.saveContext()
+        } catch {
+            print("Failed to save context:", error)
         }
+    }
 
-        func normalizeTitle() {
-            print("normalizeTitle called")
-            let trimmed = selectedTitle.trimmingCharacters(in: .whitespacesAndNewlines)
-
-            guard selectedTitle != trimmed else { return }
-
-            selectedTitle = trimmed
+    // MARK: UI State Management
+    func updateDetailContentType() {
+        if isShowingTrash {
+            detailContentType = .archiveList
+        } else if selectedNote != nil {
+            detailContentType = .noteDetail
+        } else {
+            detailContentType = .empty
         }
-        
-        func fetchDataAndSelectFirstNote() {
-            self.notes = noteService.fetchNotes(predicate: nil, sortDescriptors: nil)
-            select(note: self.notes.first, userInitiated: false)
-        }
-        
-        func saveNotesOrder() {
-            for (index, note) in notes.enumerated() {
-                let newOrder = Int64(index)
-                if note.order != newOrder {
-                    noteService.updateNote(
-                        note,
-                        newTitle: nil,
-                        newContent: nil,
-                        newStatus: nil,
-                        newTag: nil,
-                        newCursorPosition: nil,
-                        newOrder: newOrder
-                    )
-                }
-            }
-            
-            do {
-                try noteService.saveContext()
-                fetchNotes(searchText: searchText, selectedTag: selectedTag) .self
-                
-            } catch {
-                print("saveNoteOrder failed: \(error.localizedDescription)")
-            }
-        }
-        
-        func saveContextIfNeeded(context: NSManagedObjectContext?) {
-            guard let ctx = context, ctx.hasChanges else { return }
-            do {
-                try noteService.saveContext()
-            } catch {
-                print("Failed to save context:", error)
-            }
-        }
-
-        func updateDetailContentType() {
-            if isShowingTrash {
-                detailContentType = .archiveList
-            } else if selectedNote != nil {
-                detailContentType = .noteDetail
-            } else {
-                detailContentType = .empty
-            }
-        }
+    }
 }
