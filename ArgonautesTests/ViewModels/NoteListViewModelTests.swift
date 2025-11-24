@@ -25,6 +25,7 @@ class NoteListViewModelTests: XCTestCase{
         super.tearDown()
     }
     
+    // 目的: fetchNotes()を呼ぶと、ViewModelのnotesプロパティが更新され、作成順に取得できることを確認
     func testFetchNotesUpdatesNotesProperty() throws {
         // Given
         let note1 = service.createNote(title: "Test Note 1", content: "", status: .active, tag: nil)
@@ -32,18 +33,8 @@ class NoteListViewModelTests: XCTestCase{
         let note3 = service.createNote(title: "Test Note 3", content: "", status: .active, tag: nil)
         try service.saveContext()
         
-        // デバッグ: order の値を確認
-        print("DEBUG note1.order:", note1.order)
-        print("DEBUG note2.order:", note2.order)
-        print("DEBUG note3.order:", note3.order)
-        
         // When
         viewModel.fetchNotes()
-        
-        // デバッグ: 取得後の順序を確認
-        print("DEBUG notes[0].title:", viewModel.notes[0].title ?? "nil", "order:", viewModel.notes[0].order)
-        print("DEBUG notes[1].title:", viewModel.notes[1].title ?? "nil", "order:", viewModel.notes[1].order)
-        print("DEBUG notes[2].title:", viewModel.notes[2].title ?? "nil", "order:", viewModel.notes[2].order)
         
         // Then
         XCTAssertEqual(viewModel.notes.count, 3, "ViewModelのnotesには3件のノート")
@@ -52,22 +43,26 @@ class NoteListViewModelTests: XCTestCase{
         XCTAssertEqual(viewModel.notes[2].title, "Test Note 3", "最後に作成したノート")
     }
     
+    // 目的: searchTextを指定してfetchNotes()を呼ぶと、タイトルで絞り込まれたノートのみ取得できることを確認
     func testFetchNotesWithSearchTextFiltersNotes() throws {
-        // 1. ノートを3件作成し、保存
+        // Given: 3件のノートを作成
         _ = service.createNote(title: "Apple", content: "", status: .active, tag: nil)
         _ = service.createNote(title: "Banana", content: "", status: .active, tag: nil)
         _ = service.createNote(title: "Orange", content: "", status: .active, tag: nil)
         try service.saveContext()
         
+        // When: "Apple"で検索
         viewModel.searchText = "Apple"
         viewModel.fetchNotes(searchText: viewModel.searchText)
         
+        // Then: "Apple"のみ取得される
         XCTAssertEqual(viewModel.notes.count, 1, "検索結果は1件であるべき")
         XCTAssertEqual(viewModel.notes[0].title, "Apple", "検索結果のタイトルが一致すべき")
     }
     
+    // 目的: selectedTagを指定してfetchNotes()を呼ぶと、そのタグのノートのみ取得できることを確認
     func testSelectTagFiltersNotes() throws {
-        // 1. タグとノートをセットアップ
+        // Given: 2つのタグと、それぞれに紐付くノートを作成
         let tagA = service.createTag(name: "A")
         let tagB = service.createTag(name: "B")
         try service.saveContext()
@@ -76,34 +71,28 @@ class NoteListViewModelTests: XCTestCase{
         _ = service.createNote(title: "Note with B", content: "", status: .active, tag: tagB)
         try service.saveContext()
         
+        // When: tagAでフィルタリング
         viewModel.selectedTag = tagA
         viewModel.fetchNotes(searchText: "", selectedTag: viewModel.selectedTag)
         
+        // Then: tagAのノートのみ取得される
         XCTAssertEqual(viewModel.notes.count, 1, "フィルタリング結果は1件であるべき")
         XCTAssertEqual(viewModel.notes[0].title, "Note with A", "フィルタリング結果のタイトルが一致すべき")
     }
 
+    // 目的: archiveNote()を呼ぶと、ノートがアーカイブ状態になり、activeリストから消えることを確認
     func testArchiveNoteUpdatesStatusAndRemovesFromList() throws {
-        // Given
+        // Given: 1件のactiveノートを作成
         let noteToArchive = service.createNote(title: "Note to archive", content: "content", status: .active, tag: nil)
         try? service.saveContext()
         
         viewModel.fetchNotes(searchText: "", selectedTag: nil, statusFilter: .active)
         XCTAssertEqual(viewModel.notes.count, 1, "ViewModelのリストには1件のノートが存在すべき")
         
-        print("DEBUG: Before archive - notes count:", viewModel.notes.count)
-        print("DEBUG: Before archive - note status:", noteToArchive.status)
-        
-        // When
+        // When: ノートをアーカイブ
         viewModel.archiveNote(note: noteToArchive)
         
-        print("DEBUG: After archive - notes count:", viewModel.notes.count)
-        print("DEBUG: After archive - note status:", noteToArchive.status)
-        print("DEBUG: After archive - searchText:", viewModel.searchText)
-        print("DEBUG: After archive - selectedTag:", viewModel.selectedTag as Any)
-        
-        // Then
-        // 1. DB上にはノートが残っている
+        // Then: ステータスがarchivedになり、activeリストから消える
         let allNotesInDB = service.fetchNotes(predicate: nil, sortDescriptors: nil)
         XCTAssertEqual(allNotesInDB.count, 1, "DB上のノート総数はアーカイブ後も1件のままであるべき")
         
@@ -121,6 +110,7 @@ class NoteListViewModelTests: XCTestCase{
 
     // MARK: - Note Reordering Tests
 
+    // 目的: moveNotes()を呼ぶと、ノートの順序が更新されることを確認
     func testMoveNoteUpdatesOrder() {
         // Given
         let note1 = service.createNote(title: "Note 1", content: "", status: .active, tag: nil)
@@ -140,6 +130,7 @@ class NoteListViewModelTests: XCTestCase{
         XCTAssertEqual(viewModel.notes[2].title, "Note 2", "移動後の順序が正しいべき")
     }
     
+    // 目的: moveNotes()で変更した順序が、永続化されることを確認
     func testSaveNotesOrderPersistsChanges() {
         // Given
         let note1 = service.createNote(title: "Note 1", content: "", status: .active, tag: nil)
@@ -165,6 +156,7 @@ class NoteListViewModelTests: XCTestCase{
         XCTAssertEqual(newViewModel.notes[1].title, "Note 1", "順序が永続化されているべき")
     }
 
+    // 目的: 同じ位置に移動した場合、何も変更されないことを確認
     func testMoveNoteToSamePositionDoesNothing() {
         // Given
         let note1 = service.createNote(title: "Note 1", content: "", status: .active, tag: nil)
@@ -181,6 +173,7 @@ class NoteListViewModelTests: XCTestCase{
         XCTAssertEqual(viewModel.notes.map { $0.title }, originalOrder, "順序が変わらないべき")
     }
 
+    // 目的: 複数のノートを一度に移動できることを確認
     func testMoveMultipleNotesAtOnce() {
         // Given
         let note1 = service.createNote(title: "Note 1", content: "", status: .active, tag: nil)
