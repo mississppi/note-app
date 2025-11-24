@@ -8,30 +8,48 @@ class NoteListViewModelTests: XCTestCase{
     var viewContext: NSManagedObjectContext!
     var viewModel: NoteListViewModel!
     
-    override func setUpWithError() throws {
-        persistenceController = PersistenceController.inMemory
+    override func setUp() {
+        super.setUp()
+        persistenceController = PersistenceController(inMemory: true)
         viewContext = persistenceController.container.viewContext
-        service = CoreDataNoteService(context: self.viewContext)
+        service = CoreDataNoteService(context: viewContext)
         viewModel = NoteListViewModel(noteService: service)
     }
     
-    override func tearDownWithError() throws {
+    override func tearDown() {
+        // 明示的にクリーンアップ
         viewModel = nil
         service = nil
         viewContext = nil
+        persistenceController = nil
+        super.tearDown()
     }
     
     func testFetchNotesUpdatesNotesProperty() throws {
+        // Given
         let note1 = service.createNote(title: "Test Note 1", content: "", status: .active, tag: nil)
         let note2 = service.createNote(title: "Test Note 2", content: "", status: .active, tag: nil)
         let note3 = service.createNote(title: "Test Note 3", content: "", status: .active, tag: nil)
         try service.saveContext()
         
+        // デバッグ: order の値を確認
+        print("DEBUG note1.order:", note1.order)
+        print("DEBUG note2.order:", note2.order)
+        print("DEBUG note3.order:", note3.order)
+        
+        // When
         viewModel.fetchNotes()
         
+        // デバッグ: 取得後の順序を確認
+        print("DEBUG notes[0].title:", viewModel.notes[0].title ?? "nil", "order:", viewModel.notes[0].order)
+        print("DEBUG notes[1].title:", viewModel.notes[1].title ?? "nil", "order:", viewModel.notes[1].order)
+        print("DEBUG notes[2].title:", viewModel.notes[2].title ?? "nil", "order:", viewModel.notes[2].order)
+        
+        // Then
         XCTAssertEqual(viewModel.notes.count, 3, "ViewModelのnotesには3件のノート")
-        XCTAssertEqual(viewModel.notes[0].title, "Test Note 3", "ViewModelのnotesプロパティのタイトルが一致すべき")
-        XCTAssertEqual(viewModel.notes[1].title, "Test Note 2", "ViewModelのnotesプロパティのタイトルが一致すべき")
+        XCTAssertEqual(viewModel.notes[0].title, "Test Note 1", "最初に作成したノートが先頭")
+        XCTAssertEqual(viewModel.notes[1].title, "Test Note 2", "2番目に作成したノート")
+        XCTAssertEqual(viewModel.notes[2].title, "Test Note 3", "最後に作成したノート")
     }
     
     func testFetchNotesWithSearchTextFiltersNotes() throws {
@@ -65,44 +83,121 @@ class NoteListViewModelTests: XCTestCase{
         XCTAssertEqual(viewModel.notes[0].title, "Note with A", "フィルタリング結果のタイトルが一致すべき")
     }
 
-        func testArchiveNoteUpdatesStatusAndRemovesFromList() throws {
-        // MARK: Given (前提条件: ノートの準備)
-        let title = "Note to archive"
-        let status = Argonautes.NoteStatus.active
+    func testArchiveNoteUpdatesStatusAndRemovesFromList() throws {
+        // Given
+        let noteToArchive = service.createNote(title: "Note to archive", content: "content", status: .active, tag: nil)
+        try? service.saveContext()
         
-        // 1. ノートを作成し、保存する
-        let noteToArchive = service.createNote(title: title, content: "content", status: status, tag: nil)
-        try service.saveContext()
-        
-        // 2. ViewModelを初期化し、ノートをロード（この時点でリストには1件あるはず）
-        let initialNotes = service.fetchNotes(predicate: nil, sortDescriptors: nil)
-        XCTAssertEqual(initialNotes.count, 1, "アーカイブ前はノートが1件存在するべき")
-
-        // NOTE: ViewModelのテストなので、ViewModelを初期化し、データ取得をシミュレート
-        // ViewModelのコンテキスト（Service）とテストデータ（Service）を接続
-        viewModel = NoteListViewModel(noteService: service)
-        viewModel.fetchNotes(searchText: "", selectedTag: nil, statusFilter: .active) // アクティブノートのみをロード
-
+        viewModel.fetchNotes(searchText: "", selectedTag: nil, statusFilter: .active)
         XCTAssertEqual(viewModel.notes.count, 1, "ViewModelのリストには1件のノートが存在すべき")
         
-        // MARK: When (操作を実行: アーカイブ)
-        // 3. ノートをアーカイブする
-        viewModel.archiveNote(note: noteToArchive) // ViewModelのメソッドを呼び出す
+        print("DEBUG: Before archive - notes count:", viewModel.notes.count)
+        print("DEBUG: Before archive - note status:", noteToArchive.status)
         
-        // MARK: Then (結果を検証)
+        // When
+        viewModel.archiveNote(note: noteToArchive)
         
-        // 1. ノートはデータベースから消えていないことを確認 (Serviceから全件取得)
+        print("DEBUG: After archive - notes count:", viewModel.notes.count)
+        print("DEBUG: After archive - note status:", noteToArchive.status)
+        print("DEBUG: After archive - searchText:", viewModel.searchText)
+        print("DEBUG: After archive - selectedTag:", viewModel.selectedTag as Any)
+        
+        // Then
+        // 1. DB上にはノートが残っている
         let allNotesInDB = service.fetchNotes(predicate: nil, sortDescriptors: nil)
         XCTAssertEqual(allNotesInDB.count, 1, "DB上のノート総数はアーカイブ後も1件のままであるべき")
-
-        // 2. ステータスがアーカイブ済みになっていることを確認 (ビジネスロジックの検証)
-        let archivedNote = try XCTUnwrap(allNotesInDB.first)
-        XCTAssertEqual(archivedNote.status, Argonautes.NoteStatus.archived.rawValue, "ノートのステータスが.archived (1) になっているべき")
-
-        // 3. ViewModelのリストからノートが消えたことを確認 (UIロジックの検証)
+        
+        // 2. ステータスがarchivedになっている
+        let archivedNote = allNotesInDB.first!
+        XCTAssertEqual(archivedNote.status, NoteStatus.archived.rawValue, "ノートのステータスが.archived (1) になっているべき")
+        
+        // 3. ViewModelのリストから消えた
         XCTAssertEqual(viewModel.notes.count, 0, "ViewModelのリストからアーカイブされたノートは消えているべき")
         
-        // 4. selectedNoteが新しい先頭ノートに設定されていることを確認（ここでは0件なのでnil）
+        // 4. selectedNoteがnilになった
         XCTAssertNil(viewModel.selectedNote, "リストが空になったため、selectedNoteはnilであるべき")
+    }
+
+
+    // MARK: - Note Reordering Tests
+
+    func testMoveNoteUpdatesOrder() {
+        // Given
+        let note1 = service.createNote(title: "Note 1", content: "", status: .active, tag: nil)
+        let note2 = service.createNote(title: "Note 2", content: "", status: .active, tag: nil)
+        let note3 = service.createNote(title: "Note 3", content: "", status: .active, tag: nil)
+        try? service.saveContext()
+        
+        viewModel.fetchNotes()
+        
+        // When: note3 を先頭に移動 (index 2 → 0)
+        viewModel.moveNotes(fromOffsets: IndexSet(integer: 2), toOffset: 0)
+        
+        // Then
+        XCTAssertEqual(viewModel.notes.count, 3, "ノート数は変わらないべき")
+        XCTAssertEqual(viewModel.notes[0].title, "Note 3", "移動後の順序が正しいべき")
+        XCTAssertEqual(viewModel.notes[1].title, "Note 1", "移動後の順序が正しいべき")
+        XCTAssertEqual(viewModel.notes[2].title, "Note 2", "移動後の順序が正しいべき")
+    }
+    
+    func testSaveNotesOrderPersistsChanges() {
+        // Given
+        let note1 = service.createNote(title: "Note 1", content: "", status: .active, tag: nil)
+        let note2 = service.createNote(title: "Note 2", content: "", status: .active, tag: nil)
+        try? service.saveContext()
+        
+        viewModel.fetchNotes()
+        
+        // 順序を確認
+        XCTAssertEqual(viewModel.notes[0].title, "Note 1")
+        XCTAssertEqual(viewModel.notes[1].title, "Note 2")
+        
+        // When: 順序を入れ替えて保存
+        viewModel.moveNotes(fromOffsets: IndexSet(integer: 1), toOffset: 0)
+        // moveNotes は内部で saveNotesOrder を呼ぶので、明示的な呼び出しは不要
+        
+        // Then: 新しいViewModelでも順序が保持されている
+        let newViewModel = NoteListViewModel(noteService: service)
+        newViewModel.fetchNotes()
+        
+        XCTAssertEqual(newViewModel.notes.count, 2, "ノート数は変わらないべき")
+        XCTAssertEqual(newViewModel.notes[0].title, "Note 2", "順序が永続化されているべき")
+        XCTAssertEqual(newViewModel.notes[1].title, "Note 1", "順序が永続化されているべき")
+    }
+
+    func testMoveNoteToSamePositionDoesNothing() {
+        // Given
+        let note1 = service.createNote(title: "Note 1", content: "", status: .active, tag: nil)
+        let note2 = service.createNote(title: "Note 2", content: "", status: .active, tag: nil)
+        try? service.saveContext()
+        
+        viewModel.fetchNotes()
+        let originalOrder = viewModel.notes.map { $0.title }
+        
+        // When: 同じ位置に移動
+        viewModel.moveNotes(fromOffsets: IndexSet(integer: 0), toOffset: 0)
+        
+        // Then: 順序は変わらない
+        XCTAssertEqual(viewModel.notes.map { $0.title }, originalOrder, "順序が変わらないべき")
+    }
+
+    func testMoveMultipleNotesAtOnce() {
+        // Given
+        let note1 = service.createNote(title: "Note 1", content: "", status: .active, tag: nil)
+        let note2 = service.createNote(title: "Note 2", content: "", status: .active, tag: nil)
+        let note3 = service.createNote(title: "Note 3", content: "", status: .active, tag: nil)
+        let note4 = service.createNote(title: "Note 4", content: "", status: .active, tag: nil)
+        try? service.saveContext()
+        
+        viewModel.fetchNotes()
+        
+        // When: index 1,2 を先頭に移動
+        viewModel.moveNotes(fromOffsets: IndexSet([1, 2]), toOffset: 0)
+        
+        // Then
+        XCTAssertEqual(viewModel.notes[0].title, "Note 2", "複数移動後の順序が正しいべき")
+        XCTAssertEqual(viewModel.notes[1].title, "Note 3", "複数移動後の順序が正しいべき")
+        XCTAssertEqual(viewModel.notes[2].title, "Note 1", "複数移動後の順序が正しいべき")
+        XCTAssertEqual(viewModel.notes[3].title, "Note 4", "複数移動後の順序が正しいべき")
     }
 }

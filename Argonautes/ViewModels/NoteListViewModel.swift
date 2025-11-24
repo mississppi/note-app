@@ -166,9 +166,15 @@ class NoteListViewModel: ObservableObject {
         fetchNotes(searchText: searchText, selectedTag: selectedTag)
     }
     
+    // func archiveNote(note: Note){
+    //     noteService.archiveNote(note)
+    //     saveContextWithErrorHandling(operation: "archive note")
+    // }
     func archiveNote(note: Note){
         noteService.archiveNote(note)
         saveContextWithErrorHandling(operation: "archive note")
+        fetchNotes(searchText: searchText, selectedTag: selectedTag, statusFilter: .active)
+        select(note: self.notes.first, userInitiated: false)
     }
     
     func deleteNote(note: Note) {
@@ -315,7 +321,10 @@ class NoteListViewModel: ObservableObject {
         let statusPredicate = createStatusPredicate(for: statusFilter)
         
         let finalPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [searchPredicate, tagPredicate, statusPredicate].compactMap { $0 })
-        self.notes = noteService.fetchNotes(predicate: finalPredicate, sortDescriptors: [NSSortDescriptor(keyPath: \Note.order, ascending: true)])
+        self.notes = noteService.fetchNotes(
+            predicate: finalPredicate, 
+            sortDescriptors: [NSSortDescriptor(keyPath: \Note.order, ascending: true)]
+        )
         
         select(note: self.notes.first, userInitiated: false)
         

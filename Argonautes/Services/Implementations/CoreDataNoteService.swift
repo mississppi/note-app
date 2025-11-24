@@ -31,7 +31,16 @@ class CoreDataNoteService: NoteDataService {
         newNote.uuid = UUID()
         newNote.cursorPosition = Int32(0)
         newNote.status = status.rawValue
-        newNote.order = 0
+
+        let fetchRequest: NSFetchRequest<Note> = Note.fetchRequest()
+        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Note.order, ascending: false)]
+        fetchRequest.fetchLimit = 1
+
+        if let maxOrderNote = try? context.fetch(fetchRequest).first {
+            newNote.order = maxOrderNote.order + 1
+        } else {
+            newNote.order = 1
+        }
         newNote.tag = tag
         
         return newNote
