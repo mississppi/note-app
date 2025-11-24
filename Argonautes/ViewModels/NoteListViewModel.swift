@@ -11,15 +11,6 @@ import Argonautes
 /// - タグの管理・切り替え
 /// - 自動保存機能（タイトル・コンテンツの変更を監視）
 class NoteListViewModel: ObservableObject {
-    private enum Constants {
-        static let newNoteTitle = "new Note"
-        /// 検索テキストのデバウンス時間（ミリ秒）
-        static let searchDebounceMilliseconds = 500
-        /// タイトル自動保存のデバウンス時間（ミリ秒）
-        static let titleDebounceMilliseconds = 500
-        /// コンテンツ自動保存のデバウンス時間（秒）
-        static let contentDebounceSeconds: TimeInterval  = 1.0
-    }
     @Published var notes: [Note] = []
     @Published var tags: [Tag] = []
     @Published var searchText: String = ""
@@ -72,21 +63,21 @@ class NoteListViewModel: ObservableObject {
         self.noteService = noteService
         
         $searchText
-            .debounce(for: .milliseconds(Constants.searchDebounceMilliseconds), scheduler: RunLoop.main)
+            .debounce(for: .milliseconds(NoteListViewModelConstants.searchDebounceMilliseconds), scheduler: RunLoop.main)
             .sink { [weak self] searchText in
                 self?.fetchNotes(searchText: searchText)
             }
             .store(in: &cancellabels)
         
         $selectedTitle
-            .debounce(for: .milliseconds(Constants.titleDebounceMilliseconds), scheduler: RunLoop.main)
+            .debounce(for: .milliseconds(NoteListViewModelConstants.titleDebounceMilliseconds), scheduler: RunLoop.main)
             .sink { [weak self] title in
                 self?.autoSaveTitle(newTitle: title)
             }
             .store(in: &cancellabels)
         
         $selectedContent
-            .debounce(for: .seconds(Constants.contentDebounceSeconds), scheduler: RunLoop.main)
+            .debounce(for: .seconds(NoteListViewModelConstants.contentDebounceSeconds), scheduler: RunLoop.main)
             .sink { [weak self] content in
                 self?.autoSaveContent(newContent: content)
             }
@@ -148,7 +139,7 @@ class NoteListViewModel: ObservableObject {
     
     func addNewNote() {
         let newNote = noteService.createNote(
-            title: Constants.newNoteTitle,
+            title: NoteListViewModelConstants.newNoteTitle,
             content: "",
             status: .active,
             tag: selectedTag
