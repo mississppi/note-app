@@ -159,37 +159,21 @@ class NoteListViewModel: ObservableObject {
         )
         
         self.notes.insert(newNote, at: 0)
-
         // ユーザ操作なので、userInitiated: true
         select(note: newNote, userInitiated: true)
-        
-        do {
-            try noteService.saveContext()
-            fetchNotes(searchText: searchText, selectedTag: selectedTag)
-        } catch {
-            print("Failed to save new note: \(error.localizedDescription)")
-        }
+
+        saveContextWithErrorHandling(operation: "save new note")
+        fetchNotes(searchText: searchText, selectedTag: selectedTag)
     }
     
     func archiveNote(note: Note){
         noteService.archiveNote(note)
-        do {
-            try noteService.saveContext()
-            fetchNotes(searchText: searchText, selectedTag: selectedTag)
-
-            select(note: self.notes.first, userInitiated: false)
-        } catch {
-            print("Failed to save new note: \(error.localizedDescription)")
-        }
+        saveContextWithErrorHandling(operation: "archive note")
     }
     
     func deleteNote(note: Note) {
         noteService.deleteNote(note)
-        do {
-            try noteService.saveContext()
-        } catch {
-            print("Failed to delete note: \(error.localizedDescription)")
-        }
+        saveContextWithErrorHandling(operation: "delete note")
     }
     
     // MARK: - Public Methods (Tag Management)
@@ -278,7 +262,7 @@ class NoteListViewModel: ObservableObject {
             fetchDataAndSelectLastTag()
         } catch {
             addTagError = TagError.unknownError
-            print("Failed to save new tag: \(error.localizedDescription)")
+            logError("save new tag", error: error)
         }
     }
     
@@ -298,32 +282,27 @@ class NoteListViewModel: ObservableObject {
     }
 
     func restoreNoteFromArchive(note: Note) {
-        noteService.updateNote(note, newTitle:nil, newContent: nil,
+        noteService.updateNote(
+            note, 
+            newTitle:nil, 
+            newContent: nil,
             newStatus: .active,
             newTag: nil,
             newCursorPosition: nil,
             newOrder: nil
         )
-        do {
-            try noteService.saveContext()
-            fetchArchivedNotes()
-        } catch {
-            print("Failed to restore note from archive: \(error.localizedDescription)")
-        }
+        saveContextWithErrorHandling(operation: "restore note from archive")
+        fetchArchivedNotes()
     }
 
     func deleteNotePermanently(note: Note) {
         noteService.deleteNote(note)
-        do {
-            try noteService.saveContext()
-            fetchArchivedNotes()
-        } catch {
-            print("Failed to delete note permanently: \(error.localizedDescription)")
-        }
+        saveContextWithErrorHandling(operation: "delete note permanently")
+        fetchArchivedNotes()
     }
 
 
-        // MARK: - Public Methods (Data Fetching)
+    // MARK: - Public Methods (Data Fetching)
 
     func fetchNotes(
         searchText: String = "",
@@ -383,11 +362,7 @@ private extension NoteListViewModel {
 
         noteService.updateNote(note, newTitle: newTitle, newContent: nil, newStatus: nil, newTag: nil, newCursorPosition: nil, newOrder: nil)
         
-        do {
-            try noteService.saveContext()
-        } catch {
-            print("autoSaveTitle failed: \(error.localizedDescription)")
-        }
+        saveContextWithErrorHandling(operation: "auto-save title")
     }
     
     func autoSaveContent(newContent: String) {
@@ -395,18 +370,12 @@ private extension NoteListViewModel {
         guard note.content != newContent else { return }
         noteService.updateNote(note, newTitle: nil, newContent: newContent, newStatus: nil, newTag: nil, newCursorPosition: nil, newOrder: nil)
         
-        do {
-            try noteService.saveContext()
-        } catch {
-            print("autoSaveContent failed: \(error.localizedDescription)")
-        }
+        saveContextWithErrorHandling(operation: "auto-save content")
     }
 
     func normalizeTitle() {
         let trimmed = selectedTitle.trimmingCharacters(in: .whitespacesAndNewlines)
-
         guard selectedTitle != trimmed else { return }
-
         selectedTitle = trimmed
     }
     
@@ -435,22 +404,8 @@ private extension NoteListViewModel {
             }
         }
         
-        do {
-            try noteService.saveContext()
-            fetchNotes(searchText: searchText, selectedTag: selectedTag) .self
-            
-        } catch {
-            print("saveNoteOrder failed: \(error.localizedDescription)")
-        }
-    }
-    
-    func saveContextIfNeeded(context: NSManagedObjectContext?) {
-        guard let ctx = context, ctx.hasChanges else { return }
-        do {
-            try noteService.saveContext()
-        } catch {
-            print("Failed to save context:", error)
-        }
+        saveContextWithErrorHandling(operation: "save note order")
+        fetchNotes(searchText: searchText, selectedTag: selectedTag) .self
     }
 
     // MARK: UI State Management
@@ -461,6 +416,22 @@ private extension NoteListViewModel {
             detailContentType = .noteDetail
         } else {
             detailContentType = .empty
+        }
+    }
+
+    /// エラーログを出力する統一メソッド
+    /// - Parameters:
+    ///     - operation: 失敗した操作の説明
+    ///     - error: 発生したエラー
+    func logError(_ operation: String, error: Error) {
+        print("[\(type(of: self))] Failed to \(operation): \(error.localizedDescription)")
+    }
+
+    func saveContextWithErrorHandling(operation: String) {
+        do {
+            try noteService.saveContext()
+        } catch {
+            logError(operation, error: error)
         }
     }
 }
