@@ -403,7 +403,6 @@ private extension NoteListViewModel {
     }
 
     func normalizeTitle() {
-        print("normalizeTitle called")
         let trimmed = selectedTitle.trimmingCharacters(in: .whitespacesAndNewlines)
 
         guard selectedTitle != trimmed else { return }

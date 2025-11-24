@@ -1,5 +1,9 @@
 import Foundation
 
+/// ノートの状態を表す列挙型
+///
+/// Core Data の status 属性に対応します。
+/// - Note: rawValue は Int16 で保存されます
 enum NoteStatus: Int16, CaseIterable, Identifiable {
     /// アクティブ（通常表示されるノート）
     case active = 0
