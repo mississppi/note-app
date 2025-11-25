@@ -2,9 +2,8 @@ import SwiftUI
 
 struct TagAddModalView: View {
     @ObservedObject var viewModel: NoteListViewModel
-    
-    @Environment(\.dismiss) var dismiss
-    
+    @FocusState private var isNameFocused: Bool
+
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             // Title
@@ -34,47 +33,33 @@ struct TagAddModalView: View {
                     .stroke(Color(hex: "#DDDDDD"), lineWidth: 1)
             )
             
-            // Error message (left aligned)
-            if let error = viewModel.addTagError {
-                Text(error.rawValue)
-                    .font(.caption)
-                    .foregroundColor(.red)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.top, 2)
-            }
+            Text(viewModel.addTagErrorMessage)
+                .font(.caption)
+                .foregroundColor(.red)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.top, 2)
+                .opacity(viewModel.addTagErrorMessage.isEmpty ? 0 : 1)
             
             // Buttons (right aligned)
             HStack {
                 Spacer()
-                Button(action: {
-                    dismiss()
-                }) {
-                    Text("キャンセル")
-                        .font(.system(size: 16))
-                        .foregroundColor(.primary)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 6)
+                Button("キャンセル") {
+                    viewModel.showingAddTagModal = false
                 }
                 .buttonStyle(.plain)
                 .keyboardShortcut(.cancelAction)
                 
-                Button(action: {
+                Button("追加") {
                     viewModel.addNewTag()
-                    if viewModel.addTagError == nil {
-                        dismiss()
-                    }
-                }){
-                    Text("追加")
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
-                        .background(viewModel.newTagName.isEmpty ? Color.gray.opacity(0.5) : Color.blue)
-                        .cornerRadius(12)
                 }
                 .disabled(viewModel.newTagName.isEmpty)
                 .keyboardShortcut(.defaultAction)
                 .buttonStyle(.plain)
+                .foregroundColor(.white)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .background(viewModel.newTagName.isEmpty ? Color.gray.opacity(0.5) : Color.blue)
+                .cornerRadius(12)
             }
         }
         .padding(24)
@@ -83,5 +68,8 @@ struct TagAddModalView: View {
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .fill(Color.white)
         )
+        .onAppear {
+            isNameFocused = true
+        }
     }
 }

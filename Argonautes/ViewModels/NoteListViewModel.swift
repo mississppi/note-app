@@ -49,7 +49,12 @@ class NoteListViewModel: ObservableObject {
 
     @Published var showingAddTagModal: Bool = false
     @Published var newTagName: String = ""
-    @Published var addTagError: TagError? = nil
+    @Published var addTagErrorMessage: String = ""
+
+    // MARK: - Tag Editing State
+    @Published var isShowingTagEditSheet = false
+    @Published var tagEditName: String = ""
+    @Published var editTagError: TagError? = nil
 
     // MARK: - Published Properties (UI State)
 
@@ -184,6 +189,65 @@ class NoteListViewModel: ObservableObject {
     
     // MARK: - Public Methods (Tag Management)
 
+    func startEditingSelectedTag() {
+        guard let tag = selectedTag else { return }
+        tagEditName = tag.name ?? ""
+        editTagError = nil
+        isShowingTagEditSheet = true
+    }
+
+    // func saveEditedTag() {
+    //     let trimmed = tagEditName.trimmingCharacters(in: .whitespacesAndNewlines)
+    //     guard !trimmed.isEmpty else {
+    //         editTagError = .emptyName
+    //         return
+    //     }
+
+    //     guard let tag = selectedTag else {
+    //         editTagError = .tagNotFound
+    //         return
+    //     }
+
+    //     if tag.name == trimmed {
+    //         isShowingTagEditSheet = false
+    //         return
+    //     }
+
+    //     if tags.contains(where: {$0.name == trimmed && $0.uuid != tag.uuid}) {
+    //         editTagError = .duplicateTag
+    //         return
+    //     }
+
+    //     noteService.updateTag(tag, newName: trimmed)
+    //     saveContextWithErrorHandling(operation: "save edited tag")
+        
+    //     editTagError = nil
+    //     isShowingTagEditSheet = false
+    // }
+
+    func addNewTag() {
+        let trimmed = newTagName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else {
+            addTagErrorMessage = "タグ名が空です。"
+            return
+        }
+
+        if tags.contains(where: { $0.name == trimmed }) {
+            addTagErrorMessage = "同じ名前のタグが既に存在します。"
+            return
+        }
+
+        let newTag = noteService.createTag(name: trimmed)
+        saveContextWithErrorHandling(operation: "save new tag")
+
+        addTagErrorMessage = ""
+        newTagName = ""
+        fetchData()
+        selectedTag = newTag
+
+        showingAddTagModal = false // 成功時にモーダルが閉じる
+    }
+
     func fetchData() {
         self.tags = noteService.fetchTags(predicate: nil, sortDescriptors: nil)
         if !self.tags.isEmpty {
@@ -245,32 +309,32 @@ class NoteListViewModel: ObservableObject {
         fetchNotes(searchText: "", selectedTag: self.selectedTag)
     }
     
-    func addNewTag() {
-        let name = newTagName.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !name.isEmpty else {
-            addTagError = TagError.emptyTagName
-            return
-        }
+    // func addNewTag() {
+    //     let name = newTagName.trimmingCharacters(in: .whitespacesAndNewlines)
+    //     guard !name.isEmpty else {
+    //         addTagError = TagError.emptyTagName
+    //         return
+    //     }
         
-        let existsTagNames = tags.compactMap{ $0.name }
-        if existsTagNames.contains(newTagName) {
-            addTagError = TagError.duplicateTag
-            return
-        }
+    //     let existsTagNames = tags.compactMap{ $0.name }
+    //     if existsTagNames.contains(newTagName) {
+    //         addTagError = TagError.duplicateTag
+    //         return
+    //     }
         
-        let newTag = noteService.createTag(name: newTagName)
+    //     let newTag = noteService.createTag(name: newTagName)
         
-        do {
-            try noteService.saveContext()
-            addTagError = nil
-            newTagName = ""
-            self.selectedTag = newTag
-            fetchDataAndSelectLastTag()
-        } catch {
-            addTagError = TagError.unknownError
-            logError("save new tag", error: error)
-        }
-    }
+    //     do {
+    //         try noteService.saveContext()
+    //         addTagError = nil
+    //         newTagName = ""
+    //         self.selectedTag = newTag
+    //         fetchDataAndSelectLastTag()
+    //     } catch {
+    //         addTagError = TagError.unknownError
+    //         logError("save new tag", error: error)
+    //     }
+    // }
     
     func moveNotes(fromOffsets: IndexSet, toOffset: Int) {
         var updated = notes
