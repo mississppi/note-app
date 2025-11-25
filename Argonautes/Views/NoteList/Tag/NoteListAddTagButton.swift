@@ -5,7 +5,7 @@ struct NoteListAddTagButton: View {
     
     var body: some View {
         Button{
-            viewModel.showingAddTagModal = true
+            viewModel.startAddingTag()
         } label: {
             HStack(spacing: 8){
                 Image(systemName: "plus")
@@ -24,7 +24,7 @@ struct NoteListAddTagButton: View {
         }
         .buttonStyle(.plain)
         .frame(maxWidth: .infinity)
-        .sheet(isPresented: $viewModel.showingAddTagModal) {
+        .sheet(isPresented: $viewModel.isShowingAddTagSheet) {
             TagAddModalView(viewModel: viewModel)
         }
     }

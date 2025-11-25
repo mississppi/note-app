@@ -22,6 +22,8 @@ struct TagAddModalView: View {
                     .textFieldStyle(.plain)
                     .font(.system(size: 16))
                     .foregroundColor(.primary)
+                    .focused($isNameFocused)
+                    .onSubmit { viewModel.saveAddedTag() }
             }
             .padding(.vertical, 12)
             .background(
@@ -33,24 +35,24 @@ struct TagAddModalView: View {
                     .stroke(Color(hex: "#DDDDDD"), lineWidth: 1)
             )
             
-            Text(viewModel.addTagErrorMessage)
+            Text(viewModel.addTagError?.rawValue ?? "")
                 .font(.caption)
                 .foregroundColor(.red)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.top, 2)
-                .opacity(viewModel.addTagErrorMessage.isEmpty ? 0 : 1)
+                .opacity(viewModel.addTagError == nil ? 0 : 1)
             
             // Buttons (right aligned)
             HStack {
                 Spacer()
                 Button("キャンセル") {
-                    viewModel.showingAddTagModal = false
+                    viewModel.isShowingAddTagSheet = false
                 }
                 .buttonStyle(.plain)
                 .keyboardShortcut(.cancelAction)
                 
                 Button("追加") {
-                    viewModel.addNewTag()
+                    viewModel.saveAddedTag()
                 }
                 .disabled(viewModel.newTagName.isEmpty)
                 .keyboardShortcut(.defaultAction)

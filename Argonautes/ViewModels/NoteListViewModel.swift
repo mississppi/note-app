@@ -47,9 +47,9 @@ class NoteListViewModel: ObservableObject {
     @Published var selectedTagIndex: Int = 0
     @Published var tagTransitionDirection: TagTransitionDirection = .none
 
-    @Published var showingAddTagModal: Bool = false
+    @Published var isShowingAddTagSheet = false
     @Published var newTagName: String = ""
-    @Published var addTagErrorMessage: String = ""
+    @Published var addTagError: TagError? = nil
 
     // MARK: - Tag Editing State
     @Published var isShowingTagEditSheet = false
@@ -189,6 +189,12 @@ class NoteListViewModel: ObservableObject {
     
     // MARK: - Public Methods (Tag Management)
 
+    func startAddingTag() {
+        newTagName = ""
+        addTagError = nil
+        isShowingAddTagSheet = true
+    }
+
     func startEditingSelectedTag() {
         guard let tag = selectedTag else { return }
         tagEditName = tag.name ?? ""
@@ -196,56 +202,56 @@ class NoteListViewModel: ObservableObject {
         isShowingTagEditSheet = true
     }
 
-    // func saveEditedTag() {
-    //     let trimmed = tagEditName.trimmingCharacters(in: .whitespacesAndNewlines)
-    //     guard !trimmed.isEmpty else {
-    //         editTagError = .emptyName
-    //         return
-    //     }
+    func saveEditedTag() {
+        let trimmed = tagEditName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else {
+            editTagError = .emptyTagName
+            return
+        }
 
-    //     guard let tag = selectedTag else {
-    //         editTagError = .tagNotFound
-    //         return
-    //     }
+        guard let tag = selectedTag else {
+            editTagError = .tagNotFound
+            return
+        }
 
-    //     if tag.name == trimmed {
-    //         isShowingTagEditSheet = false
-    //         return
-    //     }
+        if tag.name == trimmed {
+            isShowingTagEditSheet = false
+            return
+        }
 
-    //     if tags.contains(where: {$0.name == trimmed && $0.uuid != tag.uuid}) {
-    //         editTagError = .duplicateTag
-    //         return
-    //     }
+        if tags.contains(where: {$0.name == trimmed && $0.uuid != tag.uuid}) {
+            editTagError = .duplicateTag
+            return
+        }
 
-    //     noteService.updateTag(tag, newName: trimmed)
-    //     saveContextWithErrorHandling(operation: "save edited tag")
+        noteService.updateTag(tag, newName: trimmed)
+        saveContextWithErrorHandling(operation: "save edited tag")
         
-    //     editTagError = nil
-    //     isShowingTagEditSheet = false
-    // }
+        editTagError = nil
+        isShowingTagEditSheet = false
+    }
 
-    func addNewTag() {
+    func saveAddedTag() {
         let trimmed = newTagName.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else {
-            addTagErrorMessage = "タグ名が空です。"
+            addTagError = .emptyTagName
             return
         }
 
         if tags.contains(where: { $0.name == trimmed }) {
-            addTagErrorMessage = "同じ名前のタグが既に存在します。"
+            addTagError = .duplicateTag 
             return
         }
 
         let newTag = noteService.createTag(name: trimmed)
         saveContextWithErrorHandling(operation: "save new tag")
 
-        addTagErrorMessage = ""
+        addTagError = nil
         newTagName = ""
         fetchData()
         selectedTag = newTag
 
-        showingAddTagModal = false // 成功時にモーダルが閉じる
+        isShowingAddTagSheet = false // 成功時にモーダルが閉じる
     }
 
     func fetchData() {
