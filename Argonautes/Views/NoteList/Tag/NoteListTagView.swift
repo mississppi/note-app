@@ -36,7 +36,7 @@ struct NoteListTagView: View {
                         .id(selectedTag.uuid)
                         .contextMenu {
                             Button(action: {
-                                // viewModel.editTag(selectedTag)
+                                viewModel.startEditingSelectedTag()
                             }) {
                                 Text("Edit Tag")
                                 Image(systemName: "pencil")
@@ -58,12 +58,11 @@ struct NoteListTagView: View {
         }
         .frame(height: 75)
         .frame(maxWidth: .infinity)
-        // .sheet(isPresented: $viewModel.showEditModal) {
-        //     TagEditModalView(isPresented: $viewModel.showEditModal, tagName: $viewModel.newTagName, viewModel: viewModel) {
-        //         if let tag =  viewModel.selectedTag {
-        //             selectedTag.name = viewModel.newTagName
-        //         }
-        //     }
-        // }
+        .sheet(isPresented: $viewModel.isShowingTagEditSheet) {
+            TagEditModalView(
+                tagName: $viewModel.editTagName,
+                viewModel: viewModel
+            )
+        }
     }
 }

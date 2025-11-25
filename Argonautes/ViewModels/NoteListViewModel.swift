@@ -53,7 +53,7 @@ class NoteListViewModel: ObservableObject {
 
     // MARK: - Tag Editing State
     @Published var isShowingTagEditSheet = false
-    @Published var tagEditName: String = ""
+    @Published var editTagName: String = ""
     @Published var editTagError: TagError? = nil
 
     // MARK: - Published Properties (UI State)
@@ -197,13 +197,13 @@ class NoteListViewModel: ObservableObject {
 
     func startEditingSelectedTag() {
         guard let tag = selectedTag else { return }
-        tagEditName = tag.name ?? ""
+        editTagName = tag.name ?? ""
         editTagError = nil
         isShowingTagEditSheet = true
     }
 
     func saveEditedTag() {
-        let trimmed = tagEditName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmed = editTagName.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else {
             editTagError = .emptyTagName
             return
