@@ -35,14 +35,14 @@ struct NoteListNoteArea: View {
         //         viewModel.moveNotes(fromOffsets: fromOffsets, toOffset: toOffset)
         //     }
         // }
-        List {
+        List(selection: selectionBinding) {
             ForEach(viewModel.notes, id: \.self) {
                 note in
                 NoteRowView(note: note)
                     .contentShape(Rectangle())
-                    .onTapGesture {
-                        selectionBinding.wrappedValue = note
-                    }
+                    // .onTapGesture {
+                    //     selectionBinding.wrappedValue = note
+                    // }
                     .contextMenu {
                         NoteListArchiveButton(viewModel: viewModel, note: note)
                     }
@@ -54,7 +54,7 @@ struct NoteListNoteArea: View {
                 viewModel.moveNotes(fromOffsets: fromOffsets, toOffset: toOffset)
             }
         }
-        
+        // .environment(\.editMode, .constant(.active))  // ← 追加: Edit モードを有効化
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
         .background(Color(hex: "EFEFEF"))

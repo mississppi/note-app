@@ -13,7 +13,7 @@ struct NoteDetailView: View {
                     NoteDetailContentView(viewModel: viewModel)
 
                 case .empty:
-                    EmptyNoteView()
+                    EmptyNoteView(viewModel: viewModel)
             }
         }
     }
