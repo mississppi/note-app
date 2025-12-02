@@ -81,7 +81,8 @@ class NoteListViewModel: ObservableObject {
         $searchText
             .debounce(for: .milliseconds(NoteListViewModelConstants.searchDebounceMilliseconds), scheduler: RunLoop.main)
             .sink { [weak self] searchText in
-                self?.fetchNotes(searchText: searchText)
+                guard let self = self else { return }
+                self.fetchNotes(searchText: searchText, selectedTag: self.selectedTag)
             }
             .store(in: &cancellabels)
         
@@ -257,9 +258,12 @@ class NoteListViewModel: ObservableObject {
     func fetchData() {
         self.tags = noteService.fetchTags(predicate: nil, sortDescriptors: nil)
         if !self.tags.isEmpty {
+            print("fugaaaaaaaaaaaaaaashi")
             self.selectedTag = self.tags[0]
+            print(self.selectedTag)
             self.selectedTagIndex = 0
             fetchNotes(searchText: "", selectedTag: self.selectedTag)
+            print(notes.count)
         } else {
             self.selectedTag = nil
             self.selectedTagIndex = 0
@@ -385,9 +389,14 @@ class NoteListViewModel: ObservableObject {
         selectedTag: Tag? = nil,
         statusFilter: NoteStatus = .active
     ) {
+        print("🔴 fetchNotes called")
+        print("🔴 searchText: '\(searchText)'")
+        print("🔴 selectedTag: \(selectedTag?.name ?? "nil")")
+        print("🔴 Call stack:")
+        Thread.callStackSymbols.forEach { print("  \($0)") }  // ← 呼び出し元のスタックトレース
+        print("---")
         let searchPredicate = createSearchPredicate(for: searchText)
         let tagPredicate = createTagPredicate(for: selectedTag)
-        
         let statusPredicate = createStatusPredicate(for: statusFilter)
         
         let finalPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [searchPredicate, tagPredicate, statusPredicate].compactMap { $0 })

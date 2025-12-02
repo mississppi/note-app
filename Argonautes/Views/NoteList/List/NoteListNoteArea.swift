@@ -54,7 +54,7 @@ struct NoteListNoteArea: View {
         .background(Color(hex: "EFEFEF"))
         // .tint(.clear)
         .onAppear{
-            viewModel.fetchNotes()
+            // viewModel.fetchNotes()
         }
     }
 }
