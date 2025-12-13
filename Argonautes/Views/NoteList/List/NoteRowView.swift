@@ -31,9 +31,15 @@ struct NoteRowView: View {
             }
             Spacer()
         }
-        .listRowInsets(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
+        .frame(maxWidth: .infinity)
+        .padding(.horizontal, 8)
         .frame(height: 55)
+        .background(Color.clear)
+        .contentShape(Rectangle())
+        .listRowInsets(EdgeInsets())
         .listRowSeparator(.hidden)
+        // .listRowInsets(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
+        // .background(Color(hex: "#EFEFEF"))
     }
     
     private var truncatedTitle: String {
