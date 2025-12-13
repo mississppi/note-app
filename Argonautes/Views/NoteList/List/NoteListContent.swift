@@ -36,6 +36,9 @@ struct NoteListContent: View {
                             ? Color(hex: "#E6E6E6") 
                             : Color.clear
                     )
+                    .opacity(draggedNote?.objectID == note.objectID ? 0.5 : 1.0)
+                    .scaleEffect(draggedNote?.objectID == note.objectID ? 0.98 : 1.0)
+                    .animation(.easeInOut(duration:0.2), value: draggedNote)
                     .onTapGesture {
                         viewModel.selectNote(
                             note,
@@ -85,7 +88,11 @@ struct NoteDropDelegate: DropDelegate {
                 draggedNote != note,
                 let from = viewModel.notes.firstIndex(of: draggedNote),
                 let to = viewModel.notes.firstIndex(of: note) else {
-            return}
-        viewModel.moveNotes(fromOffsets: IndexSet(integer: from), toOffset: to > from ? to + 1 : to)
+            return
+        }
+
+        withAnimation(.easeInOut(duration: 0.25)){
+            viewModel.moveNotes(fromOffsets: IndexSet(integer: from), toOffset: to > from ? to + 1 : to)
+        }
     }
 }
