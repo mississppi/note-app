@@ -18,7 +18,7 @@ struct TagContextMenu: View {
         Button(role: .destructive, action: {
             showDeleteAlert = true
         }) {
-            Text("Delete Tag")
+            Text("Move to Trash")
             Image(systemName: "trash")
         }
         .alert("タグを削除", isPresented: $showDeleteAlert) {
