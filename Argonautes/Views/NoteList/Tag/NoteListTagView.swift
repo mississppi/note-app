@@ -28,26 +28,11 @@ struct NoteListTagView: View {
             
             Spacer()
             
-            Group {
-                if let  selectedTag = viewModel.selectedTag {
-                    Text(selectedTag.name ?? "No Tag")
-                        .font(.system(size: 15))
-                        .transition(tagTransition)
-                        .id(selectedTag.uuid)
-                        .contextMenu {
-                            Button(action: {
-                                viewModel.startEditingSelectedTag()
-                            }) {
-                                Text("Edit Tag")
-                                Image(systemName: "pencil")
-                            }
-                        }
-                } else {
-                    Text("No Tag")
-                        .font(.system(size: 15))
-                }
-            }
-            .frame(width: 100, alignment: .center)
+            TagDisplayView(
+                tag: viewModel.selectedTag,viewModel: viewModel)
+                .frame(width: 100, alignment: .center)
+                .transition(tagTransition)
+                .id(viewModel.selectedTag?.uuid)
             
             Spacer()
             NoteListChevronButton(direction: .right) {
