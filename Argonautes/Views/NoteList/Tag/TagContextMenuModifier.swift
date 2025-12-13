@@ -16,3 +16,9 @@ struct TagContextMenuModifier: ViewModifier {
         }
     }
 }
+
+extension View {
+    func tagContextMenu(viewModel: NoteListViewModel, tag: Tag?) -> some View {
+        modifier(TagContextMenuModifier(viewModel: viewModel, tag: tag))
+    }
+}

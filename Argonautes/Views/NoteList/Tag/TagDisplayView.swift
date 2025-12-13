@@ -7,7 +7,7 @@ struct TagDisplayView: View {
     var body: some View {
         Text(displayName)
             .font(.system(size: 15))
-            .modifier(TagContextMenuModifier(viewModel: viewModel, tag: tag))
+            .tagContextMenu(viewModel: viewModel, tag: tag)
     }
 
     private var displayName: String {
