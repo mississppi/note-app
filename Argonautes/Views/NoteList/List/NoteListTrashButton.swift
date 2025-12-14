@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct NoteListArchiveButton: View {
+struct NoteListTrashButton: View {
     @ObservedObject var viewModel: NoteListViewModel
     let note: Note
 

@@ -8,7 +8,7 @@ enum DetailContentType{
 
     /// ゴミ箱（アーカイブ）一覧を表示
     /// - isShowingTrash が true の場合
-    case archiveList
+    case trashList
 
     /// 空の状態を表示
     /// - ノートが選択されていない場合
@@ -17,7 +17,7 @@ enum DetailContentType{
     @ViewBuilder
     func view(viewModel: NoteListViewModel) -> some View {
         switch self {
-            case .archiveList:
+            case .trashList:
                 TrashListView(viewModel: viewModel)
             case .noteDetail:
                 NoteDetailContentView(viewModel: viewModel)

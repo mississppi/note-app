@@ -171,17 +171,6 @@ class NoteListViewModel: ObservableObject {
         saveContextWithErrorHandling(operation: "save new note")
         fetchNotes(searchText: searchText, selectedTag: selectedTag)
     }
-    
-    // func archiveNote(note: Note){
-    //     noteService.archiveNote(note)
-    //     saveContextWithErrorHandling(operation: "archive note")
-    // }
-    // func archiveNote(note: Note){
-    //     noteService.archiveNote(note)
-    //     saveContextWithErrorHandling(operation: "archive note")
-    //     fetchNotes(searchText: searchText, selectedTag: selectedTag, statusFilter: .active)
-    //     select(note: self.notes.first, userInitiated: false)
-    // }
 
     func trashNote(note: Note) {
         noteService.trashNote(note)
@@ -489,7 +478,7 @@ private extension NoteListViewModel {
     // MARK: UI State Management
     func updateDetailContentType() {
         if isShowingTrash {
-            detailContentType = .archiveList
+            detailContentType = .trashList
         } else if selectedNote != nil {
             detailContentType = .noteDetail
         } else {

@@ -56,7 +56,7 @@ struct NoteListContent: View {
                         viewModel: viewModel
                     ))
                     .contextMenu {
-                        NoteListArchiveButton(viewModel: viewModel, note: note)
+                        NoteListTrashButton(viewModel: viewModel, note: note)
                     }
             }
             .onMove { fromOffsets, toOffset in
