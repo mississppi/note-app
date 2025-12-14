@@ -66,6 +66,12 @@ struct NoteListContent: View {
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
         .background(Color(hex: "EFEFEF"))
+        .onAppear {
+            print("NoteLIstContent onAppear")
+            for(index, note) in viewModel.notes.enumerated() {
+                print("🟢 Note \(index): \(note.title ?? "無題"), isTrashed: \(note.isTrashed)")
+            }
+        }
     }
 }
 

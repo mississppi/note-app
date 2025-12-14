@@ -10,6 +10,8 @@ struct PersistenceController {
         print("--- persistence init ----")
         let currentDate = Date()
         print(currentDate)
+
+
         var managedObjectModel: NSManagedObjectModel? = nil
         if inMemory {
             print("--- persistence inmemory ----")
@@ -27,6 +29,12 @@ struct PersistenceController {
 
         container = NSPersistentContainer(name: "Argonautes", managedObjectModel: managedObjectModel!)
 
+        if let storeURL = container.persistentStoreDescriptions.first?.url {
+            print("Persistent Store URL: \(storeURL)")
+        } else {
+            print("Persistent Store URL: nil")
+        }
+        
         print("--- persistence checkpoint003 ----")
         if inMemory {
             print("--- persistence 29 - inmemory ----")
@@ -58,7 +66,6 @@ struct PersistenceController {
             _ = service.createNote(
                 title: "はじめまして！",
                 content: "これは最初のノートです。このノートを編集したり、新しいノートを作成して、アイデアを整理しましょう。",
-                status: .active,
                 tag: defaultTag
             )
             do {

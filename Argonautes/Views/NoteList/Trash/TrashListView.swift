@@ -1,10 +1,8 @@
 import SwiftUI
 import CoreData
 
-/// archiveされたノートの一覧を表示するView
-/// 
-/// 
-struct ArchiveListView: View {
+/// ゴミ箱のノート一覧を表示するView
+struct TrashListView: View {
     @ObservedObject var viewModel: NoteListViewModel
     
     var body: some View {
@@ -22,7 +20,7 @@ struct ArchiveListView: View {
 
             Divider()
 
-            if viewModel.archivedNotes.isEmpty {
+            if viewModel.trashedNotes.isEmpty {
                 VStack(spacing: 16) {
                     Image(systemName: "trash")
                         .font(.system(size: 60))
@@ -34,14 +32,14 @@ struct ArchiveListView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
-                List(viewModel.archivedNotes, id: \.self) { note in 
-                    ArchiveRowView(note: note, viewModel: viewModel)
+                List(viewModel.trashedNotes, id: \.self) { note in 
+                    TrashRowView(note: note, viewModel: viewModel)
                 }
                 .listStyle(.plain)
             }
         }
         .onAppear {
-            viewModel.fetchArchivedNotes()
+            viewModel.fetchTrashedNotes()
         }
     }
 

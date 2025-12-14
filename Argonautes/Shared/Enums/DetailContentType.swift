@@ -18,7 +18,7 @@ enum DetailContentType{
     func view(viewModel: NoteListViewModel) -> some View {
         switch self {
             case .archiveList:
-                ArchiveListView(viewModel: viewModel)
+                TrashListView(viewModel: viewModel)
             case .noteDetail:
                 NoteDetailContentView(viewModel: viewModel)
             case .empty:

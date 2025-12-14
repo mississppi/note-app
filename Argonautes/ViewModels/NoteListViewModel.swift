@@ -67,7 +67,7 @@ class NoteListViewModel: ObservableObject {
             updateDetailContentType()
         }
     }
-    @Published var archivedNotes: [Note] = []
+    @Published var trashedNotes: [Note] = []
     
     // MARK: - Private Properties
 
@@ -101,7 +101,8 @@ class NoteListViewModel: ObservableObject {
             .store(in: &cancellabels)
         
         //初回起動時に1件目を選択状態にする
-        fetchDataAndSelectFirstNote()
+        // fetchDataAndSelectFirstNote()
+        fetchNotes(searchText: "", selectedTag: nil)
     }
     
     // MARK: - Public Methods
@@ -160,7 +161,6 @@ class NoteListViewModel: ObservableObject {
         let newNote = noteService.createNote(
             title: NoteListViewModelConstants.newNoteTitle,
             content: "",
-            status: .active,
             tag: selectedTag
         )
         
@@ -176,10 +176,17 @@ class NoteListViewModel: ObservableObject {
     //     noteService.archiveNote(note)
     //     saveContextWithErrorHandling(operation: "archive note")
     // }
-    func archiveNote(note: Note){
-        noteService.archiveNote(note)
-        saveContextWithErrorHandling(operation: "archive note")
-        fetchNotes(searchText: searchText, selectedTag: selectedTag, statusFilter: .active)
+    // func archiveNote(note: Note){
+    //     noteService.archiveNote(note)
+    //     saveContextWithErrorHandling(operation: "archive note")
+    //     fetchNotes(searchText: searchText, selectedTag: selectedTag, statusFilter: .active)
+    //     select(note: self.notes.first, userInitiated: false)
+    // }
+
+    func trashNote(note: Note) {
+        noteService.trashNote(note)
+        saveContextWithErrorHandling(operation: "trash note")
+        fetchNotes(searchText: searchText, selectedTag: selectedTag)
         select(note: self.notes.first, userInitiated: false)
     }
     
@@ -260,7 +267,6 @@ class NoteListViewModel: ObservableObject {
         if !self.tags.isEmpty {
             print("fugaaaaaaaaaaaaaaashi")
             self.selectedTag = self.tags[0]
-            print(self.selectedTag)
             self.selectedTagIndex = 0
             fetchNotes(searchText: "", selectedTag: self.selectedTag)
             print(notes.count)
@@ -319,30 +325,16 @@ class NoteListViewModel: ObservableObject {
         fetchNotes(searchText: "", selectedTag: self.selectedTag)
     }
     
-    // func addNewTag() {
-    //     let name = newTagName.trimmingCharacters(in: .whitespacesAndNewlines)
-    //     guard !name.isEmpty else {
-    //         addTagError = TagError.emptyTagName
-    //         return
-    //     }
-        
-    //     let existsTagNames = tags.compactMap{ $0.name }
-    //     if existsTagNames.contains(newTagName) {
-    //         addTagError = TagError.duplicateTag
-    //         return
-    //     }
-        
-    //     let newTag = noteService.createTag(name: newTagName)
-        
+    // func deleteTagAndMoveNotesToTrash(_ tag: Tag) {
     //     do {
-    //         try noteService.saveContext()
-    //         addTagError = nil
-    //         newTagName = ""
-    //         self.selectedTag = newTag
-    //         fetchDataAndSelectLastTag()
+    //         try noteService.deleteTagWithNotes(tag)
+
+    //         selectedTag = nil
+    //         selectedNote = nil
+
+    //         fetchData()
     //     } catch {
-    //         addTagError = TagError.unknownError
-    //         logError("save new tag", error: error)
+    //         print("Error deleting tag and moving notes to trash: \(error)")
     //     }
     // }
     
@@ -353,32 +345,25 @@ class NoteListViewModel: ObservableObject {
         saveNotesOrder()
     }
 
-    // MARK: - Public Methods (Archive Management)
+    // MARK: - Public Methods (Trash Management)
 
-    func fetchArchivedNotes() {
-        let predicate = NSPredicate(format: "status == %d", NoteStatus.archived.rawValue)
+    func fetchTrashedNotes() {
+        let predicate = NSPredicate(format: "isTrashed == YES")
         let sortDescriptors = [NSSortDescriptor(keyPath: \Note.updatedAt, ascending: false)]
-        archivedNotes = noteService.fetchNotes(predicate: predicate, sortDescriptors: sortDescriptors)
+        trashedNotes = noteService.fetchNotes(predicate: predicate, sortDescriptors: sortDescriptors)
     }
 
-    func restoreNoteFromArchive(note: Note) {
-        noteService.updateNote(
-            note, 
-            newTitle:nil, 
-            newContent: nil,
-            newStatus: .active,
-            newTag: nil,
-            newCursorPosition: nil,
-            newOrder: nil
-        )
-        saveContextWithErrorHandling(operation: "restore note from archive")
-        fetchArchivedNotes()
+    func restoreNoteFromTrash(note: Note) {
+        note.isTrashed = false
+        note.trashedAt = nil
+        saveContextWithErrorHandling(operation: "restore note from trash")
+        fetchTrashedNotes()
     }
 
     func deleteNotePermanently(note: Note) {
         noteService.deleteNote(note)
         saveContextWithErrorHandling(operation: "delete note permanently")
-        fetchArchivedNotes()
+        fetchTrashedNotes()
     }
 
 
@@ -386,20 +371,30 @@ class NoteListViewModel: ObservableObject {
 
     func fetchNotes(
         searchText: String = "",
-        selectedTag: Tag? = nil,
-        statusFilter: NoteStatus = .active
+        selectedTag: Tag? = nil
     ) {
         print("🔴 fetchNotes called")
         print("🔴 searchText: '\(searchText)'")
         print("🔴 selectedTag: \(selectedTag?.name ?? "nil")")
-        print("🔴 Call stack:")
-        Thread.callStackSymbols.forEach { print("  \($0)") }  // ← 呼び出し元のスタックトレース
-        print("---")
+        // print("🔴 Call stack:")
+        // Thread.callStackSymbols.forEach { print("  \($0)") }  // ← 呼び出し元のスタックトレース
+        // print("---")
         let searchPredicate = createSearchPredicate(for: searchText)
         let tagPredicate = createTagPredicate(for: selectedTag)
-        let statusPredicate = createStatusPredicate(for: statusFilter)
+        let trashedPredicate = NSPredicate(format: "isTrashed == NO")
+
+        print("🔴 searchPredicate: \(String(describing: searchPredicate))")
+        print("🔴 tagPredicate: \(String(describing: tagPredicate))")
+        print("🔴 trashedPredicate: \(trashedPredicate)")
+
+
+        let finalPredicate = NSCompoundPredicate(
+            andPredicateWithSubpredicates: [searchPredicate, tagPredicate, trashedPredicate].compactMap { $0 }
+        )
         
-        let finalPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [searchPredicate, tagPredicate, statusPredicate].compactMap { $0 })
+        print("🔴 finalPredicate: \(finalPredicate)")
+        print("🔴 Calling noteService.fetchNotes...")
+    
         self.notes = noteService.fetchNotes(
             predicate: finalPredicate, 
             sortDescriptors: [NSSortDescriptor(keyPath: \Note.order, ascending: true)]
@@ -428,10 +423,6 @@ private extension NoteListViewModel {
         return NSPredicate(format: "tag == %@", tag)
     }
     
-    func createStatusPredicate(for status: NoteStatus) -> NSPredicate? {
-        return NSPredicate(format: "status == %d", status.rawValue)
-    }
-    
     // MARK: Helper Methods
 
     func getSelectedTagIndex() -> Int? {
@@ -448,7 +439,7 @@ private extension NoteListViewModel {
         guard let note = selectedNote else {return}
         guard note.title != newTitle else { return }
 
-        noteService.updateNote(note, newTitle: newTitle, newContent: nil, newStatus: nil, newTag: nil, newCursorPosition: nil, newOrder: nil)
+        noteService.updateNote(note, newTitle: newTitle, newContent: nil, newTag: nil, newCursorPosition: nil, newOrder: nil)
         
         saveContextWithErrorHandling(operation: "auto-save title")
     }
@@ -456,7 +447,7 @@ private extension NoteListViewModel {
     func autoSaveContent(newContent: String) {
         guard let note = selectedNote else {return}
         guard note.content != newContent else { return }
-        noteService.updateNote(note, newTitle: nil, newContent: newContent, newStatus: nil, newTag: nil, newCursorPosition: nil, newOrder: nil)
+        noteService.updateNote(note, newTitle: nil, newContent: newContent, newTag: nil, newCursorPosition: nil, newOrder: nil)
         
         saveContextWithErrorHandling(operation: "auto-save content")
     }
@@ -484,7 +475,6 @@ private extension NoteListViewModel {
                     note,
                     newTitle: nil,
                     newContent: nil,
-                    newStatus: nil,
                     newTag: nil,
                     newCursorPosition: nil,
                     newOrder: newOrder

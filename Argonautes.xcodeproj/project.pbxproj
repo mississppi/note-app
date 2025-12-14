@@ -29,22 +29,9 @@
 		123BE9852E2FBF1200902BDA /* ArgonautesUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ArgonautesUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		123BE9B32E34C57000902BDA /* Exceptions for "Argonautes" folder in "ArgonautesTests" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Models/Enums/NoteStatus.swift,
-			);
-			target = 123BE97A2E2FBF1200902BDA /* ArgonautesTests */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		123BE9672E2FBF1000902BDA /* Argonautes */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				123BE9B32E34C57000902BDA /* Exceptions for "Argonautes" folder in "ArgonautesTests" target */,
-			);
 			path = Argonautes;
 			sourceTree = "<group>";
 		};

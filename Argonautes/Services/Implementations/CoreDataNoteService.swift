@@ -14,14 +14,28 @@ class CoreDataNoteService: NoteDataService {
         request.predicate = predicate
         request.sortDescriptors = sortDescriptors
         do {
-            return try context.fetch(request)
+            let results = try context.fetch(request)
+            print("🟡 ✅ Fetch succeeded!")
+            print("🟡 Fetched \(results.count) notes from Core Data")
+            
+            for (index, note) in results.enumerated() {
+                print("🟡 Note \(index):")
+                print("   - title: '\(note.title ?? "無題")'")
+                print("   - isTrashed: \(note.isTrashed)")
+                print("   - tag: \(note.tag?.name ?? "nil")")
+                print("   - order: \(note.order)")
+            }
+            
+            print("🟡 ===== CoreDataNoteService.fetchNotes END =====")
+            return results
         } catch {
-            print("Error fetching notes: \(error)")
+            print("🟡 ❌ Error fetching notes: \(error)")
+            print("🟡 ===== CoreDataNoteService.fetchNotes END (ERROR) =====")
             return []
         }
     }
     
-    func createNote(title: String, content: String, status: NoteStatus, tag: Tag?) -> Note{
+    func createNote(title: String, content: String, tag: Tag?) -> Note{
         let newNote = Note(context: context)
 
         newNote.title = title
@@ -30,7 +44,9 @@ class CoreDataNoteService: NoteDataService {
         newNote.updatedAt = Date()
         newNote.uuid = UUID()
         newNote.cursorPosition = Int32(0)
-        newNote.status = status.rawValue
+
+        newNote.isTrashed = false
+        newNote.trashedAt = nil
 
         let fetchRequest: NSFetchRequest<Note> = Note.fetchRequest()
         fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Note.order, ascending: false)]
@@ -50,7 +66,6 @@ class CoreDataNoteService: NoteDataService {
         _ note: Note,
         newTitle: String?,
         newContent: String?,
-        newStatus: NoteStatus?,
         newTag: Tag?,
         newCursorPosition: Int?,
         newOrder: Int64?
@@ -66,10 +81,6 @@ class CoreDataNoteService: NoteDataService {
         if let newContent = newContent, newContent != note.content {
             note.content = newContent
             shouldUpdateTimeStamp = true
-        }
-        
-        if let newStatus = newStatus {
-            note.status = newStatus.rawValue
         }
         
         if let newTag = newTag {
@@ -88,10 +99,10 @@ class CoreDataNoteService: NoteDataService {
             note.updatedAt = Date()
         }
     }
-    
-    func archiveNote(_ note: Note) {
-        note.status = NoteStatus.archived.rawValue
 
+    func trashNote(_ note: Note) {
+        note.isTrashed = true
+        note.trashedAt = Date()
     }
     
     func deleteNote(_ note: Note){
@@ -154,4 +165,19 @@ class CoreDataNoteService: NoteDataService {
     func deleteTag(_ tag: Tag) {
         context.delete(tag)
     }
+
+    // func deleteTagWithNotes(_ tag: Tag) throws {
+    //     let tagName = tag.name ?? "Unknown"
+    //     let notes = tag.notes?.allObjects as? [Note] ?? []
+
+    //     for note in notes {
+    //         note.isArchived = true
+    //         note.archivedAt = Date()
+    //         note.deletedTagName = tagName
+    //         // note.removeFromTags(tag)
+    //     }
+
+    //     deleteTag(tag)
+    //     try saveContext()
+    // }
 }

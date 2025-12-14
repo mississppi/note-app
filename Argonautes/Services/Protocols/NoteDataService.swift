@@ -5,19 +5,18 @@ protocol NoteDataService: AnyObject {
 
     func fetchNotes(predicate: NSPredicate?, sortDescriptors: [NSSortDescriptor]?) -> [Note]
     
-    func createNote(title: String, content: String, status: NoteStatus, tag: Tag?) -> Note
+    func createNote(title: String, content: String, tag: Tag?) -> Note
     
     func updateNote(
         _ note: Note,
         newTitle: String?,
         newContent: String?,
-        newStatus: NoteStatus?,
         newTag: Tag?,
         newCursorPosition: Int?,
         newOrder: Int64?
     )
-    
-    func archiveNote(_ note: Note)
+
+    func trashNote(_ note: Note)
     
     func deleteNote(_ note: Note)
     
@@ -32,5 +31,7 @@ protocol NoteDataService: AnyObject {
     func updateTag(_ tag: Tag, newName: String)
     
     func deleteTag(_ tag: Tag)
+
+    // func deleteTagWithNotes(_ tag: Tag) throws
 
 }
