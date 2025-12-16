@@ -3,7 +3,6 @@ import SwiftUI
 struct TagContextMenu: View {
     let viewModel: NoteListViewModel
     let tag: Tag
-    @State private var showDeleteAlert = false
 
     var body: some View {
         Button(action: {
@@ -16,18 +15,10 @@ struct TagContextMenu: View {
         Divider()
 
         Button(role: .destructive, action: {
-            showDeleteAlert = true
+            viewModel.startDeletingTag(tag)
         }) {
             Text("Move to Trash")
             Image(systemName: "trash")
-        }
-        .alert("タグを削除", isPresented: $showDeleteAlert) {
-            Button("削除", role: .destructive) {
-                print("hoge")
-            }
-            Button("キャンセル", role: .cancel) {}
-        } message: {
-            Text("「\(tag.name ?? "")」とそのタグに属する全てのノートを削除しますか？")
         }
     }
 }

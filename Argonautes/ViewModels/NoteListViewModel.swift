@@ -56,6 +56,9 @@ class NoteListViewModel: ObservableObject {
     @Published var editTagName: String = ""
     @Published var editTagError: TagError? = nil
 
+    @Published var isShowingTagDeleteSheet = false
+    @Published var tagToDelete: Tag?
+
     // MARK: - Published Properties (UI State)
 
     //Detail領域に表示するコンテンツの種類
@@ -226,6 +229,27 @@ class NoteListViewModel: ObservableObject {
         
         editTagError = nil
         isShowingTagEditSheet = false
+    }
+
+    func startDeletingTag(_ tag: Tag) {
+        tagToDelete = tag
+        isShowingTagDeleteSheet = true
+    }
+
+    func confirmDeleteTag() {
+        guard let tag = tagToDelete else { return }
+        deleteTag(tag)
+        isShowingTagDeleteSheet = false
+        tagToDelete = nil
+    }
+
+    func cancelDeleteTag() {
+        isShowingTagDeleteSheet = false
+        tagToDelete = nil
+    }
+
+    func deleteTag(_ tag: Tag) {
+        print("delete tag")
     }
 
     func saveAddedTag() {

@@ -49,5 +49,18 @@ struct NoteListTagView: View {
                 viewModel: viewModel
             )
         }
+        .sheet(isPresented: $viewModel.isShowingTagDeleteSheet) {
+            if let tag = viewModel.tagToDelete {
+                TagDeleteConfirmationView(
+                    tagName: tag.name ?? "",
+                    onConfirm: {
+                        viewModel.confirmDeleteTag()
+                    },
+                    onCancel: {
+                        viewModel.cancelDeleteTag()
+                    }
+                )
+            }
+        }
     }
 }
