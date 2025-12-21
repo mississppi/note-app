@@ -231,7 +231,12 @@ class NoteListViewModel: ObservableObject {
         isShowingTagEditSheet = false
     }
 
+    func canDeleteTag(_ tag: Tag) -> Bool {
+        return tags.count > 1
+    }
+
     func startDeletingTag(_ tag: Tag) {
+        guard canDeleteTag(tag) else { return }
         tagToDelete = tag
         isShowingTagDeleteSheet = true
     }
@@ -249,7 +254,24 @@ class NoteListViewModel: ObservableObject {
     }
 
     func deleteTag(_ tag: Tag) {
-        print("delete tag")
+        // タグに紐づくすべてのノートを取得（現在表示中のnotesだけでなく、全体から取得）
+        let allNotes = noteService.fetchNotes(predicate: nil, sortDescriptors: nil)
+        let notesWithTag = allNotes.filter { $0.tag == tag && !$0.isTrashed }
+
+        // 各ノートをゴミ箱に移動
+        for note in notesWithTag {
+            noteService.trashNote(note)
+            note.deletedTagName = tag.name
+        }
+
+        // タグを削除
+        noteService.deleteTag(tag)
+        
+        // 保存
+        saveContextWithErrorHandling(operation: "delete tag")
+        
+        // データを再取得
+        fetchData()
     }
 
     func saveAddedTag() {

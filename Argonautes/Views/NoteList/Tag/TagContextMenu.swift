@@ -20,5 +20,6 @@ struct TagContextMenu: View {
             Text("Move to Trash")
             Image(systemName: "trash")
         }
+        .disabled(!viewModel.canDeleteTag(tag))
     }
 }
