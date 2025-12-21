@@ -4,7 +4,7 @@ struct NoteListAddTagButton: View {
     @ObservedObject var viewModel: NoteListViewModel
     
     var body: some View {
-        Button{
+        Button {
             viewModel.startAddingTag()
         } label: {
             HStack(spacing: 8){
@@ -23,6 +23,8 @@ struct NoteListAddTagButton: View {
             .contentShape(RoundedRectangle(cornerRadius: 8))
         }
         .buttonStyle(.plain)
+        .disabled(!viewModel.canAddTag())
+        .opacity(viewModel.canAddTag() ? 1.0 : 0.5)
         .frame(maxWidth: .infinity)
         .sheet(isPresented: $viewModel.isShowingAddTagSheet) {
             TagAddModalView(viewModel: viewModel)

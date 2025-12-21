@@ -9,4 +9,6 @@ enum NoteListViewModelConstants {
     static let titleDebounceMilliseconds = 500
     /// コンテンツ自動保存のデバウンス時間（秒）
     static let contentDebounceSeconds: TimeInterval  = 1.0
+    /// タグの最大数
+    static let maxTagCount = 100
 }

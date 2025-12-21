@@ -189,7 +189,12 @@ class NoteListViewModel: ObservableObject {
     
     // MARK: - Public Methods (Tag Management)
 
+    func canAddTag() -> Bool {
+        return tags.count < NoteListViewModelConstants.maxTagCount
+    }
+
     func startAddingTag() {
+        guard canAddTag() else { return }
         newTagName = ""
         addTagError = nil
         isShowingAddTagSheet = true
