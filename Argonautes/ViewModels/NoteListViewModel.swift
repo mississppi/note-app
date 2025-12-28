@@ -296,8 +296,18 @@ class NoteListViewModel: ObservableObject {
 
         addTagError = nil
         newTagName = ""
-        fetchData()
+        
+        // データを再取得
+        self.tags = noteService.fetchTags(predicate: nil, sortDescriptors: nil)
+        
+        // 作成したタグを選択
         selectedTag = newTag
+        if let index = tags.firstIndex(of: newTag) {
+            selectedTagIndex = index
+        }
+        
+        // 選択したタグのノートを取得
+        fetchNotes(searchText: "", selectedTag: selectedTag)
 
         isShowingAddTagSheet = false // 成功時にモーダルが閉じる
     }
