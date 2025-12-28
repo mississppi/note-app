@@ -3,6 +3,7 @@ import SwiftUI
 struct TrashRowView: View {
     let note: Note
     @ObservedObject var viewModel: NoteListViewModel
+    @State private var showingDeleteConfirmation = false
 
     var body: some View {
         HStack(spacing: 12) {
@@ -19,16 +20,53 @@ struct TrashRowView: View {
                 // }
 
                 if let trashedAt = note.trashedAt {
-                    Text("削除日 : \(trashedAt, style: .relative)")
+                    Text("削除日: \(trashedAt, format: .dateTime.year().month().day().hour().minute())")
                         .font(.system(size: 12))
                         .foregroundColor(.gray)
                 }
             }
 
             Spacer()
+            
+            // ボタンエリア
+            HStack(spacing: 8) {
+                // 復元ボタン
+                Button(action: {
+                    viewModel.restoreNoteFromTrash(note: note)
+                }) {
+                    Image(systemName: "arrow.uturn.left")
+                        .foregroundColor(.blue)
+                        .frame(width: 24, height: 24)
+                }
+                .buttonStyle(.plain)
+                .help("復元")
+
+                // 完全削除ボタン
+                Button(action: {
+                    showingDeleteConfirmation = true
+                }) {
+                    Image(systemName: "trash.fill")
+                        .foregroundColor(.red)
+                        .frame(width: 24, height: 24)
+                }
+                .buttonStyle(.plain)
+                .help("完全に削除")
+            }
         }
         .padding(.vertical, 8)
         .padding(.horizontal, 12)
+        .sheet(isPresented: $showingDeleteConfirmation) {
+            TrashDeleteConfirmationModalView(
+                noteTitle: note.title ?? "無題",
+                onConfirm: {
+                    viewModel.deleteNotePermanently(note: note)
+                    showingDeleteConfirmation = false
+                },
+                onCancel: {
+                    showingDeleteConfirmation = false
+                }
+            )
+        }
         // .contextMenu {
         //     // 復元ボタン
         //     Button(action: {
