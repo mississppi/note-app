@@ -3,6 +3,7 @@ import SwiftUI
 struct TrashRowView: View {
     let note: Note
     @ObservedObject var viewModel: NoteListViewModel
+    @State private var showingRestoreConfirmation = false
     @State private var showingDeleteConfirmation = false
 
     var body: some View {
@@ -32,7 +33,7 @@ struct TrashRowView: View {
             HStack(spacing: 8) {
                 // 復元ボタン
                 Button(action: {
-                    viewModel.restoreNoteFromTrash(note: note)
+                    showingRestoreConfirmation = true
                 }) {
                     Image(systemName: "arrow.uturn.left")
                         .foregroundColor(.blue)
@@ -55,6 +56,18 @@ struct TrashRowView: View {
         }
         .padding(.vertical, 8)
         .padding(.horizontal, 12)
+        .sheet(isPresented: $showingRestoreConfirmation) {
+            TrashRestoreConfirmationModalView(
+                noteTitle: note.title ?? "無題",
+                onConfirm: {
+                    // viewModel.restoreNoteFromTrash(note: note)
+                    // showingRestoreConfirmation = false
+                },
+                onCancel: {
+                    // showingRestoreConfirmation = false
+                }
+            )
+        }
         .sheet(isPresented: $showingDeleteConfirmation) {
             TrashDeleteConfirmationModalView(
                 noteTitle: note.title ?? "無題",
