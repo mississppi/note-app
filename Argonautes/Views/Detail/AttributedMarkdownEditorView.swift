@@ -2,6 +2,6 @@
 //  AttributedMarkdownEditorView.swift
 //  Argonautes
 //
-//  Created by KOSUKE SAKURAI on 2025/10/26.
+//  Created by KOSUKE SAKURAI on 2025/10/26
 //
 
