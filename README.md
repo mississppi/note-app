@@ -1,5 +1,171 @@
 # Argonautes
 
+macOS向けのMarkdown対応ノート管理アプリケーションです。Core DataとSwiftUIを使用して構築されています。
+
+## 📁 プロジェクト構成
+
+### ルート構造
+
+```
+Argonautes/
+├── Argonautes/              # メインアプリケーションソース
+├── Argonautes.xcodeproj/    # Xcodeプロジェクトファイル
+├── ArgonautesTests/         # ユニットテスト
+└── README.md                # このファイル
+```
+
+### Argonautes/ ディレクトリ詳細
+
+```
+Argonautes/
+├── ArgonautesApp.swift                  # アプリケーションエントリーポイント
+├── Persistence.swift                    # Core Dataスタック設定
+├── Argonautes.entitlements             # アプリケーション権限設定
+│
+├── Models/                              # データモデル層
+│   ├── Argonautes.xcdatamodeld/        # Core Dataモデル定義
+│   ├── Enums/
+│   │   └── TagError.swift              # タグ関連のエラー定義
+│   └── Note/
+│       └── Note+Accessors.swift        # Noteエンティティの拡張
+│
+├── Services/                            # ビジネスロジック層
+│   ├── Protocols/
+│   │   └── NoteDataService.swift       # ノートサービスのプロトコル
+│   └── Implementations/
+│       └── CoreDataNoteService.swift   # Core Data実装
+│
+├── ViewModels/                          # ViewModel層
+│   └── NoteListViewModel.swift         # ノート一覧のビジネスロジック
+│
+├── Views/                               # UI層
+│   ├── ContentView.swift               # ルートビュー
+│   │
+│   ├── Common/                         # 共通コンポーネント
+│   │   └── NoteListChevronButton.swift # シェブロンボタン
+│   │
+│   ├── Detail/                         # ノート詳細画面
+│   │   ├── NoteDetailView.swift        # 詳細画面メイン
+│   │   ├── NoteDetailContentView.swift # コンテンツビュー
+│   │   ├── NoteDetailContentArea.swift # コンテンツエリア
+│   │   ├── NoteDetailTitleView.swift   # タイトルビュー
+│   │   ├── NoteDetailTitleArea.swift   # タイトルエリア
+│   │   ├── NoteDetailAddNoteButton.swift # 新規ノート追加ボタン
+│   │   ├── MarkdownEditorView.swift    # Markdownエディタ
+│   │   ├── AttributedMarkdownEditorView.swift # リッチMarkdownエディタ
+│   │   ├── EmptyNoteView.swift         # 空状態表示
+│   │   └── TrashDetailView.swift       # ゴミ箱詳細ビュー
+│   │
+│   ├── NoteList/                       # ノート一覧画面
+│   │   ├── NoteListView.swift          # 一覧画面メイン
+│   │   │
+│   │   ├── List/                       # リスト表示
+│   │   │   ├── NoteListContent.swift   # リストコンテンツ
+│   │   │   ├── NoteRowView.swift       # ノート行表示
+│   │   │   └── NoteListTrashButton.swift # ゴミ箱ボタン
+│   │   │
+│   │   ├── Search/                     # 検索機能
+│   │   │   └── NoteListSearchArea.swift # 検索エリア
+│   │   │
+│   │   ├── Tag/                        # タグ機能
+│   │   │   ├── NoteListTagArea.swift   # タグエリア
+│   │   │   ├── NoteListTagView.swift   # タグ表示
+│   │   │   ├── NoteListAddTagButton.swift # タグ追加ボタン
+│   │   │   ├── TagAddModalView.swift   # タグ追加モーダル
+│   │   │   ├── TagEditModalView.swift  # タグ編集モーダル
+│   │   │   ├── TagDeleteConfirmationView.swift # タグ削除確認
+│   │   │   ├── TagDisplayView.swift    # タグ表示
+│   │   │   ├── TagContextMenu.swift    # タグコンテキストメニュー
+│   │   │   └── TagContextMenuModifier.swift # メニューモディファイア
+│   │   │
+│   │   └── Trash/                      # ゴミ箱機能
+│   │       ├── NoteListTrashArea.swift # ゴミ箱エリア
+│   │       ├── TrashListView.swift     # ゴミ箱一覧
+│   │       ├── TrashRow.swift          # ゴミ箱行表示
+│   │       ├── TrashDeleteConfirmationModalView.swift # 完全削除確認
+│   │       └── TrashRestoreConfirmationModalView.swift # 復元確認
+│   │
+│   └── Utilities/                      # ユーティリティ
+│       ├── Color+Extensions.swift      # Color拡張
+│       ├── View+Extensions.swift       # View拡張
+│       ├── CustomTextEditor.swift      # カスタムテキストエディタ
+│       └── FocusField.swift            # フォーカス管理
+│
+└── Shared/                             # 共通定義
+    ├── Constants/
+    │   └── NoteListViewModelConstants.swift # 定数定義
+    └── Enums/
+        ├── DetailContentType.swift     # 詳細コンテンツタイプ
+        └── TagTransitionDirection.swift # タグ遷移方向
+```
+
+### ArgonautesTests/ ディレクトリ
+
+```
+ArgonautesTests/
+├── ExampleTests.swift                  # サンプルテスト
+├── NoteListViewTests.swift            # ノート一覧ビューテスト
+├── Services/
+│   ├── CoreDataNoteServiceTests.swift # サービス層テスト
+│   └── TagServiceTests.swift          # タグサービステスト
+└── ViewModels/
+    ├── NoteListViewModelTests.swift   # ViewModelテスト
+    └── TagFilteringInNoteListTests.swift # タグフィルタリングテスト
+```
+
+## 🏗️ アーキテクチャ
+
+### レイヤー構成
+
+このプロジェクトはMVVMアーキテクチャを採用しています：
+
+```
+┌─────────────────────────────────────┐
+│            Views (SwiftUI)          │ ← ユーザーインターフェース
+└──────────────┬──────────────────────┘
+               │ @Published
+               ↓
+┌─────────────────────────────────────┐
+│          ViewModels                 │ ← プレゼンテーションロジック
+└──────────────┬──────────────────────┘
+               │ Protocol
+               ↓
+┌─────────────────────────────────────┐
+│     Services (Implementations)      │ ← ビジネスロジック
+└──────────────┬──────────────────────┘
+               │
+               ↓
+┌─────────────────────────────────────┐
+│       Models (Core Data)            │ ← データ永続化
+└─────────────────────────────────────┘
+```
+
+### データフロー
+
+1. **View → ViewModel**: ユーザー操作をViewModelに通知
+2. **ViewModel → Service**: データ操作をServiceに委譲
+3. **Service → Core Data**: 永続化層へのデータアクセス
+4. **Core Data → Service → ViewModel**: データ取得
+5. **ViewModel → View**: `@Published`プロパティによる自動更新
+
+## 🔧 主要機能
+
+### ノート管理
+- ✏️ Markdown形式でのノート作成・編集
+- 🔍 ノート検索機能
+- 🗑️ ゴミ箱機能（論理削除）
+- 📝 リッチテキストエディタ
+
+### タグ管理
+- 🏷️ ノートへのタグ付け
+- 🎨 タグごとの色分け
+- 🔀 タグによるフィルタリング
+- ✏️ タグの追加・編集・削除
+
+### データ永続化
+- 💾 Core Dataによるローカルストレージ
+- 🔄 リアルタイムデータ同期
+
 ## デバッグログの見方
 
 ### 起動時のログ（正常な場合）

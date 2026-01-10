@@ -29,7 +29,7 @@ struct NoteListTrashArea: View {
         .padding(.vertical,6)
         .padding(.horizontal, 16)
         .background(viewModel.isShowingTrash ? Color(hex: "#E6E6E6") : Color.clear)
-        .cornerRadius(8) // <-- 角丸を追加
+        .cornerRadius(8)
         .padding(.bottom, 5)
     }
 }
