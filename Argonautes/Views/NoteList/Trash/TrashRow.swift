@@ -64,7 +64,7 @@ struct TrashRowView: View {
                     // showingRestoreConfirmation = false
                 },
                 onCancel: {
-                    // showingRestoreConfirmation = false
+                    showingRestoreConfirmation = false
                 }
             )
         }
