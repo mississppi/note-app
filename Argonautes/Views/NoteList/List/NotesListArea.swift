@@ -3,7 +3,7 @@ import CoreData
 import UniformTypeIdentifiers
 import Combine
 
-struct NoteListContent: View {
+struct NotesListArea: View {
     @ObservedObject var viewModel: NoteListViewModel
     @State private var draggedNote: Note?
     
@@ -67,7 +67,7 @@ struct NoteListContent: View {
         .scrollContentBackground(.hidden)
         .background(Color(hex: "EFEFEF"))
         .onAppear {
-            print("NoteLIstContent onAppear")
+            print("NotesListArea onAppear")
             for(index, note) in viewModel.notes.enumerated() {
                 print("🟢 Note \(index): \(note.title ?? "無題"), isTrashed: \(note.isTrashed)")
             }

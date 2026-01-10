@@ -61,7 +61,7 @@ struct TrashRowView: View {
                 noteTitle: note.title ?? "無題",
                 onConfirm: {
                     // viewModel.restoreNoteFromTrash(note: note)
-                    // showingRestoreConfirmation = false
+                    showingRestoreConfirmation = false
                 },
                 onCancel: {
                     showingRestoreConfirmation = false

@@ -15,7 +15,7 @@ struct NoteListView: View {
                 .frame(height: 1)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 8)
-            NoteListContent(viewModel: viewModel)
+            NotesListArea(viewModel: viewModel)
             NoteListTrashArea(viewModel: viewModel)
         }
         .padding(.horizontal, 24)
