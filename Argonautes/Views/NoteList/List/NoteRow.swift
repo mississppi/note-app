@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct NoteRowView: View {
+struct NoteRow: View {
     @ObservedObject var note: Note
     private let titleLimit: Int = 13
     

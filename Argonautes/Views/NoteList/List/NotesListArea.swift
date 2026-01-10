@@ -28,7 +28,7 @@ struct NotesListArea: View {
     var body: some View {
         List {
             ForEach(viewModel.notes, id: \.self) { note in
-                NoteRowView(note: note)
+                NoteRow(note: note)
                     .contentShape(Rectangle())
                     .listRowInsets(EdgeInsets())
                     .listRowBackground(
