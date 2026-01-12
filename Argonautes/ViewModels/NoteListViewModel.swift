@@ -72,6 +72,37 @@ class NoteListViewModel: ObservableObject {
     }
     @Published var trashedNotes: [Note] = []
     
+    /// ゴミ箱で選択されているノート
+    @Published var selectedTrashNote: Note? {
+        didSet {
+            updateDetailContentType()
+        }
+    }
+    
+    // MARK: - Computed Properties (UI Logic)
+    
+    /// リストエリアの表示コンテンツタイプ
+    var listContentType: ListContentType {
+        isShowingTrash ? .trash : .normal
+    }
+    
+    /// ゴミ箱の表示コンテンツタイプ
+    var trashContentType: TrashContentType {
+        trashedNotes.isEmpty ? .empty : .list
+    }
+    
+    /// ゴミ箱の件数表示テキスト（空の場合はnil）
+    var trashedNotesCountText: String? {
+        guard !trashedNotes.isEmpty else { return nil }
+        return "\(trashedNotes.count)件のノートがゴミ箱にあります"
+    }
+    
+    /// ゴミ箱の復元ガイドテキスト
+    var trashedNotesGuideText: String? {
+        guard !trashedNotes.isEmpty else { return nil }
+        return "ノートを復元するには、左側のリストから選択してください"
+    }
+    
     // MARK: - Private Properties
 
     private let noteService: NoteDataService
@@ -539,7 +570,11 @@ private extension NoteListViewModel {
     // MARK: UI State Management
     func updateDetailContentType() {
         if isShowingTrash {
-            detailContentType = .trashList
+            if selectedTrashNote != nil {
+                detailContentType = .trashNoteDetail
+            } else {
+                detailContentType = .trashGuide
+            }
         } else if selectedNote != nil {
             detailContentType = .noteDetail
         } else {

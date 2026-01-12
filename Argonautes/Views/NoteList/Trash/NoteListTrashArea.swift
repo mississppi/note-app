@@ -28,7 +28,8 @@ struct NoteListTrashArea: View {
         .foregroundColor(.primary)
         .padding(.vertical,6)
         .padding(.horizontal, 16)
-        .background(viewModel.isShowingTrash ? Color(hex: "#E6E6E6") : Color.clear)
+        .background(Color(hex: "EFEFEF"))
+        // .background(viewModel.isShowingTrash ? Color(hex: "#E6E6E6") : Color.clear)
         .cornerRadius(8)
         .padding(.bottom, 5)
     }

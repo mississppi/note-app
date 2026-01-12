@@ -18,13 +18,14 @@ struct TrashDetailView: View {
                 .font(.system(size: 16))
                 .foregroundColor(.gray)
             
-            if !viewModel.trashedNotes.isEmpty {
+            if let countText = viewModel.trashedNotesCountText,
+               let guideText = viewModel.trashedNotesGuideText {
                 VStack(spacing: 8) {
-                    Text("\(viewModel.trashedNotes.count)件のノートがゴミ箱にあります")
+                    Text(countText)
                         .font(.system(size: 14))
                         .foregroundColor(.gray)
                     
-                    Text("ノートを復元するには、左側のリストから選択してください")
+                    Text(guideText)
                         .font(.system(size: 14))
                         .foregroundColor(.gray)
                         .multilineTextAlignment(.center)

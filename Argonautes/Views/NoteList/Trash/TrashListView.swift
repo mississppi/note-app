@@ -7,37 +7,39 @@ struct TrashListView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            //header
+            // header
             HStack {
                 Text("ゴミ箱")
                     .font(.system(size: 24, weight: .bold))
                     .foregroundColor(.black)
                     .padding(.leading, 24)
                 Spacer()
-
             }
             .frame(height: 60)
 
             Divider()
 
-            if viewModel.trashedNotes.isEmpty {
-                VStack(spacing: 16) {
-                    Image(systemName: "trash")
-                        .font(.system(size: 60))
-                        .foregroundColor(.gray)
-
-                    Text("ゴミ箱は空です")
-                        .font(.system(size: 18))
-                        .foregroundColor(.gray)
+            // 戻るボタン
+            Button(action: {
+                viewModel.isShowingTrash = false
+            }) {
+                HStack(spacing: 4) {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 14))
+                    Text("戻る")
+                        .font(.system(size: 14))
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else {
-                List(viewModel.trashedNotes, id: \.self) { note in 
-                    TrashRowView(note: note, viewModel: viewModel)
-                }
-                .listStyle(.plain)
+                // .foregroundColor(.blue)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.leading, 24)
+                .padding(.vertical, 12)
             }
+            .buttonStyle(.plain)
+
+            viewModel.trashContentType.view(viewModel: viewModel)
+            
         }
+        .background(Color(hex: "#EFEFEF"))
         .onAppear {
             viewModel.fetchTrashedNotes()
         }
