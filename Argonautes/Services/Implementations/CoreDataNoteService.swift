@@ -103,6 +103,7 @@ class CoreDataNoteService: NoteDataService {
     func trashNote(_ note: Note) {
         note.isTrashed = true
         note.trashedAt = Date()
+        note.deletedTagName = note.tag?.name
     }
     
     func deleteNote(_ note: Note){

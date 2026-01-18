@@ -28,9 +28,9 @@ class NoteListViewModelTests: XCTestCase{
     // 目的: fetchNotes()を呼ぶと、ViewModelのnotesプロパティが更新され、作成順に取得できることを確認
     func testFetchNotesUpdatesNotesProperty() throws {
         // Given
-        let note1 = service.createNote(title: "Test Note 1", content: "", status: .active, tag: nil)
-        let note2 = service.createNote(title: "Test Note 2", content: "", status: .active, tag: nil)
-        let note3 = service.createNote(title: "Test Note 3", content: "", status: .active, tag: nil)
+        let note1 = service.createNote(title: "Test Note 1", content: "", tag: nil)
+        let note2 = service.createNote(title: "Test Note 2", content: "", tag: nil)
+        let note3 = service.createNote(title: "Test Note 3", content: "", tag: nil)
         try service.saveContext()
         
         // When
@@ -46,9 +46,9 @@ class NoteListViewModelTests: XCTestCase{
     // 目的: searchTextを指定してfetchNotes()を呼ぶと、タイトルで絞り込まれたノートのみ取得できることを確認
     func testFetchNotesWithSearchTextFiltersNotes() throws {
         // Given: 3件のノートを作成
-        _ = service.createNote(title: "Apple", content: "", status: .active, tag: nil)
-        _ = service.createNote(title: "Banana", content: "", status: .active, tag: nil)
-        _ = service.createNote(title: "Orange", content: "", status: .active, tag: nil)
+        _ = service.createNote(title: "Apple", content: "", tag: nil)
+        _ = service.createNote(title: "Banana", content: "", tag: nil)
+        _ = service.createNote(title: "Orange", content: "", tag: nil)
         try service.saveContext()
         
         // When: "Apple"で検索
@@ -67,8 +67,8 @@ class NoteListViewModelTests: XCTestCase{
         let tagB = service.createTag(name: "B")
         try service.saveContext()
         
-        _ = service.createNote(title: "Note with A", content: "", status: .active, tag: tagA)
-        _ = service.createNote(title: "Note with B", content: "", status: .active, tag: tagB)
+        _ = service.createNote(title: "Note with A", content: "", tag: tagA)
+        _ = service.createNote(title: "Note with B", content: "", tag: tagB)
         try service.saveContext()
         
         // When: tagAでフィルタリング
@@ -80,42 +80,14 @@ class NoteListViewModelTests: XCTestCase{
         XCTAssertEqual(viewModel.notes[0].title, "Note with A", "フィルタリング結果のタイトルが一致すべき")
     }
 
-    // 目的: archiveNote()を呼ぶと、ノートがアーカイブ状態になり、activeリストから消えることを確認
-    func testArchiveNoteUpdatesStatusAndRemovesFromList() throws {
-        // Given: 1件のactiveノートを作成
-        let noteToArchive = service.createNote(title: "Note to archive", content: "content", status: .active, tag: nil)
-        try? service.saveContext()
-        
-        viewModel.fetchNotes(searchText: "", selectedTag: nil, statusFilter: .active)
-        XCTAssertEqual(viewModel.notes.count, 1, "ViewModelのリストには1件のノートが存在すべき")
-        
-        // When: ノートをアーカイブ
-        viewModel.archiveNote(note: noteToArchive)
-        
-        // Then: ステータスがarchivedになり、activeリストから消える
-        let allNotesInDB = service.fetchNotes(predicate: nil, sortDescriptors: nil)
-        XCTAssertEqual(allNotesInDB.count, 1, "DB上のノート総数はアーカイブ後も1件のままであるべき")
-        
-        // 2. ステータスがarchivedになっている
-        let archivedNote = allNotesInDB.first!
-        XCTAssertEqual(archivedNote.status, NoteStatus.archived.rawValue, "ノートのステータスが.archived (1) になっているべき")
-        
-        // 3. ViewModelのリストから消えた
-        XCTAssertEqual(viewModel.notes.count, 0, "ViewModelのリストからアーカイブされたノートは消えているべき")
-        
-        // 4. selectedNoteがnilになった
-        XCTAssertNil(viewModel.selectedNote, "リストが空になったため、selectedNoteはnilであるべき")
-    }
-
-
     // MARK: - Note Reordering Tests
 
     // 目的: moveNotes()を呼ぶと、ノートの順序が更新されることを確認
     func testMoveNoteUpdatesOrder() {
         // Given
-        let note1 = service.createNote(title: "Note 1", content: "", status: .active, tag: nil)
-        let note2 = service.createNote(title: "Note 2", content: "", status: .active, tag: nil)
-        let note3 = service.createNote(title: "Note 3", content: "", status: .active, tag: nil)
+        let note1 = service.createNote(title: "Note 1", content: "", tag: nil)
+        let note2 = service.createNote(title: "Note 2", content: "", tag: nil)
+        let note3 = service.createNote(title: "Note 3", content: "", tag: nil)
         try? service.saveContext()
         
         viewModel.fetchNotes()
@@ -133,8 +105,8 @@ class NoteListViewModelTests: XCTestCase{
     // 目的: moveNotes()で変更した順序が、永続化されることを確認
     func testSaveNotesOrderPersistsChanges() {
         // Given
-        let note1 = service.createNote(title: "Note 1", content: "", status: .active, tag: nil)
-        let note2 = service.createNote(title: "Note 2", content: "", status: .active, tag: nil)
+        let note1 = service.createNote(title: "Note 1", content: "", tag: nil)
+        let note2 = service.createNote(title: "Note 2", content: "", tag: nil)
         try? service.saveContext()
         
         viewModel.fetchNotes()
@@ -159,8 +131,8 @@ class NoteListViewModelTests: XCTestCase{
     // 目的: 同じ位置に移動した場合、何も変更されないことを確認
     func testMoveNoteToSamePositionDoesNothing() {
         // Given
-        let note1 = service.createNote(title: "Note 1", content: "", status: .active, tag: nil)
-        let note2 = service.createNote(title: "Note 2", content: "", status: .active, tag: nil)
+        let note1 = service.createNote(title: "Note 1", content: "", tag: nil)
+        let note2 = service.createNote(title: "Note 2", content: "", tag: nil)
         try? service.saveContext()
         
         viewModel.fetchNotes()
@@ -176,10 +148,10 @@ class NoteListViewModelTests: XCTestCase{
     // 目的: 複数のノートを一度に移動できることを確認
     func testMoveMultipleNotesAtOnce() {
         // Given
-        let note1 = service.createNote(title: "Note 1", content: "", status: .active, tag: nil)
-        let note2 = service.createNote(title: "Note 2", content: "", status: .active, tag: nil)
-        let note3 = service.createNote(title: "Note 3", content: "", status: .active, tag: nil)
-        let note4 = service.createNote(title: "Note 4", content: "", status: .active, tag: nil)
+        let note1 = service.createNote(title: "Note 1", content: "", tag: nil)
+        let note2 = service.createNote(title: "Note 2", content: "", tag: nil)
+        let note3 = service.createNote(title: "Note 3", content: "", tag: nil)
+        let note4 = service.createNote(title: "Note 4", content: "", tag: nil)
         try? service.saveContext()
         
         viewModel.fetchNotes()

@@ -31,8 +31,7 @@ final class CoreDataNoteServiceTests: XCTestCase {
     func testCreateAndFetchNote() throws {
         let title = "Test Note Title"
         let content = "Test Note Content"
-        let status = Argonautes.NoteStatus.active
-        let newNote = service.createNote(title: title, content: content, status: status, tag: nil)
+        let newNote = service.createNote(title: title, content: content, tag: nil)
         XCTAssertTrue(viewContext.hasChanges, "ノート作成後、コンテキストに変更があるべき")
         try service.saveContext()
         
@@ -50,11 +49,9 @@ final class CoreDataNoteServiceTests: XCTestCase {
     func testUpdateAndFetchNote() throws {
         let initialTitle = "original Title"
         let initialContent = "This is the original content ."
-        let initialStatus = Argonautes.NoteStatus.active
         let newNote = service.createNote(
             title: initialTitle,
             content: initialContent,
-            status: initialStatus,
             tag: nil
         )
         
@@ -78,7 +75,6 @@ final class CoreDataNoteServiceTests: XCTestCase {
             createdNote,
             newTitle: newTitle,
             newContent: newContent,
-            newStatus: Argonautes.NoteStatus.active,
             newTag: nil,
             newCursorPosition: 10,
             newOrder: 3
@@ -101,8 +97,7 @@ final class CoreDataNoteServiceTests: XCTestCase {
     func testDeleteAndFetchNote() throws {
         let title = "Note to delete"
         let content = "This note should be deleted."
-        let status = Argonautes.NoteStatus.active
-        let noteToDelete = service.createNote(title: title, content: content, status: status, tag: nil)
+        let noteToDelete = service.createNote(title: title, content: content, tag: nil)
         try service.saveContext()
         
         var fetchedNotes = service.fetchNotes(predicate: nil, sortDescriptors: nil)
@@ -119,9 +114,9 @@ final class CoreDataNoteServiceTests: XCTestCase {
     }
     
     func testSearchNotes() throws {
-        let note1 = service.createNote(title: "買い物リスト", content: "牛乳、卵、パン", status: .active, tag: nil)
-        let note2 = service.createNote(title: "プロジェクトの計画", content: "新しいアプリの構想", status: .active, tag: nil)
-        let note3 = service.createNote(title: "旅行の計画", content: "京都、東京、大阪を巡る", status: .active, tag: nil)
+        let note1 = service.createNote(title: "買い物リスト", content: "牛乳、卵、パン", tag: nil)
+        let note2 = service.createNote(title: "プロジェクトの計画", content: "新しいアプリの構想", tag: nil)
+        let note3 = service.createNote(title: "旅行の計画", content: "京都、東京、大阪を巡る", tag: nil)
         let searchText = "計画"
         let fetchedNotes = service.searchNotes(for: searchText)
         XCTAssertEqual(fetchedNotes.count, 2, "検索結果は2件であるべき")
@@ -180,11 +175,11 @@ final class CoreDataNoteServiceTests: XCTestCase {
         print(tag1)
         let tag2 = try service.createTag(name: "tag2")
         
-        let _ = try service.createNote(title: "Note 1", content: "c 1", status: .active, tag: tag1)
-        let _ = try service.createNote(title: "Note 2", content: "c 2", status: .active, tag: tag1)
+        let _ = try service.createNote(title: "Note 1", content: "c 1", tag: tag1)
+        let _ = try service.createNote(title: "Note 2", content: "c 2", tag: tag1)
         
-        let _ = try service.createNote(title: "Note 3", content: "c 3", status: .active, tag: tag2)
-        let _ = try service.createNote(title: "Note 4", content: "c 4", status: .active, tag: tag2)
+        let _ = try service.createNote(title: "Note 3", content: "c 3", tag: tag2)
+        let _ = try service.createNote(title: "Note 4", content: "c 4", tag: tag2)
         
         let predicateForTag1 = NSPredicate(format: "tag == %@", tag1)
         let notesForTag1 = service.fetchNotes(predicate: predicateForTag1, sortDescriptors: nil)

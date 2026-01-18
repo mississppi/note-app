@@ -29,15 +29,15 @@ final class TagFilteringInNoteListTests: XCTestCase {
         // Given
         let tagWork = service.createTag(name: "Work")
         let tagLife = service.createTag(name: "Life")
-        _ = service.createNote(title: "Work Swift", content: "", status: .active, tag: tagWork)
-        _ = service.createNote(title: "Work Kotlin", content: "", status: .active, tag: tagWork)
-        _ = service.createNote(title: "Life Swift", content: "", status: .active, tag: tagLife)
+        _ = service.createNote(title: "Work Swift", content: "", tag: tagWork)
+        _ = service.createNote(title: "Work Kotlin", content: "", tag: tagWork)
+        _ = service.createNote(title: "Life Swift", content: "", tag: tagLife)
         try service.saveContext()
         
         // When
         viewModel.searchText = "Swift"
         viewModel.selectedTag = tagWork
-        viewModel.fetchNotes(searchText: viewModel.searchText, selectedTag: viewModel.selectedTag, statusFilter: .active)
+        viewModel.fetchNotes(searchText: viewModel.searchText, selectedTag: viewModel.selectedTag)
         
         // Then
         XCTAssertEqual(viewModel.notes.count, 1)
@@ -49,8 +49,8 @@ final class TagFilteringInNoteListTests: XCTestCase {
         // Given
         let tagA = service.createTag(name: "A")
         let tagB = service.createTag(name: "B")
-        _ = service.createNote(title: "Note A1", content: "", status: .active, tag: tagA)
-        _ = service.createNote(title: "Note B1", content: "", status: .active, tag: tagB)
+        _ = service.createNote(title: "Note A1", content: "", tag: tagA)
+        _ = service.createNote(title: "Note B1", content: "", tag: tagB)
         try service.saveContext()
         
         // When

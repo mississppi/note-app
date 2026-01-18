@@ -3,6 +3,8 @@ import Foundation
 enum NoteListViewModelConstants {
     /// 新規ノートのデフォルトタイトル
     static let newNoteTitle = "new Note"
+    /// デフォルトタグ名
+    static let defaultTagName = "voyage"
     /// 検索テキストのデバウンス時間（ミリ秒）
     static let searchDebounceMilliseconds = 500
     /// タイトル自動保存のデバウンス時間（ミリ秒）

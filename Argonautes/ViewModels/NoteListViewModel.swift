@@ -435,10 +435,46 @@ class NoteListViewModel: ObservableObject {
     }
 
     func restoreNoteFromTrash(note: Note) {
+        // 1. 復元先のタグを決定
+        // deletedTagNameが保存されていて、そのタグが存在する場合はそのタグへ
+        // タグが存在しない、またはdeletedTagNameがnilの場合はデフォルトタグ"voyage"へ
+        let targetTag: Tag
+        if let deletedTagName = note.deletedTagName,
+           let existingTag = tags.first(where: { $0.name == deletedTagName }) {
+            // 元のタグが存在する場合
+            targetTag = existingTag
+        } else {
+            // 元のタグが削除済み、またはタグ情報がない場合 → デフォルトタグへ
+            if let voyageTag = tags.first(where: { $0.name == NoteListViewModelConstants.defaultTagName }) {
+                targetTag = voyageTag
+            } else {
+                targetTag = noteService.createTag(name: "voyage")
+                self.tags = noteService.fetchTags(predicate: nil, sortDescriptors: nil)
+            }
+        }
+        
+        // 2. そのタグのノートの最大orderを取得して末尾に追加
+        let tagNotesPredicate = NSPredicate(format: "tag == %@ AND isTrashed == NO", targetTag)
+        let tagNotes = noteService.fetchNotes(predicate: tagNotesPredicate, sortDescriptors: nil)
+        let maxOrder = tagNotes.map { $0.order }.max() ?? -1
+        
+        // 3. ノートを復元
         note.isTrashed = false
         note.trashedAt = nil
+        note.deletedTagName = nil
+        note.tag = targetTag
+        note.order = maxOrder + 1
+        
         saveContextWithErrorHandling(operation: "restore note from trash")
-        fetchTrashedNotes()
+        
+        // 4. ゴミ箱を閉じて復元したノートを選択
+        isShowingTrash = false
+        selectedTag = targetTag
+        if let index = tags.firstIndex(of: targetTag) {
+            selectedTagIndex = index
+        }
+        fetchNotes(searchText: searchText, selectedTag: selectedTag)
+        select(note: note, userInitiated: true)
     }
 
     func deleteNotePermanently(note: Note) {

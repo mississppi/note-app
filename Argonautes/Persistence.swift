@@ -48,7 +48,7 @@ struct PersistenceController {
             
             if !inMemory {
                 // テストデータ削除したい場合
-//                 self.deleteAllData()
+                // self.deleteAllData()
                 
                 createInitialDataIfNeeded()
             }
@@ -62,7 +62,7 @@ struct PersistenceController {
         let tagRequest: NSFetchRequest<Tag> = Tag.fetchRequest()
         if (try? context.count(for: tagRequest)) == 0 {
             let service = CoreDataNoteService(context: context)
-            let defaultTag = service.createTag(name: "未分類")
+            let defaultTag = service.createTag(name: NoteListViewModelConstants.defaultTagName)
             _ = service.createNote(
                 title: "はじめまして！",
                 content: "これは最初のノートです。このノートを編集したり、新しいノートを作成して、アイデアを整理しましょう。",
