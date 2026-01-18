@@ -308,7 +308,7 @@ final class TrashManagementTests: XCTestCase {
         // Then: trashedAtが現在時刻付近に設定される
         XCTAssertNotNil(note.trashedAt, "trashedAtが設定されているべき")
         let timeDiff = abs(note.trashedAt!.timeIntervalSince(beforeTrash))
-        XCTAssertLessThan(timeDiff, 2.0, "trashedAtが現在時刻の2秒以内であるべき")
+        XCTAssertLessThan(timeDiff, TestConstants.timestampToleranceSeconds, "trashedAtが現在時刻の\(TestConstants.timestampToleranceSeconds)秒以内であるべき")
     }
     
     func testRestoreNote_MultipleTimes_ShouldWork() throws {

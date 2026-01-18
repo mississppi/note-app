@@ -268,7 +268,7 @@ class NoteListViewModel: ObservableObject {
     }
 
     func canDeleteTag(_ tag: Tag) -> Bool {
-        return tags.count > 1
+        return tags.count > NoteListViewModelConstants.minTagCount
     }
 
     func startDeletingTag(_ tag: Tag) {
