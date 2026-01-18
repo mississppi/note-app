@@ -29,10 +29,10 @@ struct TrashListView: View {
                     Text("戻る")
                         .font(.system(size: 14))
                 }
-                // .foregroundColor(.blue)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.leading, 24)
                 .padding(.vertical, 12)
+                .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
 
