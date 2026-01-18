@@ -5,7 +5,9 @@ struct NoteDetailContentArea: View {
     
     var body: some View {
         TextEditor(text: $viewModel.selectedContent)
-            .font(.body)
+            .scrollContentBackground(.hidden)
+            .background(Color("#F2F2F7"))
+            .font(.custom("HiraginoSans-W3", size: 15))
             .padding()
     }
 }
