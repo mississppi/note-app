@@ -39,7 +39,7 @@ struct TrashListView: View {
             viewModel.trashContentType.view(viewModel: viewModel)
             
         }
-        .background(Color(hex: "#EFEFEF"))
+        .background(Color.listBackground)
         .onAppear {
             viewModel.fetchTrashedNotes()
         }

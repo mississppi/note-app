@@ -12,7 +12,7 @@ struct TrashNotesListView: View {
                 .listRowBackground(
                     viewModel.selectedTrashNote?.objectID == note.objectID
                         ? Color(hex: "#E6E6E6")
-                        : Color(hex: "#EFEFEF")
+                        : Color.listBackground
                 )
                 .onTapGesture {
                     viewModel.selectedTrashNote = note
@@ -20,6 +20,6 @@ struct TrashNotesListView: View {
         }
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
-        .background(Color(hex: "#EFEFEF"))
+        .background(Color.listBackground)
     }
 }

@@ -1,6 +1,16 @@
 import SwiftUI
 
 extension Color {
+    // MARK: - App Colors
+    
+    /// ノート詳細エリア（タイトル・本文）の背景色
+    static let noteBackground = Color(hex: "#F2F2F7")
+    
+    /// サイドバー・リストエリアの背景色
+    static let listBackground = Color(hex: "#EFEFEF")
+    
+    // MARK: - Hex Initializer
+    
     /// hex: "#RRGGBB", "RRGGBB", "#RRGGBBAA" などを受け取る
     init(hex: String) {
         var hex = hex.trimmingCharacters(in: .whitespacesAndNewlines)

@@ -27,7 +27,7 @@ struct TagEditModalView: View {
                 .padding(.vertical, 12)
                 .background(
                     RoundedRectangle(cornerRadius:10)
-                        .fill(Color(hex: "#EFEFEF"))
+                        .fill(Color.listBackground)
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)

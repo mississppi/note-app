@@ -11,6 +11,5 @@ struct NoteDetailTitleArea: View {
             Spacer()
         }
         .padding()
-        .background(Color("#F2F2F7"))
     }
 }
