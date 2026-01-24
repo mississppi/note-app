@@ -11,7 +11,7 @@ struct TrashNotesListView: View {
                 .listRowInsets(EdgeInsets())
                 .listRowBackground(
                     viewModel.selectedTrashNote?.objectID == note.objectID
-                        ? Color(hex: "#E6E6E6")
+                        ? Color.selectedNoteBackground
                         : Color.listBackground
                 )
                 .onTapGesture {

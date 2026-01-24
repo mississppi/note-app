@@ -18,7 +18,7 @@ struct NoteListAddTagButton: View {
             .background(Color.clear)
             .overlay(
                 RoundedRectangle(cornerRadius: 8)
-                    .stroke(Color(hex: "#C0C0C0"), lineWidth: 1)
+                    .stroke(Color.lightBorderColor, lineWidth: 1)
             )
             .contentShape(RoundedRectangle(cornerRadius: 8))
         }

@@ -32,7 +32,7 @@ struct TagAddModalView: View {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 10)
-                    .stroke(Color(hex: "#DDDDDD"), lineWidth: 1)
+                    .stroke(Color.borderColor, lineWidth: 1)
             )
             
             Text(viewModel.addTagError?.rawValue ?? "")

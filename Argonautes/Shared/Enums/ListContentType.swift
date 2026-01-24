@@ -17,7 +17,7 @@ enum ListContentType {
                 NoteListTagArea(viewModel: viewModel)
                 NoteListSearchArea(viewModel: viewModel)
                 Rectangle()
-                    .fill(Color(hex: "#C0C0C0"))
+                    .fill(Color.lightBorderColor)
                     .frame(height: 1)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 8)

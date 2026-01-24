@@ -9,6 +9,18 @@ extension Color {
     /// サイドバー・リストエリアの背景色
     static let listBackground = Color(hex: "#EFEFEF")
     
+    /// ノート選択時の背景色
+    static let selectedNoteBackground = Color(hex: "#E6E6E6")
+    
+    /// 検索バーの背景色
+    static let searchBarBackground = Color(hex: "#E0E0E0")
+    
+    /// モーダル・枠線の色
+    static let borderColor = Color(hex: "#DDDDDD")
+    
+    /// 薄い枠線の色
+    static let lightBorderColor = Color(hex: "#C0C0C0")
+    
     // MARK: - Hex Initializer
     
     /// hex: "#RRGGBB", "RRGGBB", "#RRGGBBAA" などを受け取る

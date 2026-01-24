@@ -33,7 +33,7 @@ struct NotesListArea: View {
                     .listRowInsets(EdgeInsets())
                     .listRowBackground(
                         viewModel.selectedNote?.objectID == note.objectID 
-                            ? Color(hex: "#E6E6E6") 
+                            ? Color.selectedNoteBackground 
                             : Color.clear
                     )
                     .opacity(draggedNote?.objectID == note.objectID ? 0.5 : 1.0)

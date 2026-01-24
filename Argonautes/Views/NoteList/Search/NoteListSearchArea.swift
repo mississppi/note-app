@@ -28,7 +28,7 @@ struct NoteListSearchArea: View {
         .frame(maxWidth: .infinity) // 幅いっぱいに広げる
         .background(
             RoundedRectangle(cornerRadius: 8)
-                .fill(Color(hex: "#E0E0E0"))
+                .fill(Color.searchBarBackground)
         )
         .padding(.top, 12)
         .task {
