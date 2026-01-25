@@ -103,6 +103,24 @@ class NoteListViewModel: ObservableObject {
         return "ノートを復元するには、左側のリストから選択してください"
     }
     
+    // MARK: - Trash Note Detail Properties
+    
+    /// ゴミ箱で選択されたノートのタイトル
+    var selectedTrashNoteTitle: String {
+        selectedTrashNote?.title ?? "無題"
+    }
+    
+    /// ゴミ箱で選択されたノートの削除日時テキスト
+    var selectedTrashNoteDeletedDateText: String {
+        guard let trashedAt = selectedTrashNote?.trashedAt else { return "" }
+        return "削除日: \(trashedAt.formatted(.dateTime.year().month().day().hour().minute()))"
+    }
+    
+    /// ゴミ箱で選択されたノートの本文
+    var selectedTrashNoteContent: String {
+        selectedTrashNote?.content ?? ""
+    }
+    
     // MARK: - Private Properties
 
     private let noteService: NoteDataService
