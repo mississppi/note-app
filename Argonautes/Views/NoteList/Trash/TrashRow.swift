@@ -10,11 +10,9 @@ struct TrashRow: View {
                 .font(.system(size: 16, weight: .medium))
                 .foregroundColor(.primary)
 
-            if let trashedAt = note.trashedAt {
-                Text("削除日: \(trashedAt, format: .dateTime.year().month().day())")
-                    .font(.system(size: 12))
-                    .foregroundColor(.gray)
-            }
+            Text(note.formattedTrashedDate)
+                .font(.system(size: 12))
+                .foregroundColor(.gray)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.vertical, 8)

@@ -11,4 +11,13 @@ extension Note {
         return trimmed.isEmpty ? "無題" : trimmed
     }
 
+    /// ゴミ箱での削除日表示文字列
+    /// 
+    /// trashedAtがnilの場合は空文字を返します。
+    /// それ以外の場合は「削除日: YYYY/M/D」形式で
+    var formattedTrashedDate: String {
+        guard let trashedAt = trashedAt else { return "" }
+        return "削除日: \(trashedAt.formatted(.dateTime.year().month().day()))"
+    }
+
 }
