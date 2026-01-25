@@ -5,13 +5,9 @@ struct TagContextMenuModifier: ViewModifier {
     let tag: Tag?
 
     func body(content: Content) -> some View {
-        Group {
+        content.contextMenu {
             if let tag = tag {
-                content.contextMenu {
-                    TagContextMenu(viewModel: viewModel, tag: tag)
-                }
-            } else {
-                content
+                TagContextMenu(viewModel: viewModel, tag: tag)
             }
         }
     }
