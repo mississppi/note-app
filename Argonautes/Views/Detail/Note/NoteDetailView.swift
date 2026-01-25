@@ -5,5 +5,6 @@ struct NoteDetailView: View {
     
     var body: some View {
         viewModel.detailContentType.view(viewModel: viewModel)
+            .background(Color(hex: "#F2F2F7"))
     }
 }

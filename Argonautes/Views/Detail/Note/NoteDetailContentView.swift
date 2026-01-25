@@ -9,7 +9,6 @@ struct NoteDetailContentView: View {
             NoteDetailContentArea(viewModel: viewModel)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color("#FFFFFF"))
         .overlay(
             NoteDetailAddNoteButton(viewModel: viewModel)
                 .padding([.top, .trailing], 12),
