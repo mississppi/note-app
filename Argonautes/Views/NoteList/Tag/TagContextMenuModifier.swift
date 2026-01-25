@@ -2,19 +2,22 @@ import SwiftUI
 
 struct TagContextMenuModifier: ViewModifier {
     let viewModel: NoteListViewModel
-    let tag: Tag?
+    let tag: Tag
 
     func body(content: Content) -> some View {
         content.contextMenu {
-            if let tag = tag {
-                TagContextMenu(viewModel: viewModel, tag: tag)
-            }
+            TagContextMenu(viewModel: viewModel, tag: tag)
         }
     }
 }
 
 extension View {
+    @ViewBuilder
     func tagContextMenu(viewModel: NoteListViewModel, tag: Tag?) -> some View {
-        modifier(TagContextMenuModifier(viewModel: viewModel, tag: tag))
+        if let tag = tag {
+            self.modifier(TagContextMenuModifier(viewModel: viewModel, tag: tag))
+        } else {
+            self
+        }
     }
 }
