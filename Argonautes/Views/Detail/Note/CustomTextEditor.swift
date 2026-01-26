@@ -20,6 +20,8 @@ class CustomNSTextView: NSTextView {
         switch (cmd, shift, key) {
         case (true, false, "c"):
             return handleCopy()
+        case (true, false, "t"):
+            return handleInsertDateBlock()
         default:
             return false
         }
@@ -48,6 +50,30 @@ class CustomNSTextView: NSTextView {
         let pasteboard = NSPasteboard.general
         pasteboard.clearContents()
         pasteboard.setString(trimmedText, forType: .string)
+    }
+    
+    /// Cmd+T: 日付ブロックを挿入
+    private func handleInsertDateBlock() -> Bool {
+        let currentText = string
+        let endPosition = currentText.count
+        
+        // 今日の日付を取得
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy/MM/dd"
+        let todayString = dateFormatter.string(from: Date())
+        
+        // 挿入するテキスト
+        let dateBlock = "\n\n---\n\(todayString)\n"
+        
+        // 末尾に挿入
+        if let textStorage = textStorage {
+            textStorage.replaceCharacters(in: NSRange(location: endPosition, length: 0), with: dateBlock)
+            
+            // カーソルを最後に移動
+            setSelectedRange(NSRange(location: currentText.count + dateBlock.count, length: 0))
+        }
+        
+        return true
     }
 }
 
