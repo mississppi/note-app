@@ -588,9 +588,25 @@ private extension NoteListViewModel {
     }
 
     func normalizeTitle() {
-        let trimmed = selectedTitle.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard selectedTitle != trimmed else { return }
-        selectedTitle = trimmed
+        // 改行を空白に置き換え
+        var normalized = selectedTitle.replacingOccurrences(of: "\n", with: " ")
+        
+        // 連続する空白を1つにまとめる
+        while normalized.contains("  ") {
+            normalized = normalized.replacingOccurrences(of: "  ", with: " ")
+        }
+        
+        // 先頭・末尾の空白を削除
+        normalized = normalized.trimmingCharacters(in: .whitespaces)
+        
+        // 空の場合は「無題」にする
+        if normalized.isEmpty {
+            normalized = "無題"
+        }
+        
+        // 変更があった場合のみ更新
+        guard selectedTitle != normalized else { return }
+        selectedTitle = normalized
     }
     
     // MARK: Initial Data Loading

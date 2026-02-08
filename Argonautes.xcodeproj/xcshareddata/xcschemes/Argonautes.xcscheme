@@ -41,17 +41,6 @@
                ReferencedContainer = "container:Argonautes.xcodeproj">
             </BuildableReference>
          </TestableReference>
-         <TestableReference
-            skipped = "NO"
-            parallelizable = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "123BE9842E2FBF1200902BDA"
-               BuildableName = "ArgonautesUITests.xctest"
-               BlueprintName = "ArgonautesUITests"
-               ReferencedContainer = "container:Argonautes.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
