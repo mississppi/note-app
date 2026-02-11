@@ -95,6 +95,10 @@ struct CustomTextEditor: NSViewRepresentable {
         scrollView.documentView = textView
         
         textView.delegate = context.coordinator
+        
+        // CoordinatorにMarkdownEngineをセットアップ
+        context.coordinator.setupEngine(for: textView)
+        
         textView.isRichText = false
         textView.allowsUndo = true
         textView.isAutomaticQuoteSubstitutionEnabled = false
@@ -131,16 +135,27 @@ struct CustomTextEditor: NSViewRepresentable {
     
     class Coordinator: NSObject, NSTextViewDelegate {
         var parent: CustomTextEditor
+        private var markdownEngine: MarkdownEngine?
         
         init(_ parent: CustomTextEditor) {
             self.parent = parent
+        }
+        
+        /// MarkdownEngineをセットアップする
+        func setupEngine(for textView: NSTextView) {
+            markdownEngine = MarkdownEngine(textView: textView)
         }
         
         func textDidChange(_ notification: Notification) {
             guard let textView = notification.object as? NSTextView else {
                 return
             }
+            
+            // SwiftUIバインディングを更新
             parent.text = textView.string
+            
+            // Markdown装飾の適用はEngineに委譲
+            markdownEngine?.handleTextChange()
         }
     }
 }
