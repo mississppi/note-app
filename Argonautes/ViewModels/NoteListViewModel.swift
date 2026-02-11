@@ -364,11 +364,9 @@ class NoteListViewModel: ObservableObject {
     func fetchData() {
         self.tags = noteService.fetchTags(predicate: nil, sortDescriptors: nil)
         if !self.tags.isEmpty {
-            print("fugaaaaaaaaaaaaaaashi")
             self.selectedTag = self.tags[0]
             self.selectedTagIndex = 0
             fetchNotes(searchText: "", selectedTag: self.selectedTag)
-            print(notes.count)
         } else {
             self.selectedTag = nil
             self.selectedTagIndex = 0
@@ -508,27 +506,13 @@ class NoteListViewModel: ObservableObject {
         searchText: String = "",
         selectedTag: Tag? = nil
     ) {
-        print("🔴 fetchNotes called")
-        print("🔴 searchText: '\(searchText)'")
-        print("🔴 selectedTag: \(selectedTag?.name ?? "nil")")
-        // print("🔴 Call stack:")
-        // Thread.callStackSymbols.forEach { print("  \($0)") }  // ← 呼び出し元のスタックトレース
-        // print("---")
         let searchPredicate = createSearchPredicate(for: searchText)
         let tagPredicate = createTagPredicate(for: selectedTag)
         let trashedPredicate = NSPredicate(format: "isTrashed == NO")
 
-        print("🔴 searchPredicate: \(String(describing: searchPredicate))")
-        print("🔴 tagPredicate: \(String(describing: tagPredicate))")
-        print("🔴 trashedPredicate: \(trashedPredicate)")
-
-
         let finalPredicate = NSCompoundPredicate(
             andPredicateWithSubpredicates: [searchPredicate, tagPredicate, trashedPredicate].compactMap { $0 }
         )
-        
-        print("🔴 finalPredicate: \(finalPredicate)")
-        print("🔴 Calling noteService.fetchNotes...")
     
         self.notes = noteService.fetchNotes(
             predicate: finalPredicate, 

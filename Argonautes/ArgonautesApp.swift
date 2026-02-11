@@ -12,6 +12,11 @@ struct ArgonautesApp: App {
 
     let persistenceController = PersistenceController.shared
 
+    init() {
+        // 画像ストレージを初期化（ディレクトリを作成）
+        _ = ImageStorageManager.shared
+    }
+
     var body: some Scene {
         WindowGroup {
             ContentView()

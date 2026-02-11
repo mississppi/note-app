@@ -14,8 +14,8 @@ class MarkdownEngine {
     /// イニシャライザ
     /// - Parameters:
     ///   - textView: 対象のNSTextView
-    ///   - formattingDelay: 装飾適用までの遅延時間（デフォルト0.3秒）
-    init(textView: NSTextView, formattingDelay: TimeInterval = 0.3) {
+    ///   - formattingDelay: 装飾適用までの遅延時間（デフォルトはMarkdownConstants.formattingDelay）
+    init(textView: NSTextView, formattingDelay: TimeInterval = MarkdownConstants.formattingDelay) {
         self.textView = textView
         self.formattingDelay = formattingDelay
     }

@@ -11,7 +11,6 @@ struct PersistenceController {
         let currentDate = Date()
         print(currentDate)
 
-
         var managedObjectModel: NSManagedObjectModel? = nil
         if inMemory {
             print("--- persistence inmemory ----")
@@ -35,7 +34,6 @@ struct PersistenceController {
             print("Persistent Store URL: nil")
         }
         
-        print("--- persistence checkpoint003 ----")
         if inMemory {
             print("--- persistence 29 - inmemory ----")
             container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
@@ -77,7 +75,6 @@ struct PersistenceController {
     }
     
     func deleteAllData() {
-        print("start delete")
         let noteRequest = NSBatchDeleteRequest(fetchRequest: Note.fetchRequest())
         let tagRequest = NSBatchDeleteRequest(fetchRequest: Tag.fetchRequest())
         do {

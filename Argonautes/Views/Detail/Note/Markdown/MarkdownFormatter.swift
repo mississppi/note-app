@@ -7,18 +7,13 @@ class MarkdownFormatter {
     
     private static func headingFonts(basedOn baseFont: NSFont) -> [NSFont] {
         let baseSize = baseFont.pointSize
-        return [
-            NSFont.boldSystemFont(ofSize: baseSize * 1.7), // H1
-            NSFont.boldSystemFont(ofSize: baseSize * 1.4), // H2
-            NSFont.boldSystemFont(ofSize: baseSize * 1.3), // H3
-            NSFont.boldSystemFont(ofSize: baseSize * 1.15), // H4
-            NSFont.boldSystemFont(ofSize: baseSize * 1.0), // H5
-            NSFont.boldSystemFont(ofSize: baseSize * 0.85)  // H6
-        ]
+        return MarkdownConstants.headingFontMultipliers.map { multiplier in
+            NSFont.boldSystemFont(ofSize: baseSize * multiplier)
+        }
     }
     
     private static func codeFont(basedOn baseFont: NSFont) -> NSFont {
-        return NSFont.monospacedSystemFont(ofSize: baseFont.pointSize * 0.93, weight: .regular)
+        return NSFont.monospacedSystemFont(ofSize: baseFont.pointSize * MarkdownConstants.codeFontMultiplier, weight: .regular)
     }
     
     private static func boldFont(basedOn baseFont: NSFont) -> NSFont {
@@ -29,10 +24,7 @@ class MarkdownFormatter {
         return NSFontManager.shared.convert(baseFont, toHaveTrait: .italicFontMask)
     }
     
-    // MARK: - 色定義
-    
-    private static let codeBackgroundColor = NSColor.controlBackgroundColor
-    private static let codeForegroundColor = NSColor.systemRed
+    // MARK: - 色定義（MarkdownConstantsを参照）
     
     // MARK: - Markdown装飾適用
     
@@ -51,7 +43,7 @@ class MarkdownFormatter {
         // デフォルト属性をリセット（ベースフォントを使用）
         let defaultAttributes: [NSAttributedString.Key: Any] = [
             .font: baseFont,
-            .foregroundColor: NSColor.controlTextColor
+            .foregroundColor: MarkdownConstants.defaultTextColor
         ]
         attributedString.addAttributes(defaultAttributes, range: targetRange)
         
@@ -63,16 +55,19 @@ class MarkdownFormatter {
             return NSIntersectionRange(matchRange, excludeRange).length > 0
         }
         
-        // 1. 見出し（行頭の # ）
+        // 1. 画像 ![alt](path) - 一時的に無効化
+        // applyImages(to: attributedString, in: targetRange, text: text, shouldSkip: shouldSkip)
+        
+        // 2. 見出し（行頭の # ）
         applyHeadings(to: attributedString, baseFont: baseFont, in: targetRange, text: text, shouldSkip: shouldSkip)
         
-        // 2. 太字 **text**
+        // 3. 太字 **text**
         applyBold(to: attributedString, baseFont: baseFont, in: targetRange, text: text, shouldSkip: shouldSkip)
         
-        // 3. イタリック *text* (太字の後に処理)
+        // 4. イタリック *text* (太字の後に処理)
         applyItalic(to: attributedString, baseFont: baseFont, in: targetRange, text: text, shouldSkip: shouldSkip)
         
-        // 4. インラインコード `code`
+        // 5. インラインコード `code`
         applyInlineCode(to: attributedString, baseFont: baseFont, in: targetRange, text: text, shouldSkip: shouldSkip)
     }
     
@@ -149,8 +144,67 @@ class MarkdownFormatter {
             if shouldSkip(contentRange) { return }
             
             attributedString.addAttribute(.font, value: codeFont(basedOn: baseFont), range: contentRange)
-            attributedString.addAttribute(.backgroundColor, value: codeBackgroundColor, range: contentRange)
-            attributedString.addAttribute(.foregroundColor, value: codeForegroundColor, range: contentRange)
+            attributedString.addAttribute(.backgroundColor, value: MarkdownConstants.codeBackgroundColor, range: contentRange)
+            attributedString.addAttribute(.foregroundColor, value: MarkdownConstants.codeForegroundColor, range: contentRange)
+        }
+    }
+    
+    private static func applyImages(
+        to attributedString: NSMutableAttributedString,
+        in range: NSRange,
+        text: NSString,
+        shouldSkip: (NSRange) -> Bool
+    ) {
+        let pattern = "!\\[([^\\]]*)\\]\\(([^)]+)\\)"
+        guard let regex = try? NSRegularExpression(pattern: pattern, options: []) else { return }
+        
+        // マッチを逆順で処理（位置がずれないように）
+        let matches = regex.matches(in: text as String, options: [], range: range).reversed()
+        
+        for match in matches {
+            guard match.numberOfRanges > 2 else { continue }
+            
+            let fullRange = match.range
+            if shouldSkip(fullRange) { continue }
+            
+            let altRange = match.range(at: 1)
+            let pathRange = match.range(at: 2)
+            
+            guard let pathSwiftRange = Range(pathRange, in: text as String) else { continue }
+            let imagePath = String(text.substring(with: pathRange))
+            
+            // ImageStorageManagerでパス解決
+            guard let imageURL = ImageStorageManager.shared.resolveImagePath(imagePath),
+                  let image = NSImage(contentsOf: imageURL) else {
+                // 画像が見つからない場合はスキップ
+                continue
+            }
+            
+            // NSTextAttachmentで画像を埋め込み
+            let attachment = NSTextAttachment()
+            attachment.image = image
+            
+            // 画像サイズを調整（エディタ幅に合わせる）
+            let maxWidth = MarkdownConstants.imageMaxWidth
+            let imageSize = image.size
+            if imageSize.width > maxWidth {
+                let scale = maxWidth / imageSize.width
+                attachment.bounds = CGRect(
+                    x: 0,
+                    y: 0,
+                    width: maxWidth,
+                    height: imageSize.height * scale
+                )
+            } else {
+                attachment.bounds = CGRect(
+                    origin: .zero,
+                    size: imageSize
+                )
+            }
+            
+            // Markdown記法を画像で置き換え
+            let attachmentString = NSAttributedString(attachment: attachment)
+            attributedString.replaceCharacters(in: fullRange, with: attachmentString)
         }
     }
 }

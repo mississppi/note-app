@@ -15,18 +15,6 @@ class CoreDataNoteService: NoteDataService {
         request.sortDescriptors = sortDescriptors
         do {
             let results = try context.fetch(request)
-            print("🟡 ✅ Fetch succeeded!")
-            print("🟡 Fetched \(results.count) notes from Core Data")
-            
-            for (index, note) in results.enumerated() {
-                print("🟡 Note \(index):")
-                print("   - title: '\(note.title ?? "無題")'")
-                print("   - isTrashed: \(note.isTrashed)")
-                print("   - tag: \(note.tag?.name ?? "nil")")
-                print("   - order: \(note.order)")
-            }
-            
-            print("🟡 ===== CoreDataNoteService.fetchNotes END =====")
             return results
         } catch {
             print("🟡 ❌ Error fetching notes: \(error)")
@@ -73,7 +61,6 @@ class CoreDataNoteService: NoteDataService {
         var shouldUpdateTimeStamp = false
         
         if let newTitle = newTitle, newTitle != note.title{
-            print("DEBUG: title changed: ''\(note.title ?? "")'' -> ''\(newTitle)''")
             note.title = newTitle
             shouldUpdateTimeStamp = true
         }
