@@ -1,5 +1,5 @@
 import CoreData
-import Argonautes
+import Moore
 
 struct PersistenceController {
     static let shared = PersistenceController()

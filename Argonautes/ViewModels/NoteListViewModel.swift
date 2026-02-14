@@ -1,7 +1,7 @@
 import Foundation
 import Combine
 import CoreData
-import Argonautes
+import Moore
 
 /// ノート一覧画面のビジネスロジックを管理するViewModel
 /// 

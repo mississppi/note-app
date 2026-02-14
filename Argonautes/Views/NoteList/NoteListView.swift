@@ -1,6 +1,6 @@
 import SwiftUI
 import CoreData
-import Argonautes
+import Moore
 
 struct NoteListView: View {
     @ObservedObject var viewModel: NoteListViewModel

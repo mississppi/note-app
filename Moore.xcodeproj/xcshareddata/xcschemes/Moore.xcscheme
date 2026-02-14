@@ -16,9 +16,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "123BE9642E2FBF1000902BDA"
-               BuildableName = "Argonautes.app"
-               BlueprintName = "Argonautes"
-               ReferencedContainer = "container:Argonautes.xcodeproj">
+               BuildableName = "Moore.app"
+               BlueprintName = "Moore"
+               ReferencedContainer = "container:Moore.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -36,9 +36,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "123BE97A2E2FBF1200902BDA"
-               BuildableName = "ArgonautesTests.xctest"
-               BlueprintName = "ArgonautesTests"
-               ReferencedContainer = "container:Argonautes.xcodeproj">
+               BuildableName = "MooreTests.xctest"
+               BlueprintName = "MooreTests"
+               ReferencedContainer = "container:Moore.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -58,9 +58,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "123BE9642E2FBF1000902BDA"
-            BuildableName = "Argonautes.app"
-            BlueprintName = "Argonautes"
-            ReferencedContainer = "container:Argonautes.xcodeproj">
+            BuildableName = "Moore.app"
+            BlueprintName = "Moore"
+            ReferencedContainer = "container:Moore.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -75,9 +75,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "123BE9642E2FBF1000902BDA"
-            BuildableName = "Argonautes.app"
-            BlueprintName = "Argonautes"
-            ReferencedContainer = "container:Argonautes.xcodeproj">
+            BuildableName = "Moore.app"
+            BlueprintName = "Moore"
+            ReferencedContainer = "container:Moore.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

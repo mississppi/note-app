@@ -24,9 +24,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		123BE9652E2FBF1000902BDA /* Argonautes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Argonautes.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		123BE97B2E2FBF1200902BDA /* ArgonautesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ArgonautesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		123BE9852E2FBF1200902BDA /* ArgonautesUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ArgonautesUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		123BE9652E2FBF1000902BDA /* Moore.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Moore.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		123BE97B2E2FBF1200902BDA /* MooreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MooreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		123BE9852E2FBF1200902BDA /* MooreUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MooreUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -79,9 +79,9 @@
 		123BE9662E2FBF1000902BDA /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				123BE9652E2FBF1000902BDA /* Argonautes.app */,
-				123BE97B2E2FBF1200902BDA /* ArgonautesTests.xctest */,
-				123BE9852E2FBF1200902BDA /* ArgonautesUITests.xctest */,
+				123BE9652E2FBF1000902BDA /* Moore.app */,
+				123BE97B2E2FBF1200902BDA /* MooreTests.xctest */,
+				123BE9852E2FBF1200902BDA /* MooreUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -89,9 +89,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		123BE9642E2FBF1000902BDA /* Argonautes */ = {
+		123BE9642E2FBF1000902BDA /* Moore */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 123BE98F2E2FBF1200902BDA /* Build configuration list for PBXNativeTarget "Argonautes" */;
+			buildConfigurationList = 123BE98F2E2FBF1200902BDA /* Build configuration list for PBXNativeTarget "Moore" */;
 			buildPhases = (
 				123BE9612E2FBF1000902BDA /* Sources */,
 				123BE9622E2FBF1000902BDA /* Frameworks */,
@@ -104,16 +104,16 @@
 			fileSystemSynchronizedGroups = (
 				123BE9672E2FBF1000902BDA /* Argonautes */,
 			);
-			name = Argonautes;
+			name = Moore;
 			packageProductDependencies = (
 			);
 			productName = Argonautes;
-			productReference = 123BE9652E2FBF1000902BDA /* Argonautes.app */;
+			productReference = 123BE9652E2FBF1000902BDA /* Moore.app */;
 			productType = "com.apple.product-type.application";
 		};
-		123BE97A2E2FBF1200902BDA /* ArgonautesTests */ = {
+		123BE97A2E2FBF1200902BDA /* MooreTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 123BE9922E2FBF1200902BDA /* Build configuration list for PBXNativeTarget "ArgonautesTests" */;
+			buildConfigurationList = 123BE9922E2FBF1200902BDA /* Build configuration list for PBXNativeTarget "MooreTests" */;
 			buildPhases = (
 				123BE9772E2FBF1200902BDA /* Sources */,
 				123BE9782E2FBF1200902BDA /* Frameworks */,
@@ -127,16 +127,16 @@
 			fileSystemSynchronizedGroups = (
 				123BE97E2E2FBF1200902BDA /* ArgonautesTests */,
 			);
-			name = ArgonautesTests;
+			name = MooreTests;
 			packageProductDependencies = (
 			);
 			productName = ArgonautesTests;
-			productReference = 123BE97B2E2FBF1200902BDA /* ArgonautesTests.xctest */;
+			productReference = 123BE97B2E2FBF1200902BDA /* MooreTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		123BE9842E2FBF1200902BDA /* ArgonautesUITests */ = {
+		123BE9842E2FBF1200902BDA /* MooreUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 123BE9952E2FBF1200902BDA /* Build configuration list for PBXNativeTarget "ArgonautesUITests" */;
+			buildConfigurationList = 123BE9952E2FBF1200902BDA /* Build configuration list for PBXNativeTarget "MooreUITests" */;
 			buildPhases = (
 				123BE9812E2FBF1200902BDA /* Sources */,
 				123BE9822E2FBF1200902BDA /* Frameworks */,
@@ -147,11 +147,11 @@
 			dependencies = (
 				123BE9872E2FBF1200902BDA /* PBXTargetDependency */,
 			);
-			name = ArgonautesUITests;
+			name = MooreUITests;
 			packageProductDependencies = (
 			);
 			productName = ArgonautesUITests;
-			productReference = 123BE9852E2FBF1200902BDA /* ArgonautesUITests.xctest */;
+			productReference = 123BE9852E2FBF1200902BDA /* MooreUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -177,7 +177,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 123BE9602E2FBF1000902BDA /* Build configuration list for PBXProject "Argonautes" */;
+			buildConfigurationList = 123BE9602E2FBF1000902BDA /* Build configuration list for PBXProject "Moore" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -191,9 +191,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				123BE9642E2FBF1000902BDA /* Argonautes */,
-				123BE97A2E2FBF1200902BDA /* ArgonautesTests */,
-				123BE9842E2FBF1200902BDA /* ArgonautesUITests */,
+				123BE9642E2FBF1000902BDA /* Moore */,
+				123BE97A2E2FBF1200902BDA /* MooreTests */,
+				123BE9842E2FBF1200902BDA /* MooreUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -249,12 +249,12 @@
 /* Begin PBXTargetDependency section */
 		123BE97D2E2FBF1200902BDA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 123BE9642E2FBF1000902BDA /* Argonautes */;
+			target = 123BE9642E2FBF1000902BDA /* Moore */;
 			targetProxy = 123BE97C2E2FBF1200902BDA /* PBXContainerItemProxy */;
 		};
 		123BE9872E2FBF1200902BDA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 123BE9642E2FBF1000902BDA /* Argonautes */;
+			target = 123BE9642E2FBF1000902BDA /* Moore */;
 			targetProxy = 123BE9862E2FBF1200902BDA /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -400,7 +400,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = mississippistudio.Argonautes;
+				PRODUCT_BUNDLE_IDENTIFIER = mississippistudio.Moore;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -430,7 +430,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = mississippistudio.Argonautes;
+				PRODUCT_BUNDLE_IDENTIFIER = mississippistudio.Moore;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -451,7 +451,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Argonautes.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Argonautes";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Moore.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Moore";
 			};
 			name = Debug;
 		};
@@ -468,7 +468,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Argonautes.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Argonautes";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Moore.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Moore";
 			};
 			name = Release;
 		};
@@ -505,7 +505,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		123BE9602E2FBF1000902BDA /* Build configuration list for PBXProject "Argonautes" */ = {
+		123BE9602E2FBF1000902BDA /* Build configuration list for PBXProject "Moore" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				123BE98D2E2FBF1200902BDA /* Debug */,
@@ -514,7 +514,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		123BE98F2E2FBF1200902BDA /* Build configuration list for PBXNativeTarget "Argonautes" */ = {
+		123BE98F2E2FBF1200902BDA /* Build configuration list for PBXNativeTarget "Moore" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				123BE9902E2FBF1200902BDA /* Debug */,
@@ -523,7 +523,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		123BE9922E2FBF1200902BDA /* Build configuration list for PBXNativeTarget "ArgonautesTests" */ = {
+		123BE9922E2FBF1200902BDA /* Build configuration list for PBXNativeTarget "MooreTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				123BE9932E2FBF1200902BDA /* Debug */,
@@ -532,7 +532,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		123BE9952E2FBF1200902BDA /* Build configuration list for PBXNativeTarget "ArgonautesUITests" */ = {
+		123BE9952E2FBF1200902BDA /* Build configuration list for PBXNativeTarget "MooreUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				123BE9962E2FBF1200902BDA /* Debug */,
