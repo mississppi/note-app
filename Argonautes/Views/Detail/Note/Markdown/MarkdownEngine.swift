@@ -104,6 +104,11 @@ class MarkdownEngine {
         
         // 選択範囲を復元（範囲チェック付き）
         restoreSelection(selectedRange, in: textView)
+        
+        // レイアウト完了後にスクロール位置を調整
+        DispatchQueue.main.async { [weak textView] in
+            textView?.scrollRangeToVisible(selectedRange)
+        }
     }
     
     /// 選択範囲を安全に復元する

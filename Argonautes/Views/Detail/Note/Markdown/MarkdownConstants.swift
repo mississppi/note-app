@@ -6,7 +6,7 @@ enum MarkdownConstants {
     // MARK: - Formatting Timing
     
     /// Markdown装飾適用までの遅延時間（秒）
-    static let formattingDelay: TimeInterval = 0.3
+    static let formattingDelay: TimeInterval = 0.1
     
     // MARK: - Font Size Multipliers
     
@@ -15,6 +15,14 @@ enum MarkdownConstants {
     
     /// コードブロックのフォントサイズ倍率
     static let codeFontMultiplier: CGFloat = 0.93
+    
+    // MARK: - Paragraph Spacing
+    
+    /// 行間の追加スペース（ポイント）
+    static let lineSpacing: CGFloat = 3.0
+    
+    /// 段落間の追加スペース（ポイント）
+    static let paragraphSpacing: CGFloat = 7.0
     
     // MARK: - Colors
     

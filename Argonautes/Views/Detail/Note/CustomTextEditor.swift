@@ -126,6 +126,8 @@ struct CustomTextEditor: NSViewRepresentable {
         
         if textView.string != text {
             textView.string = text
+            // テキストが変更された時は即座にMarkdown装飾を適用
+            context.coordinator.markdownEngine?.applyMarkdownImmediately()
         }
     }
     
@@ -135,7 +137,7 @@ struct CustomTextEditor: NSViewRepresentable {
     
     class Coordinator: NSObject, NSTextViewDelegate {
         var parent: CustomTextEditor
-        private var markdownEngine: MarkdownEngine?
+        fileprivate var markdownEngine: MarkdownEngine?
         
         init(_ parent: CustomTextEditor) {
             self.parent = parent

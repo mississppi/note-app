@@ -40,10 +40,16 @@ class MarkdownFormatter {
                              excluding excludeRange: NSRange? = nil) {
         let targetRange = range ?? NSRange(location: 0, length: attributedString.length)
         
-        // デフォルト属性をリセット（ベースフォントを使用）
+        // 段落スタイルを設定（行間調整）
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = MarkdownConstants.lineSpacing
+        paragraphStyle.paragraphSpacing = MarkdownConstants.paragraphSpacing
+        
+        // デフォルト属性をリセット（ベースフォントと段落スタイルを使用）
         let defaultAttributes: [NSAttributedString.Key: Any] = [
             .font: baseFont,
-            .foregroundColor: MarkdownConstants.defaultTextColor
+            .foregroundColor: MarkdownConstants.defaultTextColor,
+            .paragraphStyle: paragraphStyle
         ]
         attributedString.addAttributes(defaultAttributes, range: targetRange)
         
