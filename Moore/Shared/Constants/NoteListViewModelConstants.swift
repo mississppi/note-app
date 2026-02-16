@@ -4,7 +4,7 @@ enum NoteListViewModelConstants {
     /// 新規ノートのデフォルトタイトル
     static let newNoteTitle = "new Note"
     /// デフォルトタグ名
-    static let defaultTagName = "voyage"
+    static let defaultTagName = "general"
     /// タグの最小数（これ以下にはできない）
     static let minTagCount = 1
     /// タグの最大数

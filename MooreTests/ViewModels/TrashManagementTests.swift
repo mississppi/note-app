@@ -96,7 +96,7 @@ final class TrashManagementTests: XCTestCase {
         XCTAssertEqual(note.tag?.name, "OriginalTag", "元のタグに復元されるべき")
     }
     
-    func testRestoreNoteFromTrash_WithDeletedTag_ShouldRestoreToVoyageTag() throws {
+    func testRestoreNoteFromTrash_WithDeletedTag_ShouldRestoreToDefaultTag() throws {
         // Given: タグとノートを作成してゴミ箱に移動し、その後タグを削除
         let tag = service.createTag(name: "DeletedTag")
         let note = service.createNote(title: "Test", content: "Content", tag: tag)
@@ -113,20 +113,20 @@ final class TrashManagementTests: XCTestCase {
         // When: ノートを復元
         viewModel.restoreNoteFromTrash(note: note)
         
-        // Then: デフォルトタグ(voyage)に復元される
+        // Then: デフォルトタグに復元される
         XCTAssertFalse(note.isTrashed, "ノートが復元されているべき")
-        XCTAssertEqual(note.tag?.name, NoteListViewModelConstants.defaultTagName, "削除されたタグの場合、voyageタグに復元されるべき")
+        XCTAssertEqual(note.tag?.name, NoteListViewModelConstants.defaultTagName, "削除されたタグの場合、デフォルトタグに復元されるべき")
         
-        // voyageタグが存在することを確認
-        let voyageTag = viewModel.tags.first(where: { $0.name == NoteListViewModelConstants.defaultTagName })
-        XCTAssertNotNil(voyageTag, "voyageタグが存在するべき")
+        // デフォルトタグが存在することを確認
+        let defaultTag = viewModel.tags.first(where: { $0.name == NoteListViewModelConstants.defaultTagName })
+        XCTAssertNotNil(defaultTag, "デフォルトタグが存在するべき")
         
         // DeletedTagは再作成されない
         let deletedTag = viewModel.tags.first(where: { $0.name == "DeletedTag" })
         XCTAssertNil(deletedTag, "削除されたタグは再作成されないべき")
     }
     
-    func testRestoreNoteFromTrash_WithNilDeletedTagName_ShouldRestoreToVoyageTag() throws {
+    func testRestoreNoteFromTrash_WithNilDeletedTagName_ShouldRestoreToDefaultTag() throws {
         // Given: タグなしのノートを作成してゴミ箱に移動
         let note = service.createNote(title: "Test", content: "Content", tag: nil)
         note.deletedTagName = nil // 明示的にnil
@@ -141,9 +141,9 @@ final class TrashManagementTests: XCTestCase {
         // When: ノートを復元
         viewModel.restoreNoteFromTrash(note: note)
         
-        // Then: "voyage"タグに復元される
+        // Then: デフォルトタグに復元される
         XCTAssertFalse(note.isTrashed, "ノートが復元されているべき")
-        XCTAssertEqual(note.tag?.name, NoteListViewModelConstants.defaultTagName, "voyageタグに復元されるべき")
+        XCTAssertEqual(note.tag?.name, NoteListViewModelConstants.defaultTagName, "デフォルトタグに復元されるべき")
         
         // voyageタグが作成されたことを確認
         let voyageTag = viewModel.tags.first(where: { $0.name == NoteListViewModelConstants.defaultTagName })

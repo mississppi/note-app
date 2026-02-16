@@ -453,7 +453,7 @@ class NoteListViewModel: ObservableObject {
     func restoreNoteFromTrash(note: Note) {
         // 1. 復元先のタグを決定
         // deletedTagNameが保存されていて、そのタグが存在する場合はそのタグへ
-        // タグが存在しない、またはdeletedTagNameがnilの場合はデフォルトタグ"voyage"へ
+        // タグが存在しない、またはdeletedTagNameがnilの場合はデフォルトタグへ
         let targetTag: Tag
         if let deletedTagName = note.deletedTagName,
            let existingTag = tags.first(where: { $0.name == deletedTagName }) {
@@ -461,10 +461,10 @@ class NoteListViewModel: ObservableObject {
             targetTag = existingTag
         } else {
             // 元のタグが削除済み、またはタグ情報がない場合 → デフォルトタグへ
-            if let voyageTag = tags.first(where: { $0.name == NoteListViewModelConstants.defaultTagName }) {
-                targetTag = voyageTag
+            if let defaultTag = tags.first(where: { $0.name == NoteListViewModelConstants.defaultTagName }) {
+                targetTag = defaultTag
             } else {
-                targetTag = noteService.createTag(name: "voyage")
+                targetTag = noteService.createTag(name: NoteListViewModelConstants.defaultTagName)
                 self.tags = noteService.fetchTags(predicate: nil, sortDescriptors: nil)
             }
         }
