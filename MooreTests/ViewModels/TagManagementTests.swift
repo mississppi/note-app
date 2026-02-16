@@ -1,6 +1,6 @@
 import XCTest
 import CoreData
-@testable import Argonautes
+@testable import Moore
 
 /// NoteListViewModelのタグ管理機能をテスト
 /// 

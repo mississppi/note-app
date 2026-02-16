@@ -1,5 +1,4 @@
 import CoreData
-import Moore
 
 struct PersistenceController {
     static let shared = PersistenceController()
@@ -16,7 +15,7 @@ struct PersistenceController {
             print("--- persistence inmemory ----")
             // テスト環境の場合、Bundle.mainからモデルをロードする
             // テストターゲットのリソースとしてモデルがコピーされていることを前提とする
-            guard let modelURL = Bundle.main.url(forResource: "Argonautes", withExtension: "momd") else { // <--- ここを Bundle.main に修正
+            guard let modelURL = Bundle.main.url(forResource: "Moore", withExtension: "momd") else {
                 fatalError("Failed to find Core Data model in test bundle.")
             }
             managedObjectModel = NSManagedObjectModel(contentsOf: modelURL)
@@ -26,7 +25,7 @@ struct PersistenceController {
             managedObjectModel = NSManagedObjectModel.mergedModel(from: [Bundle.main])
         }
 
-        container = NSPersistentContainer(name: "Argonautes", managedObjectModel: managedObjectModel!)
+        container = NSPersistentContainer(name: "Moore", managedObjectModel: managedObjectModel!)
 
         if let storeURL = container.persistentStoreDescriptions.first?.url {
             print("Persistent Store URL: \(storeURL)")

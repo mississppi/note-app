@@ -1,6 +1,6 @@
 //
-//  ArgonautesApp.swift
-//  Argonautes
+//  MooreApp.swift
+//  Moore
 //
 //  Created by KOSUKE SAKURAI on 2025/07/22.
 //
@@ -8,7 +8,7 @@
 import SwiftUI
 
 @main
-struct ArgonautesApp: App {
+struct MooreApp: App {
 
     let persistenceController = PersistenceController.shared
 
@@ -21,6 +21,7 @@ struct ArgonautesApp: App {
         WindowGroup {
             ContentView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                .preferredColorScheme(.light)
         }
     }
 }

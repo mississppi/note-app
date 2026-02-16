@@ -1,7 +1,7 @@
 import XCTest
 import SwiftUI
 import CoreData
-@testable import Argonautes
+@testable import Moore
 
 final class NoteListViewTests: XCTestCase {
     var service: CoreDataNoteService!

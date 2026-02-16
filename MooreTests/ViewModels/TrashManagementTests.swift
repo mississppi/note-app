@@ -1,6 +1,6 @@
 import XCTest
 import CoreData
-@testable import Argonautes
+@testable import Moore
 
 /// ゴミ箱機能のユニットテスト
 final class TrashManagementTests: XCTestCase {

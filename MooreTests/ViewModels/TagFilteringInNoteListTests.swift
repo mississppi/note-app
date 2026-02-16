@@ -1,6 +1,6 @@
 import XCTest
 import CoreData
-@testable import Argonautes
+@testable import Moore
 
 final class TagFilteringInNoteListTests: XCTestCase {
     private var persistence: PersistenceController!

@@ -1,6 +1,6 @@
 import XCTest
 import CoreData
-@testable import Argonautes
+@testable import Moore
 
 /// NoteListViewModelのUI状態管理機能をテスト
 final class NoteListViewModelUIStateTests: XCTestCase {

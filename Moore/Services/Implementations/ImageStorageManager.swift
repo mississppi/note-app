@@ -16,14 +16,14 @@ class ImageStorageManager {
     // MARK: - Properties
     
     /// 画像保存先のディレクトリ
-    /// ~/Library/Application Support/mississippistudio.Argonautes/Images/
+    /// ~/Library/Application Support/mississippistudio.Moore/Images/
     var imagesDirectory: URL {
         let appSupport = FileManager.default.urls(
             for: .applicationSupportDirectory,
             in: .userDomainMask
         ).first!
         
-        let appDir = appSupport.appendingPathComponent("mississippistudio.Argonautes")
+        let appDir = appSupport.appendingPathComponent("mississippistudio.Moore")
         return appDir.appendingPathComponent("Images")
     }
     

@@ -12,14 +12,14 @@
 			containerPortal = 123BE95D2E2FBF1000902BDA /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 123BE9642E2FBF1000902BDA;
-			remoteInfo = Argonautes;
+			remoteInfo = Moore;
 		};
 		123BE9862E2FBF1200902BDA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 123BE95D2E2FBF1000902BDA /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 123BE9642E2FBF1000902BDA;
-			remoteInfo = Argonautes;
+			remoteInfo = Moore;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -30,14 +30,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		123BE9672E2FBF1000902BDA /* Argonautes */ = {
+		123BE9672E2FBF1000902BDA /* Moore */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Argonautes;
+			path = Moore;
 			sourceTree = "<group>";
 		};
-		123BE97E2E2FBF1200902BDA /* ArgonautesTests */ = {
+		123BE97E2E2FBF1200902BDA /* MooreTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = ArgonautesTests;
+			path = MooreTests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -70,8 +70,8 @@
 		123BE95C2E2FBF1000902BDA = {
 			isa = PBXGroup;
 			children = (
-				123BE9672E2FBF1000902BDA /* Argonautes */,
-				123BE97E2E2FBF1200902BDA /* ArgonautesTests */,
+				123BE9672E2FBF1000902BDA /* Moore */,
+				123BE97E2E2FBF1200902BDA /* MooreTests */,
 				123BE9662E2FBF1000902BDA /* Products */,
 			);
 			sourceTree = "<group>";
@@ -102,12 +102,12 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				123BE9672E2FBF1000902BDA /* Argonautes */,
+				123BE9672E2FBF1000902BDA /* Moore */,
 			);
 			name = Moore;
 			packageProductDependencies = (
 			);
-			productName = Argonautes;
+			productName = Moore;
 			productReference = 123BE9652E2FBF1000902BDA /* Moore.app */;
 			productType = "com.apple.product-type.application";
 		};
@@ -125,12 +125,12 @@
 				123BE97D2E2FBF1200902BDA /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				123BE97E2E2FBF1200902BDA /* ArgonautesTests */,
+				123BE97E2E2FBF1200902BDA /* MooreTests */,
 			);
 			name = MooreTests;
 			packageProductDependencies = (
 			);
-			productName = ArgonautesTests;
+			productName = MooreTests;
 			productReference = 123BE97B2E2FBF1200902BDA /* MooreTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
@@ -150,7 +150,7 @@
 			name = MooreUITests;
 			packageProductDependencies = (
 			);
-			productName = ArgonautesUITests;
+			productName = MooreUITests;
 			productReference = 123BE9852E2FBF1200902BDA /* MooreUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
@@ -383,12 +383,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = Argonautes/Argonautes.entitlements;
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
-				CODE_SIGN_STYLE = Manual;
-				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"Argonautes/Preview Content\"";
+			CODE_SIGN_ENTITLEMENTS = Moore/Moore.entitlements;
+			"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
+			CODE_SIGN_STYLE = Manual;
+			COMBINE_HIDPI_IMAGES = YES;
+			CURRENT_PROJECT_VERSION = 1;
+			DEVELOPMENT_ASSET_PATHS = "\"Moore/Preview Content\"";
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=macosx*]" = F85XD694X6;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -413,12 +413,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = Argonautes/Argonautes.entitlements;
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
-				CODE_SIGN_STYLE = Manual;
-				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"Argonautes/Preview Content\"";
+			CODE_SIGN_ENTITLEMENTS = Moore/Moore.entitlements;
+			"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
+			CODE_SIGN_STYLE = Manual;
+			COMBINE_HIDPI_IMAGES = YES;
+			CURRENT_PROJECT_VERSION = 1;
+			DEVELOPMENT_ASSET_PATHS = "\"Moore/Preview Content\"";
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=macosx*]" = F85XD694X6;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -447,7 +447,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.6;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = mississippistudio.ArgonautesTests;
+			PRODUCT_BUNDLE_IDENTIFIER = mississippistudio.MooreTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -464,7 +464,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.6;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = mississippistudio.ArgonautesTests;
+			PRODUCT_BUNDLE_IDENTIFIER = mississippistudio.MooreTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -479,11 +479,11 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = mississippistudio.ArgonautesUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TEST_TARGET_NAME = Argonautes;
+			PRODUCT_BUNDLE_IDENTIFIER = mississippistudio.MooreUITests;
+			PRODUCT_NAME = "$(TARGET_NAME)";
+			SWIFT_EMIT_LOC_STRINGS = NO;
+			SWIFT_VERSION = 5.0;
+			TEST_TARGET_NAME = Moore;
 			};
 			name = Debug;
 		};
@@ -494,11 +494,11 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = mississippistudio.ArgonautesUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TEST_TARGET_NAME = Argonautes;
+			PRODUCT_BUNDLE_IDENTIFIER = mississippistudio.MooreUITests;
+			PRODUCT_NAME = "$(TARGET_NAME)";
+			SWIFT_EMIT_LOC_STRINGS = NO;
+			SWIFT_VERSION = 5.0;
+			TEST_TARGET_NAME = Moore;
 			};
 			name = Release;
 		};

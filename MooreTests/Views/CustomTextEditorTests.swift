@@ -1,6 +1,6 @@
 import XCTest
 import AppKit
-@testable import Argonautes
+@testable import Moore
 
 final class CustomTextEditorTests: XCTestCase {
     
