@@ -1,6 +1,7 @@
 import SwiftUI
 import CoreData
 
+
 struct ContentView: View {
     @StateObject private var viewModel = NoteListViewModel(
         noteService: CoreDataNoteService(context: PersistenceController.shared.container.viewContext)
