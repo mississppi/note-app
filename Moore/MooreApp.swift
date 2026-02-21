@@ -20,6 +20,7 @@ struct MooreApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .font(.notoSansJPBody)
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .preferredColorScheme(.light)
         }
