@@ -24,6 +24,7 @@ struct MooreApp: App {
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .preferredColorScheme(.light)
         }
+        .windowStyle(HiddenTitleBarWindowStyle())
         .commands {
             ExportCommands()
         }
