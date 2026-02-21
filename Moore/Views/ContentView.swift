@@ -1,7 +1,6 @@
 import SwiftUI
 import CoreData
 
-
 struct ContentView: View {
     @StateObject private var viewModel = NoteListViewModel(
         noteService: CoreDataNoteService(context: PersistenceController.shared.container.viewContext)
@@ -13,6 +12,7 @@ struct ContentView: View {
             NoteDetailView(viewModel: viewModel)
         }
         .modifier(TransparentTitleBarModifier())
+        .focusedValue(\.noteListViewModel, viewModel)
     }
 }
 #Preview {

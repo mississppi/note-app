@@ -24,12 +24,8 @@ struct MooreApp: App {
                 .preferredColorScheme(.light)
         }
         .commands {
-            CommandGroup(after: .importExport) {
-                Button("エクスポート") {
-                    // TODO: エクスポート機能を実装
-                }
-                .keyboardShortcut("e", modifiers: [.command, .shift])
-            }
+            ExportCommands()
         }
     }
 }
+
