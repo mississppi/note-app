@@ -82,6 +82,7 @@ struct CustomTextEditor: NSViewRepresentable {
     @Binding var text: String
     var font: NSFont?
     var backgroundColor: NSColor?
+    var isEditable: Bool = true
     
     func makeNSView(context: Context) -> NSScrollView {
         let scrollView = NSTextView.scrollableTextView()
@@ -109,13 +110,10 @@ struct CustomTextEditor: NSViewRepresentable {
         if let font = font {
             textView.font = font
         }
-        
         if let backgroundColor = backgroundColor {
             textView.backgroundColor = backgroundColor
         }
-        
         textView.textContainerInset = NSSize(width: 10, height: 10)
-        
         return scrollView
     }
     
@@ -129,6 +127,8 @@ struct CustomTextEditor: NSViewRepresentable {
             // テキストが変更された時は即座にMarkdown装飾を適用
             context.coordinator.markdownEngine?.applyMarkdownImmediately()
         }
+        // ロック状態をCoordinatorに伝える
+        context.coordinator.isEditable = isEditable
     }
     
     func makeCoordinator() -> Coordinator {
@@ -138,9 +138,14 @@ struct CustomTextEditor: NSViewRepresentable {
     class Coordinator: NSObject, NSTextViewDelegate {
         var parent: CustomTextEditor
         fileprivate var markdownEngine: MarkdownEngine?
+        var isEditable: Bool = true
         
         init(_ parent: CustomTextEditor) {
             self.parent = parent
+        }
+
+        func textView(_ textView: NSTextView, shouldChangeTextIn affectedCharRange: NSRange, replacementString: String?) -> Bool {
+            return isEditable
         }
         
         /// MarkdownEngineをセットアップする

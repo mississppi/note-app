@@ -2,6 +2,7 @@ import Foundation
 import CoreData
 
 class CoreDataNoteService: NoteDataService {
+
     
     private let context: NSManagedObjectContext
     
@@ -23,7 +24,11 @@ class CoreDataNoteService: NoteDataService {
         }
     }
     
-    func createNote(title: String, content: String, tag: Tag?) -> Note{
+    func createNote(
+        title: String, 
+        content: String, 
+        tag: Tag?
+    ) -> Note {
         let newNote = Note(context: context)
 
         newNote.title = title
@@ -35,6 +40,7 @@ class CoreDataNoteService: NoteDataService {
 
         newNote.isTrashed = false
         newNote.trashedAt = nil
+        newNote.isLock = false
 
         let fetchRequest: NSFetchRequest<Note> = Note.fetchRequest()
         fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Note.order, ascending: false)]
@@ -46,7 +52,7 @@ class CoreDataNoteService: NoteDataService {
             newNote.order = 1
         }
         newNote.tag = tag
-        
+
         return newNote
     }
     
@@ -85,6 +91,11 @@ class CoreDataNoteService: NoteDataService {
         if shouldUpdateTimeStamp {
             note.updatedAt = Date()
         }
+    }
+
+    func toggleLock(_ note: Note) {
+        note.isLock.toggle()
+        note.updatedAt = Date()
     }
 
     func trashNote(_ note: Note) {

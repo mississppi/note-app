@@ -3,6 +3,25 @@ import CoreData
 @testable import Moore
 
 final class CoreDataNoteServiceTests: XCTestCase {
+    func testToggleLock_ShouldToggleAndUpdateTimestamp() throws {
+        // ノート作成（初期状態: isLock == false）
+        let note = service.createNote(title: "Lock Test", content: "", tag: nil)
+        try service.saveContext()
+        XCTAssertFalse(note.isLock, "初期状態はfalse")
+
+        let oldTimestamp = note.updatedAt
+
+        // トグルしてtrueになる
+        service.toggleLock(note)
+        try service.saveContext()
+        XCTAssertTrue(note.isLock, "toggleLock後はtrue")
+        XCTAssertNotEqual(note.updatedAt, oldTimestamp, "updatedAtが更新されるべき")
+
+        // 再度トグルしてfalseに戻る
+        service.toggleLock(note)
+        try service.saveContext()
+        XCTAssertFalse(note.isLock, "再度toggleLockでfalseに戻る")
+    }
 
     var service: CoreDataNoteService!
     var persistenceController: PersistenceController!

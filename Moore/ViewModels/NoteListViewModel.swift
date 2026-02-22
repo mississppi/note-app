@@ -1,6 +1,7 @@
 import Foundation
 import Combine
 import CoreData
+import SwiftUI
 
 /// ノート一覧画面のビジネスロジックを管理するViewModel
 /// 
@@ -10,6 +11,42 @@ import CoreData
 /// - タグの管理・切り替え
 /// - 自動保存機能（タイトル・コンテンツの変更を監視）
 class NoteListViewModel: ObservableObject {
+    /// ロック切り替えボタンのアクション（View用）
+    func toggleLockButtonAction() {
+        guard let note = selectedNote else { return }
+        toggleLock(note)
+    }
+
+    /// ロック状態を切り替える
+    func toggleLock(_ note: Note) {
+        noteService.toggleLock(note)
+        saveContextWithErrorHandling(operation: "toggle lock")
+        // UI更新のためselectedNoteを再セット
+        selectedNote = note
+    }
+        // MARK: - Computed Properties (Lock Button UI)
+        /// ロック切り替えボタンを表示するか
+        var isLockButtonVisible: Bool {
+            selectedNote != nil
+        }
+
+        /// ロック切り替えボタンのアイコン名
+        var lockButtonIcon: String {
+            guard let note = selectedNote else { return "lock.open" }
+            return note.isLock ? "lock.fill" : "lock.open"
+        }
+
+        /// ロック切り替えボタンの色
+        var lockButtonColor: Color {
+            guard let note = selectedNote else { return .gray }
+            return note.isLock ? .blue : .gray
+        }
+
+        /// ロック切り替えボタンのヘルプテキスト
+        var lockButtonHelp: String {
+            guard let note = selectedNote else { return "ロックする" }
+            return note.isLock ? "ロック解除" : "ロックする"
+        }
     
     // MARK: - Published Properties (Note List Management)
     @Published var notes: [Note] = []

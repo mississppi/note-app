@@ -8,7 +8,8 @@ struct NoteDetailContentArea: View {
         CustomTextEditor(
             text: $viewModel.selectedContent,
             font: NSFont(name: "HiraginoSans-W3", size: 15),
-            backgroundColor: NSColor(Color(hex: "#F2F2F7"))
+            backgroundColor: NSColor(Color(hex: "#F2F2F7")),
+            isEditable: !(viewModel.selectedNote?.isLock ?? false)
         )
         .padding()
     }
