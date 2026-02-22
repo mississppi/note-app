@@ -789,19 +789,12 @@ private extension NoteListViewModel {
         }
     }
 
-    /// エラーログを出力する統一メソッド
-    /// - Parameters:
-    ///     - operation: 失敗した操作の説明
-    ///     - error: 発生したエラー
-    func logError(_ operation: String, error: Error) {
-        print("[\(type(of: self))] Failed to \(operation): \(error.localizedDescription)")
-    }
 
     func saveContextWithErrorHandling(operation: String) {
         do {
             try noteService.saveContext()
         } catch {
-            logError(operation, error: error)
+            Logger.error("[\(type(of: self))] Failed to \(operation): \(error.localizedDescription)")
         }
     }
 }

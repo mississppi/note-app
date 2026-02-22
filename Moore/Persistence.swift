@@ -1,4 +1,5 @@
 import CoreData
+import Logger
 
 struct PersistenceController {
     static let shared = PersistenceController()
@@ -6,13 +7,11 @@ struct PersistenceController {
     let container: NSPersistentContainer
 
     init(inMemory: Bool = false) {
-        print("--- persistence init ----")
         let currentDate = Date()
-        print(currentDate)
 
         var managedObjectModel: NSManagedObjectModel? = nil
         if inMemory {
-            print("--- persistence inmemory ----")
+            Logger.info("--- persistence inmemory ----")
             // テスト環境の場合、Bundle.mainからモデルをロードする
             // テストターゲットのリソースとしてモデルがコピーされていることを前提とする
             guard let modelURL = Bundle.main.url(forResource: "Moore", withExtension: "momd") else {
@@ -20,21 +19,14 @@ struct PersistenceController {
             }
             managedObjectModel = NSManagedObjectModel(contentsOf: modelURL)
         } else {
-            print("--- persistence no inMemory ----")
+            Logger.info("--- persistence no inMemory ----")
             // 通常のアプリ実行時
             managedObjectModel = NSManagedObjectModel.mergedModel(from: [Bundle.main])
         }
 
         container = NSPersistentContainer(name: "Moore", managedObjectModel: managedObjectModel!)
 
-        if let storeURL = container.persistentStoreDescriptions.first?.url {
-            print("Persistent Store URL: \(storeURL)")
-        } else {
-            print("Persistent Store URL: nil")
-        }
-        
         if inMemory {
-            print("--- persistence 29 - inmemory ----")
             container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
         }
 
@@ -44,9 +36,7 @@ struct PersistenceController {
             }
             
             if !inMemory {
-                // テストデータ削除したい場合
                 // self.deleteAllData()
-                
                 createInitialDataIfNeeded()
             }
         })
@@ -68,7 +58,7 @@ struct PersistenceController {
             do {
                 try service.saveContext()
             } catch {
-                print("Failed to save initial data: \(error)")
+                Logger.error("Failed to save initial data: \(error)")
             }
         }
     }
@@ -81,7 +71,7 @@ struct PersistenceController {
             try container.viewContext.execute(tagRequest)
             try container.viewContext.save()
         } catch {
-            print("Failed to delete all data: \(error)")
+            Logger.error("Failed to delete all data: \(error)")
         }
     }
     

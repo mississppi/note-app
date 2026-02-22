@@ -1,9 +1,9 @@
 import Foundation
 import CoreData
+import Logger
 
 class CoreDataNoteService: NoteDataService {
 
-    
     private let context: NSManagedObjectContext
     
     init(context: NSManagedObjectContext) {
@@ -18,8 +18,8 @@ class CoreDataNoteService: NoteDataService {
             let results = try context.fetch(request)
             return results
         } catch {
-            print("🟡 ❌ Error fetching notes: \(error)")
-            print("🟡 ===== CoreDataNoteService.fetchNotes END (ERROR) =====")
+            Logger.error("🟡 ❌ Error fetching notes: \(error)")
+            Logger.debug("🟡 ===== CoreDataNoteService.fetchNotes END (ERROR) =====")
             return []
         }
     }
@@ -117,7 +117,7 @@ class CoreDataNoteService: NoteDataService {
         do {
             return try context.fetch(request)
         } catch {
-            print("Error searching notes: \(error)")
+            Logger.error("Error searching notes: \(error)")
             return []
         }
     }
@@ -127,13 +127,10 @@ class CoreDataNoteService: NoteDataService {
             do {
                 try context.save()
             } catch {
-                print("エラーが発生しました \(error.localizedDescription)")
-                print("Core Data save error \(error.localizedDescription)")
+                Logger.error("エラーが発生しました \(error.localizedDescription)")
+                Logger.error("Core Data save error \(error.localizedDescription)")
                 throw error
             }
-        } else {
-            print("haschangeできない:")
-            print("DEBUG: no changes in ct to save.")
         }
     }
     
@@ -145,7 +142,7 @@ class CoreDataNoteService: NoteDataService {
         do {
             return try context.fetch(request)
         } catch {
-            print("Error fetching tags: \(error)")
+            Logger.error("Error fetching tags: \(error)")
             return []
         }
     }
@@ -164,19 +161,4 @@ class CoreDataNoteService: NoteDataService {
     func deleteTag(_ tag: Tag) {
         context.delete(tag)
     }
-
-    // func deleteTagWithNotes(_ tag: Tag) throws {
-    //     let tagName = tag.name ?? "Unknown"
-    //     let notes = tag.notes?.allObjects as? [Note] ?? []
-
-    //     for note in notes {
-    //         note.isArchived = true
-    //         note.archivedAt = Date()
-    //         note.deletedTagName = tagName
-    //         // note.removeFromTags(tag)
-    //     }
-
-    //     deleteTag(tag)
-    //     try saveContext()
-    // }
 }

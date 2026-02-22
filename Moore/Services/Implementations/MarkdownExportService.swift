@@ -7,12 +7,13 @@
 
 import Foundation
 import CoreData
+import Logger
 
 class MarkdownExportService: ExportService {
     
     func exportNotes(_ notes: [Note], to directory: URL) throws {
-        print("[MarkdownExportService] エクスポート開始: \(notes.count)件のノート")
-        print("[MarkdownExportService] 出力先: \(directory.path)")
+        Logger.info("[MarkdownExportService] エクスポート開始: \(notes.count)件のノート")
+        Logger.info("[MarkdownExportService] 出力先: \(directory.path)")
         
         // Create export folder with timestamp
         let dateFormatter = DateFormatter()
@@ -21,17 +22,17 @@ class MarkdownExportService: ExportService {
         let exportFolderName = "Moore_Export_\(timestamp)"
         let exportURL = directory.appendingPathComponent(exportFolderName)
         
-        print("[MarkdownExportService] フォルダ作成: \(exportURL.path)")
+        Logger.info("[MarkdownExportService] フォルダ作成: \(exportURL.path)")
         try FileManager.default.createDirectory(at: exportURL, withIntermediateDirectories: true)
-        print("[MarkdownExportService] フォルダ作成成功")
+        Logger.info("[MarkdownExportService] フォルダ作成成功")
         
         // Export each note
         for (index, note) in notes.enumerated() {
-            print("[MarkdownExportService] ノート\(index + 1)/\(notes.count)をエクスポート中...")
+            Logger.info("[MarkdownExportService] ノート\(index + 1)/\(notes.count)をエクスポート中...")
             try exportNote(note, to: exportURL)
         }
         
-        print("[MarkdownExportService] ✅ 完了: \(notes.count)件のノートを \(exportURL.path) にエクスポートしました")
+        Logger.info("[MarkdownExportService] ✅ 完了: \(notes.count)件のノートを \(exportURL.path) にエクスポートしました")
     }
     
     private func exportNote(_ note: Note, to directory: URL) throws {
@@ -39,9 +40,9 @@ class MarkdownExportService: ExportService {
         let filename = generateFilename(for: note)
         let fileURL = directory.appendingPathComponent(filename)
         
-        print("[MarkdownExportService]   - ファイル: \(filename)")
+        Logger.info("[MarkdownExportService]   - ファイル: \(filename)")
         try markdown.write(to: fileURL, atomically: true, encoding: .utf8)
-        print("[MarkdownExportService]   - 書き込み完了")
+        Logger.info("[MarkdownExportService]   - 書き込み完了")
     }
     
     private func generateMarkdown(for note: Note) -> String {
