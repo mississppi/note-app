@@ -26,7 +26,7 @@ struct MooreApp: App {
         }
         .windowStyle(HiddenTitleBarWindowStyle())
         .commands {
-            ExportCommands()
+            ImportExportCommands()
         }
     }
 }

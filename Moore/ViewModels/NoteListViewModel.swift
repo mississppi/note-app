@@ -11,6 +11,123 @@ import SwiftUI
 /// - タグの管理・切り替え
 /// - 自動保存機能（タイトル・コンテンツの変更を監視）
 class NoteListViewModel: ObservableObject {
+
+    /// インポート時のバリデーション結果
+    struct ImportValidationResult {
+        let fileURL: URL
+        let isValid: Bool
+        let errors: [String]
+        let parsedNote: ParsedNote?
+    }
+
+    /// パース済みノートデータ構造
+    struct ParsedNote {
+        let title: String
+        let date: Date
+        let tags: [String]
+        let content: String
+    }
+
+    /// エクスポートディレクトリからノートをインポート
+    /// - Parameter directory: Moore_Export_xxx ディレクトリのURL
+    /// インポート時のエラー通知用
+    @Published var importErrorMessage: String? = nil
+
+    func importNotes(from directory: URL) {
+        // 1. ディレクトリ内のmdファイルを列挙
+        let fileManager = FileManager.default
+        guard let files = try? fileManager.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil, options: []) else {
+            importErrorMessage = "ディレクトリの読み込みに失敗しました"
+            return
+        }
+        let mdFiles = files.filter { $0.pathExtension.lowercased() == "md" }
+
+        if mdFiles.isEmpty {
+            importErrorMessage = "インポート対象のmdファイルがありません"
+            return
+        }
+
+        var validationResults: [ImportValidationResult] = []
+        for fileURL in mdFiles {
+            let result = parseAndValidateMarkdownFile(fileURL)
+            validationResults.append(result)
+        }
+
+        // 1件でもエラーがあれば何も登録せずエラー内容を通知
+        let failed = validationResults.filter { !$0.isValid }
+        if !failed.isEmpty {
+            let errorSummary = failed.map { "\($0.fileURL.lastPathComponent): \($0.errors.joined(separator: ", "))" }.joined(separator: "\n")
+            importErrorMessage = "インポートできないファイルがあります:\n" + errorSummary
+            return
+        }
+
+        // 全件OKなら一括インポート
+        for result in validationResults {
+            guard let parsed = result.parsedNote else { continue }
+            // タグ名で既存タグを検索
+            var tag: Tag? = nil
+            if let found = tags.first(where: { parsed.tags.contains($0.name ?? "") }) {
+                tag = found
+            } else if let firstTagName = parsed.tags.first {
+                // 新規タグ作成
+                tag = noteService.createTag(name: firstTagName)
+                // タグリストを更新
+                self.tags = noteService.fetchTags(predicate: nil, sortDescriptors: nil)
+            }
+            // ノート作成
+            _ = noteService.createNote(
+                title: parsed.title,
+                content: parsed.content,
+                tag: tag
+            )
+        }
+        // データ再取得
+        fetchNotes(searchText: "", selectedTag: nil)
+        importErrorMessage = nil // 成功時はエラーをクリア
+    }
+
+    /// mdファイルのパース＆バリデーション（YAML frontmatterと本文抽出）
+    private func parseAndValidateMarkdownFile(_ fileURL: URL) -> ImportValidationResult {
+        guard let text = try? String(contentsOf: fileURL, encoding: .utf8) else {
+            return ImportValidationResult(fileURL: fileURL, isValid: false, errors: ["ファイル読み込み失敗"], parsedNote: nil)
+        }
+
+        // YAML frontmatter抽出
+        let yamlRegex = try! NSRegularExpression(pattern: "^---\\n([\\s\\S]*?)\\n---\\n", options: [.anchorsMatchLines])
+        let nsText = text as NSString
+        var title: String? = nil
+        var date: Date? = nil
+        var tags: [String] = []
+        var content: String = ""
+        var errors: [String] = []
+
+        if let match = yamlRegex.firstMatch(in: text, options: [], range: NSRange(location: 0, length: nsText.length)) {
+            let yamlRange = match.range(at: 1)
+            let yamlString = nsText.substring(with: yamlRange)
+            // YAML行ごとにパース
+            for line in yamlString.components(separatedBy: "\n") {
+                let trimmed = line.trimmingCharacters(in: .whitespaces)
+
+            }
+            // 本文抽出
+            let contentStart = match.range.location + match.range.length
+            if contentStart < nsText.length {
+                content = nsText.substring(from: contentStart).trimmingCharacters(in: .whitespacesAndNewlines)
+            }
+        } else {
+            errors.append("YAML frontmatterが見つかりません")
+        }
+
+        // バリデーション
+        if title == nil || title!.isEmpty { errors.append("titleがありません") }
+        if date == nil { errors.append("dateが不正です") }
+        if tags.isEmpty { errors.append("tagsがありません") }
+        if content.isEmpty { errors.append("本文がありません") }
+
+        let isValid = errors.isEmpty
+        let parsedNote = isValid ? ParsedNote(title: title!, date: date!, tags: tags, content: content) : nil
+        return ImportValidationResult(fileURL: fileURL, isValid: isValid, errors: errors, parsedNote: parsedNote)
+    }
     /// ロック切り替えボタンのアクション（View用）
     func toggleLockButtonAction() {
         guard let note = selectedNote else { return }
@@ -686,5 +803,33 @@ private extension NoteListViewModel {
         } catch {
             logError(operation, error: error)
         }
+    }
+}
+
+// MARK: - Export Methods
+
+/// ノートをエクスポートする（UIからディレクトリを渡すだけでOK）
+func exportNotes(to directory: URL) {
+    let notesToExport = notes.filter { $0.trashedAt == nil }
+    Logger.info("[NoteListViewModel] エクスポート対象: \(notesToExport.count)件")
+    guard !notesToExport.isEmpty else {
+        Logger.warning("[NoteListViewModel] エクスポートするノートがありません")
+        return
+    }
+    guard directory.startAccessingSecurityScopedResource() else {
+        Logger.error("[NoteListViewModel] ❌ セキュリティスコープへのアクセス開始に失敗")
+        return
+    }
+    defer {
+        directory.stopAccessingSecurityScopedResource()
+    }
+    let exportService = MarkdownExportService()
+    do {
+        Logger.info("[NoteListViewModel] エクスポート開始...")
+        try exportService.exportNotes(notesToExport, to: directory)
+        Logger.info("[NoteListViewModel] ✅ \(notesToExport.count)件のノートをエクスポートしました")
+    } catch {
+        Logger.error("[NoteListViewModel] ❌ エクスポート失敗: \(error)")
+        Logger.error("[NoteListViewModel] エラー詳細: \(error.localizedDescription)")
     }
 }
