@@ -1,10 +1,3 @@
-//
-//  ExportService.swift
-//  Moore
-//
-//  Created on 2026-02-21.
-//
-
 import Foundation
 import CoreData
 

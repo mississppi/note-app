@@ -1,10 +1,3 @@
-//
-//  ImportExportCommands.swift
-//  Moore
-//
-//  Created on 2026-02-22.
-//
-
 import SwiftUI
 import AppKit
 
@@ -71,7 +64,7 @@ struct ImportExportCommands: Commands {
         }
         let directory = panel.url!
         Logger.info("[ImportExportCommands] 選択されたフォルダ: \(directory.path)")
-        // viewModel.exportNotes(to: directory)
+        viewModel.exportActiveNotes(to: directory)
     }
 
     /// パネル選択判定（インポート・エクスポート共通）
