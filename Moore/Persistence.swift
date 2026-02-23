@@ -1,5 +1,4 @@
 import CoreData
-import Logger
 
 struct PersistenceController {
     static let shared = PersistenceController()

@@ -43,10 +43,11 @@ struct ImportExportCommands: Commands {
         panel.prompt = "インポート"
         panel.message = "Mooreエクスポートフォルダを選択してください"
         let result = panel.runModal()
-        guard result == .OK, let directory = panel.url else {
+        guard isPanelSelectionValid(result: result, panel: panel) else {
             Logger.info("[ImportExportCommands] キャンセルされました")
             return
         }
+        let directory = panel.url!
         Logger.info("[ImportExportCommands] インポート対象フォルダ: \(directory.path)")
         // viewModel.importNotes(from: directory)
     }
@@ -64,11 +65,17 @@ struct ImportExportCommands: Commands {
         panel.prompt = "エクスポート"
         panel.message = "ノートをエクスポートするフォルダを選択してください"
         let result = panel.runModal()
-        guard result == .OK, let directory = panel.url else {
+        guard isPanelSelectionValid(result: result, panel: panel) else {
             Logger.info("[ImportExportCommands] キャンセルされました")
             return
         }
+        let directory = panel.url!
         Logger.info("[ImportExportCommands] 選択されたフォルダ: \(directory.path)")
-        viewModel.exportNotes(to: directory)
+        // viewModel.exportNotes(to: directory)
+    }
+
+    /// パネル選択判定（インポート・エクスポート共通）
+    private func isPanelSelectionValid(result: NSApplication.ModalResponse, panel: NSOpenPanel) -> Bool {
+        return result == .OK && panel.url != nil
     }
 }

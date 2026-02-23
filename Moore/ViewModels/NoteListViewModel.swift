@@ -287,7 +287,8 @@ class NoteListViewModel: ObservableObject {
             .debounce(for: .milliseconds(NoteListViewModelConstants.searchDebounceMilliseconds), scheduler: RunLoop.main)
             .sink { [weak self] searchText in
                 guard let self = self else { return }
-                self.fetchNotes(searchText: searchText, selectedTag: self.selectedTag)
+                // 検索時は全タグ横断
+                self.fetchNotes(searchText: searchText, selectedTag: nil)
             }
             .store(in: &cancellabels)
         
@@ -803,26 +804,26 @@ private extension NoteListViewModel {
 
 /// ノートをエクスポートする（UIからディレクトリを渡すだけでOK）
 func exportNotes(to directory: URL) {
-    let notesToExport = notes.filter { $0.trashedAt == nil }
-    Logger.info("[NoteListViewModel] エクスポート対象: \(notesToExport.count)件")
-    guard !notesToExport.isEmpty else {
-        Logger.warning("[NoteListViewModel] エクスポートするノートがありません")
-        return
-    }
-    guard directory.startAccessingSecurityScopedResource() else {
-        Logger.error("[NoteListViewModel] ❌ セキュリティスコープへのアクセス開始に失敗")
-        return
-    }
-    defer {
-        directory.stopAccessingSecurityScopedResource()
-    }
-    let exportService = MarkdownExportService()
-    do {
-        Logger.info("[NoteListViewModel] エクスポート開始...")
-        try exportService.exportNotes(notesToExport, to: directory)
-        Logger.info("[NoteListViewModel] ✅ \(notesToExport.count)件のノートをエクスポートしました")
-    } catch {
-        Logger.error("[NoteListViewModel] ❌ エクスポート失敗: \(error)")
-        Logger.error("[NoteListViewModel] エラー詳細: \(error.localizedDescription)")
-    }
+//    let notesToExport = notes.filter { $0.trashedAt == nil }
+//    Logger.info("[NoteListViewModel] エクスポート対象: \(notesToExport.count)件")
+//    guard !notesToExport.isEmpty else {
+//        Logger.warning("[NoteListViewModel] エクスポートするノートがありません")
+//        return
+//    }
+//    guard directory.startAccessingSecurityScopedResource() else {
+//        Logger.error("[NoteListViewModel] ❌ セキュリティスコープへのアクセス開始に失敗")
+//        return
+//    }
+//    defer {
+//        directory.stopAccessingSecurityScopedResource()
+//    }
+//    let exportService = MarkdownExportService()
+//    do {
+//        Logger.info("[NoteListViewModel] エクスポート開始...")
+//        try exportService.exportNotes(notesToExport, to: directory)
+//        Logger.info("[NoteListViewModel] ✅ \(notesToExport.count)件のノートをエクスポートしました")
+//    } catch {
+//        Logger.error("[NoteListViewModel] ❌ エクスポート失敗: \(error)")
+//        Logger.error("[NoteListViewModel] エラー詳細: \(error.localizedDescription)")
+//    }
 }
