@@ -151,10 +151,10 @@ class NoteListViewModel: ObservableObject {
         
         $searchText
             .debounce(for: .milliseconds(NoteListViewModelConstants.searchDebounceMilliseconds), scheduler: RunLoop.main)
-            .sink { [weak self] searchText in
+            .sink { [weak self] _ in
                 guard let self = self else { return }
-                // 検索時は全タグ横断
-                self.fetchNotes(searchText: searchText, selectedTag: nil)
+                // 検索テキストの状態に応じて適切なメソッドを呼ぶ
+                self.reloadNotesBasedOnSearchState()
             }
             .store(in: &cancellabels)
         
@@ -172,9 +172,9 @@ class NoteListViewModel: ObservableObject {
             }
             .store(in: &cancellabels)
         
-        //初回起動時に1件目を選択状態にする
-        // fetchDataAndSelectFirstNote()
-        fetchNotes(searchText: "", selectedTag: nil)
+        //初回起動時はタグ一覧を取得して選択状態を初期化する
+        fetchData()
+        let _initSelectedTagName = self.selectedTag?.name ?? "nil"
     }
     
     // MARK: - Public Methods
@@ -248,13 +248,13 @@ class NoteListViewModel: ObservableObject {
         select(note: newNote, userInitiated: true)
 
         saveContextWithErrorHandling(operation: "save new note")
-        fetchNotes(searchText: searchText, selectedTag: selectedTag)
+        reloadNotesBasedOnSearchState()
     }
 
     func trashNote(note: Note) {
         noteService.trashNote(note)
         saveContextWithErrorHandling(operation: "trash note")
-        fetchNotes(searchText: searchText, selectedTag: selectedTag)
+        reloadNotesBasedOnSearchState()
         select(note: self.notes.first, userInitiated: false)
     }
     
@@ -516,7 +516,7 @@ class NoteListViewModel: ObservableObject {
         if let index = tags.firstIndex(of: targetTag) {
             selectedTagIndex = index
         }
-        fetchNotes(searchText: searchText, selectedTag: selectedTag)
+        reloadNotesBasedOnSearchState()
         select(note: note, userInitiated: true)
     }
 
@@ -528,6 +528,19 @@ class NoteListViewModel: ObservableObject {
 
 
     // MARK: - Public Methods (Data Fetching)
+    /// 検索テキストで全タグ横断検索する
+    func searchNotes(searchText: String) {
+        let searchPredicate = createSearchPredicate(for: searchText)
+        let trashedPredicate = NSPredicate(format: "isTrashed == NO")
+        let finalPredicate = NSCompoundPredicate(
+            andPredicateWithSubpredicates: [searchPredicate, trashedPredicate].compactMap { $0 }
+        )
+        self.notes = noteService.fetchNotes(
+            predicate: finalPredicate,
+            sortDescriptors: [NSSortDescriptor(keyPath: \Note.order, ascending: true)]
+        )
+        select(note: self.notes.first, userInitiated: false)
+    }
 
     func fetchNotes(
         searchText: String = "",
@@ -550,6 +563,17 @@ class NoteListViewModel: ObservableObject {
         
     }
 
+    /// 現在の `searchText` の状態に応じて、検索またはタグ絞り込みでノートを再取得する
+    func reloadNotesBasedOnSearchState() {
+        let trimmed = self.searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        Logger.info("[NoteListViewModel] reloadNotesBasedOnSearchState: searchText='\(self.searchText)' trimmed='\(trimmed)' selectedTag='\(self.selectedTag?.name ?? "nil")'")
+        if !trimmed.isEmpty {
+            self.searchNotes(searchText: self.searchText)
+        } else {
+            self.fetchNotes(searchText: "", selectedTag: self.selectedTag)
+        }
+    }
+
 
 }
 
@@ -562,8 +586,10 @@ private extension NoteListViewModel {
     }
     
     func createTagPredicate(for tag: Tag?) -> NSPredicate? {
-        guard let tag = tag else {return nil}
-        return NSPredicate(format: "tag == %@", tag)
+        guard let tag = tag else { return nil }
+        // Compare by tag name to avoid issues with managed object instance identity across contexts
+        let tagName = tag.name ?? ""
+        return NSPredicate(format: "tag.name == %@", tagName)
     }
 }
 
@@ -629,7 +655,8 @@ private extension NoteListViewModel {
         }
         
         saveContextWithErrorHandling(operation: "save note order")
-        fetchNotes(searchText: searchText, selectedTag: selectedTag) .self
+        // 再取得は現在の検索状態に応じる
+        reloadNotesBasedOnSearchState()
     }
 }
 
