@@ -88,8 +88,11 @@ class MarkdownExportService: ExportService {
         // Title (sanitized for filesystem)
         let title = note.title ?? "untitled"
         let sanitizedTitle = sanitizeFilename(title)
+        
+        // UUID suffix (first 8 characters for uniqueness without excessive length)
+        let uuidSuffix = note.uuid?.uuidString.prefix(8).lowercased() ?? UUID().uuidString.prefix(8).lowercased()
 
-        return "\(dateString)-\(sanitizedTitle).md"
+        return "\(dateString)-\(sanitizedTitle)-\(uuidSuffix).md"
     }
     
     private func sanitizeFilename(_ string: String) -> String {

@@ -553,6 +553,7 @@ class NoteListViewModel: ObservableObject {
         let finalPredicate = NSCompoundPredicate(
             andPredicateWithSubpredicates: [searchPredicate, tagPredicate, trashedPredicate].compactMap { $0 }
         )
+        Logger.info("[NoteListViewModel] fetchNotes: searchText='\(searchText)', selectedTag='\(selectedTag?.name ?? "nil")', predicate='\(finalPredicate.predicateFormat)'")
     
         self.notes = noteService.fetchNotes(
             predicate: finalPredicate, 
@@ -560,7 +561,6 @@ class NoteListViewModel: ObservableObject {
         )
         
         select(note: self.notes.first, userInitiated: false)
-        
     }
 
     /// 現在の `searchText` の状態に応じて、検索またはタグ絞り込みでノートを再取得する
