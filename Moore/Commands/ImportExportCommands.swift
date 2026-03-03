@@ -42,7 +42,15 @@ struct ImportExportCommands: Commands {
         }
         let directory = panel.url!
         Logger.info("[ImportExportCommands] インポート対象フォルダ: \(directory.path)")
-        // viewModel.importNotes(from: directory)
+        
+        viewModel.importNotes(from: directory)
+        
+        // エラーチェック
+        if let errorMessage = viewModel.importErrorMessage {
+            showImportErrorAlert(errorMessage: errorMessage)
+        } else {
+            showImportCompletionAlert(directory: directory)
+        }
     }
 
     private func handleExport() {
@@ -77,6 +85,26 @@ struct ImportExportCommands: Commands {
         let alert = NSAlert()
         alert.messageText = "エクスポート完了"
         alert.informativeText = "\(noteCount)件のノートをエクスポートしました\n\n保存先:\n\(directory.path)"
+        alert.alertStyle = .informational
+        alert.addButton(withTitle: "OK")
+        alert.runModal()
+    }
+    
+    /// インポートエラーアラート表示
+    private func showImportErrorAlert(errorMessage: String) {
+        let alert = NSAlert()
+        alert.messageText = "インポートエラー"
+        alert.informativeText = errorMessage
+        alert.alertStyle = .warning
+        alert.addButton(withTitle: "OK")
+        alert.runModal()
+    }
+    
+    /// インポート完了アラート表示
+    private func showImportCompletionAlert(directory: URL) {
+        let alert = NSAlert()
+        alert.messageText = "インポート完了"
+        alert.informativeText = "ノートをインポートしました\n\nインポート元:\n\(directory.path)"
         alert.alertStyle = .informational
         alert.addButton(withTitle: "OK")
         alert.runModal()

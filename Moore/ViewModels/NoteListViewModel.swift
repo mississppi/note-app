@@ -799,8 +799,8 @@ extension NoteListViewModel {
                 tag: tag
             )
         }
-        // データ再取得
-        fetchNotes(searchText: "", selectedTag: nil)
+        // データ再取得（現在の選択タグ・検索状態を考慮）
+        reloadNotesBasedOnSearchState()
         importErrorMessage = nil // 成功時はエラーをクリア
     }
 
