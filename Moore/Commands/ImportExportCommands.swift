@@ -64,7 +64,23 @@ struct ImportExportCommands: Commands {
         }
         let directory = panel.url!
         Logger.info("[ImportExportCommands] 選択されたフォルダ: \(directory.path)")
-        viewModel.exportActiveNotes(to: directory)
+        
+        // エクスポート実行
+        let notesToExport = viewModel.notes.filter { !$0.isTrashed }
+        viewModel.exportNotes(notesToExport, to: directory)
+        
+        // 完了通知
+        showExportCompletionAlert(noteCount: notesToExport.count, directory: directory)
+    }
+    
+    /// エクスポート完了アラート表示
+    private func showExportCompletionAlert(noteCount: Int, directory: URL) {
+        let alert = NSAlert()
+        alert.messageText = "エクスポート完了"
+        alert.informativeText = "\(noteCount)件のノートをエクスポートしました\n\n保存先:\n\(directory.path)"
+        alert.alertStyle = .informational
+        alert.addButton(withTitle: "OK")
+        alert.runModal()
     }
 
     /// パネル選択判定（インポート・エクスポート共通）

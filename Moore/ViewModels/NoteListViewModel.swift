@@ -803,32 +803,6 @@ extension NoteListViewModel {
         fetchNotes(searchText: "", selectedTag: nil)
         importErrorMessage = nil // 成功時はエラーをクリア
     }
-    
-    /// ノートをタグごとにサブフォルダ分けしてエクスポートする（ゴミ箱以外）
-    func exportActiveNotes(to directory: URL) {
-        let exportService = MarkdownExportService()
-        // タグをid昇順でソート（UUID型対応）
-        // let sortedTags = tags.sorted {
-        //     let uuid0 = $0.uuid?.uuidString ?? ""
-        //     let uuid1 = $1.uuid?.uuidString ?? ""
-        //     return uuid0 < uuid1
-        // }
-        // for tag in sortedTags {
-        //     // タグ名サニタイズ（ファイル名として安全な文字列に変換）
-        //     let tagFolderName = exportService.sanitizeFilename(tag.name ?? "untitled")
-        //     let tagFolderURL = directory.appendingPathComponent(tagFolderName)
-        //     let notesForTag = notes.filter { $0.tag == tag && !$0.isTrashed }
-        //     guard !notesForTag.isEmpty else { continue }
-        //     do {
-        //         // try FileManager.default.createDirectory(at: tagFolderURL, withIntermediateDirectories: true)/
-        //         // Logger.info("[NoteListViewModel] タグフォルダ作成: \(tagFolderURL.path)")
-        //         // try exportService.exportNotes(notesForTag, to: tagFolderURL)
-        //         // Logger.info("[NoteListViewModel] タグ \(tag.name ?? "untitled") のノートをエクスポートしました")/
-        //     } catch {
-        //         // Logger.error("[NoteListViewModel] タグ \(tag.name ?? "untitled") のエクスポート失敗: \(error)")
-        //     }
-        // }
-    }
 
     /// ノート配列を直接渡してエクスポート
     func exportNotes(_ notes: [Note], to directory: URL) {
