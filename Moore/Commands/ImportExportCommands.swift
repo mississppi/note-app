@@ -65,12 +65,11 @@ struct ImportExportCommands: Commands {
         let directory = panel.url!
         Logger.info("[ImportExportCommands] 選択されたフォルダ: \(directory.path)")
         
-        // エクスポート実行
-        let notesToExport = viewModel.notes.filter { !$0.isTrashed }
-        viewModel.exportNotes(notesToExport, to: directory)
+        // 全タグのアクティブノートをエクスポート
+        let exportedCount = viewModel.exportAllActiveNotes(to: directory)
         
         // 完了通知
-        showExportCompletionAlert(noteCount: notesToExport.count, directory: directory)
+        showExportCompletionAlert(noteCount: exportedCount, directory: directory)
     }
     
     /// エクスポート完了アラート表示

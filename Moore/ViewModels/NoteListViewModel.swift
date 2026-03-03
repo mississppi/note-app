@@ -829,6 +829,17 @@ extension NoteListViewModel {
         }
     }
     
+    /// 全タグのアクティブノートを取得してエクスポート
+    /// - Returns: エクスポートされたノート数
+    @discardableResult
+    func exportAllActiveNotes(to directory: URL) -> Int {
+        let allNotesPredicate = NSPredicate(format: "isTrashed == NO")
+        let sortDescriptors = [NSSortDescriptor(keyPath: \Note.order, ascending: true)]
+        let allActiveNotes = noteService.fetchNotes(predicate: allNotesPredicate, sortDescriptors: sortDescriptors)
+        exportNotes(allActiveNotes, to: directory)
+        return allActiveNotes.count
+    }
+    
     /// mdファイルのパース＆バリデーション（YAML frontmatterと本文抽出）
     private func parseAndValidateMarkdownFile(_ fileURL: URL) -> ImportValidationResult {
         guard let text = try? String(contentsOf: fileURL, encoding: .utf8) else {
@@ -847,11 +858,48 @@ extension NoteListViewModel {
         if let match = yamlRegex.firstMatch(in: text, options: [], range: NSRange(location: 0, length: nsText.length)) {
             let yamlRange = match.range(at: 1)
             let yamlString = nsText.substring(with: yamlRange)
+            
             // YAML行ごとにパース
+            var isInTagsSection = false
             for line in yamlString.components(separatedBy: "\n") {
                 let trimmed = line.trimmingCharacters(in: .whitespaces)
-
+                
+                // title: "..." 形式
+                if trimmed.hasPrefix("title:") {
+                    let titleValue = trimmed.replacingOccurrences(of: "title:", with: "").trimmingCharacters(in: .whitespaces)
+                    // ダブルクォートを除去
+                    if titleValue.hasPrefix("\"") && titleValue.hasSuffix("\"") {
+                        title = String(titleValue.dropFirst().dropLast())
+                    } else {
+                        title = titleValue
+                    }
+                    isInTagsSection = false
+                }
+                // date: 2026-02-23T12:00:00Z 形式
+                else if trimmed.hasPrefix("date:") {
+                    let dateValue = trimmed.replacingOccurrences(of: "date:", with: "").trimmingCharacters(in: .whitespaces)
+                    let isoFormatter = ISO8601DateFormatter()
+                    isoFormatter.formatOptions = [.withInternetDateTime]
+                    date = isoFormatter.date(from: dateValue)
+                    isInTagsSection = false
+                }
+                // tags: セクション開始
+                else if trimmed.hasPrefix("tags:") {
+                    isInTagsSection = true
+                }
+                // タグ項目: "  - tagname" 形式
+                else if isInTagsSection && line.hasPrefix("  - ") {
+                    let tagName = line.replacingOccurrences(of: "  - ", with: "").trimmingCharacters(in: .whitespaces)
+                    if !tagName.isEmpty {
+                        tags.append(tagName)
+                    }
+                }
+                // 他の行（インデントなし）が来たらtagsセクション終了
+                else if !line.hasPrefix("  ") && !trimmed.isEmpty {
+                    isInTagsSection = false
+                }
             }
+            
             // 本文抽出
             let contentStart = match.range.location + match.range.length
             if contentStart < nsText.length {
