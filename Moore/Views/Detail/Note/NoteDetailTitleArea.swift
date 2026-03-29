@@ -10,17 +10,17 @@ struct NoteDetailTitleArea: View {
                 .disabled(viewModel.selectedNote == nil)
 
             //　ロックボタン
-            Button(action: {
-                viewModel.toggleLockButtonAction()
-            }) {
-                Image(systemName: viewModel.lockButtonIcon)
-                    .font(.title2)
-                    .foregroundColor(viewModel.lockButtonColor)
-                    .help(viewModel.lockButtonHelp)
-            }
-            .buttonStyle(PlainButtonStyle())
-            .opacity(viewModel.isLockButtonVisible ? 1 : 0)
-            .disabled(!viewModel.isLockButtonVisible)
+            // Button(action: {
+            //     viewModel.toggleLockButtonAction()
+            // }) {
+            //     Image(systemName: viewModel.lockButtonIcon)
+            //         .font(.title2)
+            //         .foregroundColor(viewModel.lockButtonColor)
+            //         .help(viewModel.lockButtonHelp)
+            // }
+            // .buttonStyle(PlainButtonStyle())
+            // .opacity(viewModel.isLockButtonVisible ? 1 : 0)
+            // .disabled(!viewModel.isLockButtonVisible)
             Spacer()
         }
         .padding()
